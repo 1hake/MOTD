@@ -1,0 +1,35 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int       @id @default(autoincrement())
+  email     String    @unique
+  createdAt DateTime  @default(now())
+  posts     SongPost[]
+  friends   Friendship[] @relation("UserFriends")
+  friendOf  Friendship[] @relation("FriendOf")
+}
+
+model SongPost {
+  id     Int      @id @default(autoincrement())
+  title  String
+  artist String
+  link   String
+  date   DateTime @default(now())
+  user   User     @relation(fields: [userId], references: [id])
+  userId Int
+}
+
+model Friendship {
+  id       Int  @id @default(autoincrement())
+  user     User @relation("UserFriends", fields: [userId], references: [id])
+  userId   Int
+  friend   User @relation("FriendOf", fields: [friendId], references: [id])
+  friendId Int
+}
