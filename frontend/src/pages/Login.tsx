@@ -1,16 +1,17 @@
-import React, { useState } from "react";
-import { api } from "../lib/api";
-import { setToken } from "../lib/storage";
-import { useNavigate } from "react-router-dom";
+
+import React, { useState } from 'react';
+import { api } from '../lib/api';
+import { setToken } from '../lib/storage';
+import { useNavigate } from 'react-router-dom';
 
 export default function Login() {
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState('');
   const navigate = useNavigate();
 
   const handleLogin = async () => {
-    const res = await api.post("/auth/email", { email });
+    const res = await api.post('/auth/email', { email });
     await setToken(res.data.token);
-    navigate("/home");
+    navigate('/home');
   };
 
   return (
@@ -24,7 +25,7 @@ export default function Login() {
       />
       <button
         onClick={handleLogin}
-        className="bg-blue-500 text-white px-4 py-2 rounded"
+        className="bg-blue-600 text-white px-4 py-2 rounded"
       >
         Se connecter
       </button>

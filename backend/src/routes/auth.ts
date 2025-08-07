@@ -1,11 +1,12 @@
-import { Router } from "express";
-import prisma from "../prismaClient";
+
+import { Router } from 'express';
+import prisma from '../prismaClient.js';
 
 const router = Router();
 
-router.post("/email", async (req, res) => {
+router.post('/email', async (req, res) => {
   const { email } = req.body;
-  if (!email) return res.status(400).json({ error: "Email required" });
+  if (!email) return res.status(400).json({ error: 'Email required' });
 
   let user = await prisma.user.findUnique({ where: { email } });
   if (!user) {

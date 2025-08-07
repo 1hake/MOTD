@@ -1,3 +1,4 @@
+
 import { Preferences } from '@capacitor/preferences';
 
 export const setToken = async (token: string) => {

@@ -1,19 +1,21 @@
-import React, { useState } from "react";
-import { api } from "../lib/api";
-import { getToken } from "../lib/storage";
-import { useNavigate } from "react-router-dom";
+
+import React, { useState } from 'react';
+import { api } from '../lib/api';
+import { getToken } from '../lib/storage';
+import { useNavigate } from 'react-router-dom';
 
 export default function PostSong() {
-  const [title, setTitle] = useState("");
-  const [artist, setArtist] = useState("");
-  const [link, setLink] = useState("");
+  const [title, setTitle] = useState('');
+  const [artist, setArtist] = useState('');
+  const [link, setLink] = useState('');
   const navigate = useNavigate();
 
   const submit = async () => {
     const token = await getToken();
-    const userId = Number(token!.split("-").pop());
-    await api.post("/posts", { title, artist, link, userId });
-    navigate("/home");
+    if (!token) return navigate('/');
+    const userId = Number(token.split('-').pop());
+    await api.post('/posts', { title, artist, link, userId });
+    navigate('/home');
   };
 
   return (
@@ -22,7 +24,7 @@ export default function PostSong() {
       <input className="border p-2" placeholder="Titre" value={title} onChange={e => setTitle(e.target.value)} />
       <input className="border p-2" placeholder="Artiste" value={artist} onChange={e => setArtist(e.target.value)} />
       <input className="border p-2" placeholder="Lien Spotify/YouTube" value={link} onChange={e => setLink(e.target.value)} />
-      <button className="bg-blue-500 text-white p-2 rounded" onClick={submit}>Publier</button>
+      <button className="bg-blue-600 text-white p-2 rounded" onClick={submit}>Publier</button>
     </div>
   );
 }
