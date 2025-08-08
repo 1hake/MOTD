@@ -4,6 +4,7 @@ import { api } from '../lib/api';
 import { getToken, getUserIdFromToken } from '../lib/storage';
 import { useNavigate } from 'react-router-dom';
 import AddFriendButton from '../components/AddFriendButton';
+import LoadingState from '../components/LoadingState';
 
 type Friend = {
   id: number;
@@ -57,57 +58,65 @@ export default function Friends() {
   };
 
   return (
-    <div className="p-4 max-w-4xl mx-auto">
-      {/* Friends list */}
-      <div className="bg-white rounded-xl shadow-lg p-6">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-lg font-semibold">Liste d'amis ({friends.length})</h2>
-          <AddFriendButton onAdd={addFriend} />
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-2xl mx-auto px-4 py-8">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">Mes amis</h1>
+          <div className="flex items-center justify-between">
+            <p className="text-gray-600">
+              {friends.length === 0 ? 'Aucun ami pour le moment' : `${friends.length} ami${friends.length > 1 ? 's' : ''}`}
+            </p>
+            <AddFriendButton onAdd={addFriend} />
+          </div>
         </div>
 
-        {loading ? (
+        {/* Loading state */}
+        {loading && (
           <div className="text-center py-8">
-            <div className="text-lg">Chargement...</div>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto"></div>
+            <p className="text-gray-500 mt-2">Chargement...</p>
           </div>
-        ) : friends.length === 0 ? (
-          <div className="text-center text-gray-500 py-12">
+        )}
+
+        {/* Empty state */}
+        {!loading && friends.length === 0 && (
+          <div className="text-center py-12">
             <div className="text-6xl mb-4">👥</div>
-            <p className="text-lg mb-4">Vous n'avez pas encore d'amis</p>
-            <p className="text-sm text-gray-400 mb-4">Ajoutez des amis pour voir leurs musiques dans votre feed!</p>
+            <h3 className="text-lg font-medium text-gray-700 mb-2">Aucun ami ajouté</h3>
+            <p className="text-gray-500">Ajoutez des amis pour découvrir leurs musiques préférées !</p>
           </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        )}
+
+        {/* Friends list */}
+        {!loading && friends.length > 0 && (
+          <div className="space-y-3">
             {friends.map((friend) => (
-              <div key={friend.id} className="bg-gradient-to-br from-purple-100 to-pink-100 rounded-lg p-4 border hover:shadow-md transition-shadow">
+              <div
+                key={friend.id}
+                className="bg-white rounded-xl p-4 border border-gray-200 hover:shadow-md hover:border-gray-300 transition-all duration-200 cursor-pointer"
+                onClick={() => navigate(`/profile/${friend.id}`)}
+              >
                 <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white font-bold">
+                  <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-semibold">
                     {friend.email.charAt(0).toUpperCase()}
                   </div>
-                  <div className="flex-1">
-                    <div className="font-medium text-gray-800">{friend.email.split('@')[0]}</div>
-                    <div className="text-sm text-gray-600">{friend.email}</div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-medium text-gray-900 truncate">
+                      {friend.email.split('@')[0]}
+                    </h3>
+                    <p className="text-sm text-gray-500 truncate">{friend.email}</p>
+                  </div>
+                  <div className="text-gray-400">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
                   </div>
                 </div>
               </div>
             ))}
           </div>
         )}
-
-        <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
-          <div className="flex items-center space-x-2 text-blue-700">
-            <span className="text-lg">💡</span>
-            <div className="text-sm">
-              <strong>Astuce:</strong> Les musiques partagées par vos amis apparaissent maintenant dans votre{' '}
-              <button
-                onClick={() => navigate('/feed')}
-                className="text-blue-600 underline hover:text-blue-800"
-              >
-                feed principal
-              </button>
-              .
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   );

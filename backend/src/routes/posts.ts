@@ -5,8 +5,8 @@ const router = Router();
 
 
 router.post('/', async (req, res) => {
-  const { title, artist, link, userId, coverUrl } = req.body;
-  if (!title || !artist || !link || !userId) {
+  const { title, artist, link, userId, coverUrl, deezerLink, spotifyLink, appleMusicLink } = req.body;
+  if (!title || !artist || !userId) {
     return res.status(400).json({ error: 'Missing fields' });
   }
 
@@ -17,12 +17,29 @@ router.post('/', async (req, res) => {
   today.setHours(0, 0, 0, 0);
 
   try {
+    // Check if user exists
+    const user = await prisma.user.findUnique({
+      where: { id: uid }
+    });
+    if (!user) return res.status(400).json({ error: 'User not found' });
+
     const existing = await prisma.songPost.findFirst({
       where: { userId: uid, date: { gte: today } }
     });
     if (existing) return res.status(400).json({ error: 'Already posted today' });
 
-    const post = await prisma.songPost.create({ data: { title, artist, link, userId: uid, coverUrl } });
+    const post = await prisma.songPost.create({
+      data: {
+        title,
+        artist,
+        link: link || deezerLink || spotifyLink || appleMusicLink || '', // Fallback for backward compatibility
+        deezerLink,
+        spotifyLink,
+        appleMusicLink,
+        userId: uid,
+        coverUrl
+      }
+    });
     res.json(post);
   } catch (e) {
     console.error('[POST /posts] error:', e);

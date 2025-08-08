@@ -56,45 +56,61 @@ export default function AddFriendButton({ onAdd }: AddFriendButtonProps) {
         <>
             <button
                 type="button"
-                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 active:scale-[.99]"
+                className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-6 py-2 rounded-xl hover:from-blue-600 hover:to-indigo-700 transform hover:scale-105 active:scale-95 transition-all duration-200 font-semibold shadow-lg hover:shadow-xl"
                 onClick={open}
             >
-                Ajouter un ami
+                <span className="flex items-center gap-2">
+                    ➕ <span>Ajouter un ami</span>
+                </span>
             </button>
 
             <Dialog open={isOpen} onClose={close} className="relative z-50">
                 {/* Backdrop */}
-                <div className="fixed inset-0 bg-black/40" aria-hidden="true" />
+                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" aria-hidden="true" />
 
                 {/* Modal container */}
                 <div className="fixed inset-0 flex items-center justify-center p-4">
-                    <Dialog.Panel className="w-full max-w-sm rounded-xl bg-white p-6 shadow-lg">
-                        <Dialog.Title className="text-lg font-semibold mb-3">
-                            Ajouter un ami
-                        </Dialog.Title>
+                    <Dialog.Panel className="w-full max-w-md rounded-3xl bg-white/95 backdrop-blur-xl p-8 shadow-2xl border border-white/50 transform transition-all duration-300">
+                        <div className="text-center mb-6">
+                            <div className="w-16 h-16 mx-auto bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center mb-4 shadow-lg">
+                                <span className="text-2xl">👥</span>
+                            </div>
+                            <Dialog.Title className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                                Ajouter un ami
+                            </Dialog.Title>
+                            <p className="text-gray-600 mt-2">Entrez l'adresse email de votre ami</p>
+                        </div>
 
-                        <div className="space-y-2">
-                            <input
-                                ref={inputRef}
-                                type="email"
-                                className="border rounded w-full p-2 outline-none focus:ring-2 focus:ring-blue-500"
-                                placeholder="Email"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                onKeyDown={onKeyDown}
-                                disabled={loading}
-                                autoComplete="email"
-                                inputMode="email"
-                            />
+                        <div className="space-y-4">
+                            <div className="space-y-2">
+                                <label className="block text-sm font-semibold text-gray-700">
+                                    Adresse email
+                                </label>
+                                <input
+                                    ref={inputRef}
+                                    type="email"
+                                    className="w-full px-4 py-3 border border-gray-300 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white/70 backdrop-blur-sm"
+                                    placeholder="ami@example.com"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    onKeyDown={onKeyDown}
+                                    disabled={loading}
+                                    autoComplete="email"
+                                    inputMode="email"
+                                />
+                            </div>
                             {error && (
-                                <div className="text-red-600 text-sm">{error}</div>
+                                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-2xl text-sm flex items-center gap-2">
+                                    <span>⚠️</span>
+                                    <span>{error}</span>
+                                </div>
                             )}
                         </div>
 
-                        <div className="mt-4 flex justify-end gap-2">
+                        <div className="mt-8 flex gap-3">
                             <button
                                 type="button"
-                                className="px-3 py-1 rounded hover:bg-gray-100"
+                                className="flex-1 px-4 py-3 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-2xl transition-all duration-200 font-medium"
                                 onClick={close}
                                 disabled={loading}
                             >
@@ -102,11 +118,20 @@ export default function AddFriendButton({ onAdd }: AddFriendButtonProps) {
                             </button>
                             <button
                                 type="button"
-                                className="bg-blue-600 text-white px-4 py-1 rounded disabled:opacity-50"
+                                className="flex-1 bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-4 py-3 rounded-2xl disabled:opacity-50 disabled:cursor-not-allowed hover:from-blue-600 hover:to-indigo-700 transform hover:scale-105 active:scale-95 transition-all duration-200 font-semibold shadow-lg hover:shadow-xl"
                                 onClick={handleAdd}
                                 disabled={loading || !isValidEmail}
                             >
-                                {loading ? 'Ajout…' : 'Ajouter'}
+                                {loading ? (
+                                    <span className="flex items-center justify-center gap-2">
+                                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                        Ajout...
+                                    </span>
+                                ) : (
+                                    <span className="flex items-center justify-center gap-2">
+                                        ✨ <span>Ajouter</span>
+                                    </span>
+                                )}
                             </button>
                         </div>
                     </Dialog.Panel>

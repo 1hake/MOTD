@@ -3,7 +3,10 @@ import { api } from '../lib/api';
 import { getToken, getUserIdFromToken } from '../lib/storage';
 import { useNavigate } from 'react-router-dom';
 import { initPushSafe } from '../push';
-import SongCard from '../components/SongCard';
+import EmptyFeedCTA from '../components/EmptyFeedCTA';
+import PostsSection from '../components/PostsSection';
+import EmptyFriendsState from '../components/EmptyFriendsState';
+import LoadingState from '../components/LoadingState';
 
 type Post = {
     id: number;
@@ -37,20 +40,26 @@ export default function Feed() {
                     return navigate('/');
                 }
 
-                // Fetch all today's posts (including user's own posts)
-                const allPostsRes = await api.get(`/posts/today?userId=${userId}`);
-                const allPostsData = allPostsRes.data;
+                // Fetch user's own posts for today
+                const myPostsRes = await api.get(`/posts/me?userId=${userId}`);
+                const allMyPosts = myPostsRes.data;
+
+                // Filter to get only today's posts
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                const todayMyPosts = allMyPosts.filter((post: Post) => {
+                    const postDate = new Date(post.date);
+                    postDate.setHours(0, 0, 0, 0);
+                    return postDate.getTime() === today.getTime();
+                });
 
                 // Fetch friends' posts specifically
                 const friendsPostsRes = await api.get(`/friends/posts?userId=${userId}`);
                 const friendsPostsData = friendsPostsRes.data;
 
-                // Separate my posts from friends' posts
-                const myPostsData = allPostsData.filter((post: Post) => !post.user || post.user.id === userId);
-
-                setAllPosts(allPostsData);
-                setMyPosts(myPostsData);
+                setMyPosts(todayMyPosts);
                 setFriendsPosts(friendsPostsData);
+                setAllPosts([...todayMyPosts, ...friendsPostsData]);
 
                 // Initialize push listeners safely (no-op on web)
                 initPushSafe().catch(() => { });
@@ -63,103 +72,46 @@ export default function Feed() {
     }, [navigate]);
 
     if (loading) {
-        return (
-            <div className="p-4 flex justify-center items-center min-h-screen">
-                <div className="text-lg">Chargement du feed...</div>
-            </div>
-        );
+        return <LoadingState message="Chargement du feed..." />;
     }
 
     return (
-        <div className="p-4 max-w-4xl mx-auto">
-            {/* Sticky CTA when user hasn't posted yet */}
-            {myPosts.length === 0 && (
-                <div className="sticky top-16 z-10 bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl shadow-lg p-6 mb-6 border-2 border-green-200">
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-4">
-                            <div className="bg-white bg-opacity-20 rounded-full p-3">
-                                <span className="text-2xl">🎵</span>
-                            </div>
-                            <div className="text-white">
-                                <h3 className="text-lg font-semibold">Vous n'avez pas encore partagé votre chanson du jour !</h3>
-                                <p className="text-sm text-green-100">Partagez votre musique préférée avec vos amis.</p>
-                            </div>
-                        </div>
-                        <button
-                            onClick={() => navigate('/post')}
-                            className="bg-white text-green-600 px-6 py-3 rounded-lg font-semibold hover:bg-green-50 transition-colors shadow-lg"
-                        >
-                            ➕ Poster ma chanson
-                        </button>
-                    </div>
+        <div className="min-h-[calc(100vh-8rem)] bg-gradient-to-br from-slate-50 via-white to-indigo-50">
+            {/* Page Header */}
+            <div className="bg-white border-b border-gray-200 px-4 py-4">
+                <div className="max-w-4xl mx-auto">
+                    <h1 className="text-2xl font-bold text-gray-800">Feed du jour</h1>
                 </div>
-            )}
-
-            {/* My posts today */}
-            {myPosts.length > 0 && (
-                <div className="mb-8">
-                    <h2 className="text-lg font-semibold mb-4 text-purple-600">Ma chanson du jour</h2>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {myPosts.map((post) => (
-                            <SongCard
-                                key={post.id}
-                                id={post.id}
-                                title={post.title}
-                                artist={post.artist}
-                                link={post.link}
-                                coverUrl={post.coverUrl}
-                                variant="purple"
-                            />
-                        ))}
-                    </div>
-                </div>
-            )}
-
-            {/* Friends' posts */}
-            <div>
-                <h2 className="text-lg font-semibold mb-4 text-blue-600">
-                    Musiques de mes amis
-                    {friendsPosts.length > 0 && <span className="text-sm text-gray-500 ml-2">({friendsPosts.length})</span>}
-                </h2>
-
-                {friendsPosts.length === 0 ? (
-                    <div className="text-center text-gray-500 py-12 bg-white rounded-xl shadow">
-                        <div className="text-6xl mb-4">👥</div>
-                        <p className="text-lg mb-2">Vos amis n'ont pas encore partagé de musique aujourd'hui</p>
-                        <button
-                            onClick={() => navigate('/friends')}
-                            className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-                        >
-                            Gérer mes amis
-                        </button>
-                    </div>
-                ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {friendsPosts.map((post) => (
-                            <SongCard
-                                key={post.id}
-                                id={post.id}
-                                title={post.title}
-                                artist={post.artist}
-                                link={post.link}
-                                coverUrl={post.coverUrl}
-                                sharedBy={post.user?.email}
-                                variant="blue"
-                            />
-                        ))}
-                    </div>
-                )}
             </div>
 
-            {/* Quick actions at the bottom */}
-            <div className="fixed bottom-20 right-4 flex flex-col gap-2">
-                <button
-                    onClick={() => navigate('/post')}
-                    className="bg-green-600 text-white w-12 h-12 rounded-full shadow-lg hover:bg-green-700 transition-colors flex items-center justify-center text-xl"
-                    title="Poster une chanson"
-                >
-                    ➕
-                </button>
+            <div className="max-w-4xl mx-auto px-4 py-6 space-y-8">
+                {/* Empty feed CTA */}
+                <EmptyFeedCTA show={myPosts.length === 0} />
+
+                {/* My posts today */}
+                {myPosts.length > 0 && (
+                    <PostsSection
+                        title="Ma chanson du jour"
+                        posts={myPosts}
+                        variant="purple"
+                        gradientFrom="from-purple-500"
+                        gradientTo="to-pink-500"
+                    />
+                )}
+
+                {/* Friends' posts */}
+                <PostsSection
+                    title="Musiques de mes amis"
+                    posts={friendsPosts}
+                    variant="blue"
+                    gradientFrom="from-blue-500"
+                    gradientTo="to-indigo-500"
+                    showCount={true}
+                    emptyMessage={<EmptyFriendsState />}
+                />
+
+                {/* Floating Action Button */}
+
             </div>
         </div>
     );

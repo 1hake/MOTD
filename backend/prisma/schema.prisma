@@ -21,14 +21,17 @@ model User {
 }
 
 model SongPost {
-  id       Int      @id @default(autoincrement())
-  title    String
-  artist   String
-  link     String
-  coverUrl String?
-  date     DateTime @default(now())
-  user     User     @relation(fields: [userId], references: [id])
-  userId   Int
+  id             Int      @id @default(autoincrement())
+  title          String
+  artist         String
+  link           String // Keep for backward compatibility
+  deezerLink     String?
+  spotifyLink    String?
+  appleMusicLink String?
+  coverUrl       String?
+  date           DateTime @default(now())
+  user           User     @relation(fields: [userId], references: [id])
+  userId         Int
 }
 
 model Friendship {
