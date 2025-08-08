@@ -1,6 +1,13 @@
 import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
+
+// Hash function using bcrypt (consistent with auth routes)
+async function hashPassword(password: string): Promise<string> {
+    const saltRounds = 10;
+    return await bcrypt.hash(password, saltRounds);
+}
 
 async function main() {
     // Clear existing data
@@ -13,23 +20,38 @@ async function main() {
 
     // Create example users
     const alice = await prisma.user.create({
-        data: { email: 'alice@example.com' }
+        data: {
+            email: 'alice@example.com',
+            passwordHash: await hashPassword('alice123')
+        }
     });
 
     const bob = await prisma.user.create({
-        data: { email: 'bob@example.com' }
+        data: {
+            email: 'bob@example.com',
+            passwordHash: await hashPassword('bob123')
+        }
     });
 
     const charlie = await prisma.user.create({
-        data: { email: 'charlie@example.com' }
+        data: {
+            email: 'charlie@example.com',
+            passwordHash: await hashPassword('charlie123')
+        }
     });
 
     const david = await prisma.user.create({
-        data: { email: 'david@example.com' }
+        data: {
+            email: 'david@example.com',
+            passwordHash: await hashPassword('david123')
+        }
     });
 
     const emma = await prisma.user.create({
-        data: { email: 'emma@example.com' }
+        data: {
+            email: 'emma@example.com',
+            passwordHash: await hashPassword('emma123')
+        }
     });
 
     console.log('Created example users');

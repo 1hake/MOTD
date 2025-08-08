@@ -18,8 +18,11 @@ router.get('/', async (req, res) => {
   const { userId } = req.query;
   if (!userId) return res.status(400).json({ error: 'Missing userId' });
 
+  const userIdNumber = parseInt(userId as string, 10);
+  if (isNaN(userIdNumber)) return res.status(400).json({ error: 'Invalid userId format' });
+
   const friends = await prisma.friendship.findMany({
-    where: { userId: Number(userId) },
+    where: { userId: userIdNumber },
     include: { friend: true }
   });
 
@@ -31,8 +34,11 @@ router.get('/posts', async (req, res) => {
   const { userId } = req.query;
   if (!userId) return res.status(400).json({ error: 'Missing userId' });
 
+  const userIdNumber = parseInt(userId as string, 10);
+  if (isNaN(userIdNumber)) return res.status(400).json({ error: 'Invalid userId format' });
+
   const friends = await prisma.friendship.findMany({
-    where: { userId: Number(userId) },
+    where: { userId: userIdNumber },
     select: { friendId: true }
   });
   const friendIds = friends.map(f => f.friendId);

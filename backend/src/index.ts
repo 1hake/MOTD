@@ -6,6 +6,7 @@ import postRoutes from './routes/posts';
 import friendRoutes from './routes/friends';
 import deviceRoutes from './routes/devices';
 import coverRoutes from './routes/cover';
+import userRoutes from './routes/users';
 
 dotenv.config();
 const app = express();
@@ -22,6 +23,7 @@ app.use('/auth', authRoutes);
 app.use('/posts', postRoutes);
 app.use('/friends', friendRoutes);
 app.use('/devices', deviceRoutes);
+app.use('/users', userRoutes);
 app.use('/api', coverRoutes);
 
 const PORT = process.env.PORT || 4000;
