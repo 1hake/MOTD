@@ -26,7 +26,7 @@ export default function Signup() {
         try {
             const response = await api.post('/auth/signup', { email, password });
             setToken(response.data.token);
-            navigate('/home');
+            navigate('/feed');
         } catch (error: any) {
             console.error('Signup failed:', error);
             const errorMessage = error.response?.data?.error || 'Signup failed. Please try again.';

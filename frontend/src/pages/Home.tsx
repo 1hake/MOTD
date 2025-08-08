@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { api } from '../lib/api';
-import { getToken } from '../lib/storage';
+import { getToken, getUserIdFromToken } from '../lib/storage';
 import { useNavigate } from 'react-router-dom';
 import { initPushSafe } from '../push';
 import AnimatedGradientBlob from '../components/AnimateGradient';
@@ -14,8 +14,14 @@ export default function Home() {
     (async () => {
       const token = await getToken();
       if (!token) return navigate('/');
-      const id = Number(token.split('-').pop());
-      const res = await api.get(`/posts/today?userId=${id}`);
+
+      const userId = getUserIdFromToken(token);
+      if (!userId) {
+        console.error('Could not get user ID from token');
+        return navigate('/');
+      }
+
+      const res = await api.get(`/posts/today?userId=${userId}`);
       setPosts(res.data);
       // Initialize push listeners safely (no-op on web)
       initPushSafe().catch(() => { });
@@ -25,21 +31,27 @@ export default function Home() {
   return (
     <div className="p-4">
       <h1 className="text-xl font-bold mb-4">Chansons du jour</h1>
-      <div className="flex gap-2 mb-4">
+      <div className="flex flex-wrap gap-2 mb-4">
         <button
-          className="bg-green-600 text-white px-4 py-2 rounded"
+          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition-colors"
           onClick={() => navigate('/post')}
         >
           Poster ma chanson
         </button>
         <button
-          className="bg-gray-700 text-white px-4 py-2 rounded"
+          className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 transition-colors"
+          onClick={() => navigate('/playlist')}
+        >
+          🎵 Playlist du jour
+        </button>
+        <button
+          className="bg-gray-700 text-white px-4 py-2 rounded hover:bg-gray-800 transition-colors"
           onClick={() => navigate('/history')}
         >
           Mon historique
         </button>
         <button
-          className="bg-blue-700 text-white px-4 py-2 rounded"
+          className="bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-800 transition-colors"
           onClick={() => navigate('/friends')}
         >
           Amis

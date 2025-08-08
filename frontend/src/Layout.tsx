@@ -1,14 +1,12 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
 import Navigation from './components/Navigation';
-import LogoutButton from './components/LogoutButton';
+import TopBar from './components/TopBar';
 
 const Layout: React.FC = () => {
     return (
-        <div className="min-h-screen pb-16 relative bg-gray-50">
-            <div className="absolute top-4 right-4 z-10">
-                <LogoutButton />
-            </div>
+        <div className="min-h-screen pb-16 pt-16 relative bg-gray-50">
+            <TopBar />
             <Outlet />
             <Navigation />
         </div>

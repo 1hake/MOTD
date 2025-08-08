@@ -89,24 +89,26 @@ export default function Search({ onSelect }: SearchProps) {
     }, [tracks]);
 
     return (
-        <div className="w-full max-w-3xl mx-auto">
-            <label htmlFor="mb-search" className="block text-sm font-medium text-gray-700 mb-2">
-                Search by artist or song
-            </label>
-            <div className="relative">
-                <input
-                    id="mb-search"
-                    type="text"
-                    value={q}
-                    onChange={(e) => setQ(e.target.value)}
-                    placeholder={`Try "Daft Punk" or "Smells Like Teen Spirit"`}
-                    className="w-full rounded-xl border border-gray-300 bg-white/70 backdrop-blur px-4 py-3 outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                />
-                {loading && (
-                    <div className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-500">
-                        Searching…
-                    </div>
-                )}
+        <div className="w-full max-w-4xl mx-auto">
+            <div className="mb-6">
+                <label htmlFor="mb-search" className="block text-lg font-semibold text-gray-800 mb-3">
+                    Rechercher une chanson
+                </label>
+                <div className="relative">
+                    <input
+                        id="mb-search"
+                        type="text"
+                        value={q}
+                        onChange={(e) => setQ(e.target.value)}
+                        placeholder={`Essayez "Daft Punk" ou "Bohemian Rhapsody"`}
+                        className="w-full rounded-xl border border-gray-300 bg-white px-4 py-4 text-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 shadow-sm"
+                    />
+                    {loading && (
+                        <div className="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-gray-500">
+                            Recherche…
+                        </div>
+                    )}
+                </div>
             </div>
 
             {error && (
@@ -115,14 +117,14 @@ export default function Search({ onSelect }: SearchProps) {
                 </div>
             )}
 
-            <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {items.map((it) => (
                     <div
                         key={it.id}
-                        className="group rounded-2xl border border-gray-200 bg-white/60 backdrop-blur hover:bg-white transition p-3 flex gap-3 cursor-pointer"
+                        className="group rounded-xl border border-gray-200 bg-white hover:shadow-lg transition-all p-4 flex gap-3 cursor-pointer hover:border-green-300"
                         onClick={() => onSelect?.(it)}
                     >
-                        <div className="h-20 w-20 rounded-xl bg-gray-100 overflow-hidden flex-shrink-0">
+                        <div className="h-16 w-16 rounded-lg bg-gray-100 overflow-hidden flex-shrink-0">
                             {it.cover ? (
                                 <img
                                     src={it.cover}
@@ -131,40 +133,37 @@ export default function Search({ onSelect }: SearchProps) {
                                     loading="lazy"
                                 />
                             ) : (
-                                <div className="h-full w-full grid place-items-center text-xs text-gray-400">
-                                    No cover
+                                <div className="h-full w-full grid place-items-center text-gray-400 text-xl">
+                                    🎵
                                 </div>
                             )}
                         </div>
-                        <div className="min-w-0">
-                            <div className="font-semibold truncate" title={it.title}>
+                        <div className="min-w-0 flex-1">
+                            <div className="font-semibold text-gray-900 truncate mb-1" title={it.title}>
                                 {it.title}
                             </div>
-                            <div className="text-sm text-gray-700 truncate" title={it.artist}>
+                            <div className="text-sm text-gray-600 truncate mb-1" title={it.artist}>
                                 {it.artist}
                             </div>
                             {it.album && (
-                                <div className="text-xs text-gray-500 truncate" title={it.album}>
+                                <div className="text-xs text-gray-500 truncate mb-2" title={it.album}>
                                     {it.album}
                                 </div>
                             )}
-
-                            <a
-                                href={`https://www.deezer.com/track/${it.id}`}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="mt-2 inline-block text-xs text-indigo-600 hover:underline"
-                                onClick={e => e.stopPropagation()}
-                            >
-                                View on Deezer
-                            </a>
+                            <div className="text-xs text-green-600 font-medium group-hover:text-green-700">
+                                Cliquer pour sélectionner
+                            </div>
                         </div>
                     </div>
                 ))}
             </div>
 
             {!loading && !error && debouncedQ && items.length === 0 && (
-                <p className="mt-4 text-sm text-gray-500">No results found.</p>
+                <div className="text-center py-12">
+                    <div className="text-6xl mb-4">🎵</div>
+                    <p className="text-lg text-gray-500 mb-2">Aucun résultat trouvé</p>
+                    <p className="text-sm text-gray-400">Essayez avec d'autres mots-clés</p>
+                </div>
             )}
         </div>
     );

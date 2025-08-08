@@ -19,7 +19,7 @@ export default function Login() {
     try {
       const res = await api.post('/auth/login', { email, password });
       await setToken(res.data.token);
-      navigate('/home');
+      navigate('/feed');
     } catch (error: any) {
       console.error('Login failed:', error);
       const errorMessage = error.response?.data?.error || 'Login failed. Please try again.';
