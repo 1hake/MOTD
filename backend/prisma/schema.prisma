@@ -13,9 +13,6 @@ model User {
   name         String?
   profileImage String?
   passwordHash String?
-  googleId     String?       @unique
-  appleId      String?       @unique
-  spotifyId    String?       @unique
   createdAt    DateTime      @default(now())
   posts        SongPost[]
   friends      Friendship[]  @relation("UserFriends")

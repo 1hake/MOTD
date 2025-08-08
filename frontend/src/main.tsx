@@ -5,7 +5,6 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import './index.css';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
-import OAuthCallback from './pages/OAuthCallback';
 import Home from './pages/Home';
 import PostSong from './pages/PostSong';
 import History from './pages/History';
@@ -19,7 +18,6 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/oauth-callback" element={<OAuthCallback />} />
         <Route element={<Layout />}>
           <Route path="/home" element={<Home />} />
           <Route path="/post" element={<PostSong />} />

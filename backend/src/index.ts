@@ -1,8 +1,6 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import session from 'express-session';
-import passport from './passportConfig';
 import authRoutes from './routes/auth';
 import postRoutes from './routes/posts';
 import friendRoutes from './routes/friends';
@@ -17,21 +15,6 @@ app.use(cors({
     credentials: true
 }));
 app.use(express.json());
-
-// Configure session
-app.use(session({
-    secret: process.env.SESSION_SECRET || 'your_secret_key',
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-        secure: process.env.NODE_ENV === 'production',
-        maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
-    }
-}));
-
-// Initialize passport
-app.use(passport.initialize());
-app.use(passport.session());
 
 app.get('/health', (_req, res) => res.json({ ok: true }));
 

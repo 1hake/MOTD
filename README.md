@@ -47,11 +47,13 @@ npm run cap:run:ios      # ou: npm run cap:run:android
 - Le code client n'explose pas si FCM est absent (no-op sur Web et si pas natif).
 
 ## 5) API test rapide
-- Auth mock:
+- Auth:
 ```
-POST /auth/email { "email": "toi@ex.com" }  -> { token: "mock-token-<id>" }
+POST /auth/signup { "email": "toi@ex.com", "password": "password123" }  -> { token: "jwt-token", user }
+POST /auth/login  { "email": "toi@ex.com", "password": "password123" }  -> { token: "jwt-token", user }
+POST /auth/email  { "email": "toi@ex.com" }  -> { token: "jwt-token", user } (simplified auth)
 ```
-- Avec le token, tu peux:
+- Avec le token JWT, tu peux:
   - `POST /posts` { title, artist, link, userId }
   - `GET  /posts/today?userId=<id>`
   - `GET  /posts/me?userId=<id>`
@@ -59,7 +61,8 @@ POST /auth/email { "email": "toi@ex.com" }  -> { token: "mock-token-<id>" }
   - `GET  /friends?userId=<id>`
 
 ## 6) Notes
-- Sécurité: auth simplifiée (mock). Mets un vrai JWT/magic link pour prod.
+- Sécurité: auth simplifiée (email/password sans hash). Mets un vrai bcrypt/scrypt pour prod.
 - SQLite par défaut; passe à Postgres via `.env` + `prisma migrate`.
+- OAuth retiré pour simplifier, seule l'auth email/password est supportée.
 
 Bon dev! 🎧

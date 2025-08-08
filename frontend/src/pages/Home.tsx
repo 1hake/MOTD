@@ -4,6 +4,7 @@ import { api } from '../lib/api';
 import { getToken } from '../lib/storage';
 import { useNavigate } from 'react-router-dom';
 import { initPushSafe } from '../push';
+import AnimatedGradientBlob from '../components/AnimateGradient';
 
 export default function Home() {
   const [posts, setPosts] = useState<any[]>([]);
@@ -17,7 +18,7 @@ export default function Home() {
       const res = await api.get(`/posts/today?userId=${id}`);
       setPosts(res.data);
       // Initialize push listeners safely (no-op on web)
-      initPushSafe().catch(() => {});
+      initPushSafe().catch(() => { });
     })();
   }, [navigate]);
 
@@ -44,6 +45,8 @@ export default function Home() {
           Amis
         </button>
       </div>
+      {/* <AnimatedGradientBlob width={420} height={420} speed={1.2} lineIntensity={0.12} /> */}
+
       <ul>
         {posts.map((p) => (
           <li key={p.id} className="border-b py-2">
