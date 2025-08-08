@@ -1,6 +1,5 @@
-
 import { Router } from 'express';
-import prisma from '../prismaClient.js';
+import prisma from '../prismaClient';
 
 const router = Router();
 
@@ -25,6 +24,32 @@ router.get('/', async (req, res) => {
   });
 
   res.json(friends.map(f => f.friend));
+});
+
+// Get all posts from friends for today
+router.get('/posts', async (req, res) => {
+  const { userId } = req.query;
+  if (!userId) return res.status(400).json({ error: 'Missing userId' });
+
+  const friends = await prisma.friendship.findMany({
+    where: { userId: Number(userId) },
+    select: { friendId: true }
+  });
+  const friendIds = friends.map(f => f.friendId);
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const posts = await prisma.songPost.findMany({
+    where: {
+      userId: { in: friendIds },
+      date: { gte: today }
+    },
+    include: { user: true },
+    orderBy: { date: 'desc' }
+  });
+
+  res.json(posts);
 });
 
 export default router;

@@ -1,59 +1,84 @@
-
 import { Router } from 'express';
-import prisma from '../prismaClient.js';
+import prisma from '../prismaClient';
 
 const router = Router();
 
+
 router.post('/', async (req, res) => {
-  const { title, artist, link, userId } = req.body;
+  const { title, artist, link, userId, coverUrl } = req.body;
   if (!title || !artist || !link || !userId) {
     return res.status(400).json({ error: 'Missing fields' });
   }
 
+  const uid = Number(userId);
+  if (!Number.isFinite(uid)) return res.status(400).json({ error: 'Invalid userId' });
+
   const today = new Date();
-  today.setHours(0,0,0,0);
+  today.setHours(0, 0, 0, 0);
 
-  const existing = await prisma.songPost.findFirst({
-    where: { userId, date: { gte: today } }
-  });
-  if (existing) return res.status(400).json({ error: 'Already posted today' });
+  try {
+    const existing = await prisma.songPost.findFirst({
+      where: { userId: uid, date: { gte: today } }
+    });
+    if (existing) return res.status(400).json({ error: 'Already posted today' });
 
-  const post = await prisma.songPost.create({ data: { title, artist, link, userId } });
-  res.json(post);
+    const post = await prisma.songPost.create({ data: { title, artist, link, userId: uid, coverUrl } });
+    res.json(post);
+  } catch (e) {
+    console.error('[POST /posts] error:', e);
+    res.status(500).json({ error: 'Server error' });
+  }
 });
 
 router.get('/today', async (req, res) => {
   const { userId } = req.query;
   if (!userId) return res.status(400).json({ error: 'Missing userId' });
 
-  const friends = await prisma.friendship.findMany({
-    where: { userId: Number(userId) },
-    select: { friendId: true }
-  });
-  const friendIds = friends.map(f => f.friendId);
+  const uid = Number(userId);
+  if (!Number.isFinite(uid)) return res.status(400).json({ error: 'Invalid userId' });
 
-  const today = new Date();
-  today.setHours(0,0,0,0);
+  try {
+    const friends = await prisma.friendship.findMany({
+      where: { userId: uid },
+      select: { friendId: true }
+    });
+    const friendIds = friends.map(f => f.friendId);
 
-  const posts = await prisma.songPost.findMany({
-    where: { userId: { in: friendIds }, date: { gte: today } },
-    include: { user: true },
-    orderBy: { date: 'desc' }
-  });
+    if (friendIds.length === 0) return res.json([]);
 
-  res.json(posts);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const posts = await prisma.songPost.findMany({
+      where: { userId: { in: friendIds }, date: { gte: today } },
+      include: { user: true },
+      orderBy: { date: 'desc' }
+    });
+
+    res.json(posts);
+  } catch (e) {
+    console.error('[GET /posts/today] error:', e);
+    res.status(500).json({ error: 'Server error' });
+  }
 });
 
 router.get('/me', async (req, res) => {
   const { userId } = req.query;
   if (!userId) return res.status(400).json({ error: 'Missing userId' });
 
-  const posts = await prisma.songPost.findMany({
-    where: { userId: Number(userId) },
-    orderBy: { date: 'desc' }
-  });
+  const uid = Number(userId);
+  if (!Number.isFinite(uid)) return res.status(400).json({ error: 'Invalid userId' });
 
-  res.json(posts);
+  try {
+    const posts = await prisma.songPost.findMany({
+      where: { userId: uid },
+      orderBy: { date: 'desc' }
+    });
+    res.json(posts);
+  } catch (e) {
+    console.error('[GET /posts/me] error:', e);
+    res.status(500).json({ error: 'Server error' });
+  }
 });
 
 export default router;

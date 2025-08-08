@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { api } from '../lib/api';
 import { setToken } from '../lib/storage';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -29,6 +29,14 @@ export default function Login() {
       >
         Se connecter
       </button>
+      <div className="mt-4">
+        <p className="text-gray-600">
+          Pas encore de compte?{' '}
+          <Link to="/signup" className="text-blue-600 hover:underline">
+            S'inscrire
+          </Link>
+        </p>
+      </div>
     </div>
   );
 }

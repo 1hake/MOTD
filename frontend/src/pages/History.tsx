@@ -21,13 +21,33 @@ export default function History() {
   return (
     <div className="p-4">
       <h1 className="text-xl font-bold mb-4">Mon historique</h1>
-      <ul>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {posts.map((p) => (
-          <li key={p.id} className="border-b py-2">
-            <strong>{p.title}</strong> – {p.artist}
-          </li>
+          <div
+            key={p.id}
+            className="rounded-xl shadow border bg-white/80 relative overflow-hidden flex flex-col justify-end min-h-[120px]"
+            style={p.coverUrl ? {
+              backgroundImage: `url(${p.coverUrl})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              backgroundRepeat: 'no-repeat',
+            } : {}}
+          >
+            <div className={p.coverUrl ? "bg-black/60 p-3" : "p-3"}>
+              <div className="font-semibold text-white drop-shadow" title={p.title}>{p.title}</div>
+              <div className="text-sm text-gray-200 drop-shadow" title={p.artist}>{p.artist}</div>
+              <a
+                href={p.link}
+                target="_blank"
+                rel="noreferrer"
+                className="text-xs text-indigo-200 hover:underline mt-1 inline-block"
+              >
+                Voir sur Deezer
+              </a>
+            </div>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   );
 }
