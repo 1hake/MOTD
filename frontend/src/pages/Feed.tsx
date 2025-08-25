@@ -15,6 +15,8 @@ type Post = {
     link: string;
     coverUrl?: string;
     date: string;
+    likeCount?: number;
+    isLikedByUser?: boolean;
     user?: {
         id: number;
         email: string;
@@ -27,6 +29,22 @@ export default function Feed() {
     const [friendsPosts, setFriendsPosts] = useState<Post[]>([]);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
+
+    const handleLikeChange = (postId: number, isLiked: boolean, newLikeCount: number) => {
+        // Update the friends posts array
+        setFriendsPosts(prev => prev.map(post =>
+            post.id === postId
+                ? { ...post, likeCount: newLikeCount, isLikedByUser: isLiked }
+                : post
+        ));
+
+        // Update the all posts array as well
+        setAllPosts(prev => prev.map(post =>
+            post.id === postId
+                ? { ...post, likeCount: newLikeCount, isLikedByUser: isLiked }
+                : post
+        ));
+    };
 
     useEffect(() => {
         (async () => {
@@ -76,13 +94,8 @@ export default function Feed() {
     }
 
     return (
-        <div className="min-h-[calc(100vh-8rem)] bg-gradient-to-br from-slate-50 via-white to-indigo-50">
-            {/* Page Header */}
-            <div className="bg-white border-b border-gray-200 px-4 py-4">
-                <div className="max-w-4xl mx-auto">
-                    <h1 className="text-2xl font-bold text-gray-800">Feed du jour</h1>
-                </div>
-            </div>
+        <div className="min-h-[calc(100vh-8rem)]">
+
 
             <div className="max-w-4xl mx-auto px-4 py-6 space-y-8">
                 {/* Empty feed CTA */}
@@ -93,9 +106,6 @@ export default function Feed() {
                     <PostsSection
                         title="Ma chanson du jour"
                         posts={myPosts}
-                        variant="purple"
-                        gradientFrom="from-purple-500"
-                        gradientTo="to-pink-500"
                     />
                 )}
 
@@ -103,11 +113,9 @@ export default function Feed() {
                 <PostsSection
                     title="Musiques de mes amis"
                     posts={friendsPosts}
-                    variant="blue"
-                    gradientFrom="from-blue-500"
-                    gradientTo="to-indigo-500"
                     showCount={true}
                     emptyMessage={<EmptyFriendsState />}
+                    onLikeChange={handleLikeChange}
                 />
 
                 {/* Floating Action Button */}

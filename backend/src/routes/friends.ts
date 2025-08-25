@@ -51,11 +51,26 @@ router.get('/posts', async (req, res) => {
       userId: { in: friendIds },
       date: { gte: today }
     },
-    include: { user: true },
+    include: {
+      user: true,
+      likes: {
+        select: {
+          userId: true
+        }
+      }
+    },
     orderBy: { date: 'desc' }
   });
 
-  res.json(posts);
+  // Add like count and user's like status to each post
+  const postsWithLikes = posts.map(post => ({
+    ...post,
+    likeCount: post.likes.length,
+    isLikedByUser: post.likes.some(like => like.userId === userIdNumber),
+    likes: undefined // Remove the likes array from response for cleaner data
+  }));
+
+  res.json(postsWithLikes);
 });
 
 export default router;

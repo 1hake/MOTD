@@ -11,9 +11,9 @@ const LoadingState: React.FC<LoadingStateProps> = ({
 }) => {
     return (
         <div className={`flex justify-center items-center ${className}`}>
-            <div className="flex flex-col items-center space-y-4">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
-                <div className="text-gray-600 font-medium">{message}</div>
+            <div className="flex flex-col items-center space-y-4 animate-in">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-music-600"></div>
+                <div className="text-primary-600 font-medium">{message}</div>
             </div>
         </div>
     );

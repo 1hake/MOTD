@@ -37,14 +37,14 @@ export default function Signup() {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 flex items-center justify-center p-6 relative overflow-hidden">
+        <div className="min-h-screen flex items-center justify-center p-6 relative overflow-hidden">
             {/* Background decoration */}
             <div className="absolute inset-0 overflow-hidden">
-                <div className="absolute -top-4 -right-4 w-72 h-72 bg-gradient-to-br from-indigo-400/20 to-purple-400/20 rounded-full blur-3xl"></div>
-                <div className="absolute -bottom-4 -left-4 w-72 h-72 bg-gradient-to-br from-purple-400/20 to-pink-400/20 rounded-full blur-3xl"></div>
+                <div className="absolute -top-20 -right-20 w-80 h-80 bg-gradient-to-br from-music-400/30 to-accent-400/30 rounded-full blur-3xl" />
+                <div className="absolute -bottom-20 -left-20 w-80 h-80 bg-gradient-to-br from-accent-400/30 to-music-400/30 rounded-full blur-3xl" />
             </div>
 
-            <div className="w-full max-w-md bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/50 overflow-hidden relative z-10">
+            <div className="w-full max-w-md glass-surface rounded-4xl overflow-hidden relative z-10 animate-in">
                 <div className="p-8">
                     <div className="text-center mb-8">
                         <div className="mb-6">

@@ -18,6 +18,7 @@ model User {
   friends      Friendship[]  @relation("UserFriends")
   friendOf     Friendship[]  @relation("FriendOf")
   devices      DeviceToken[]
+  likes        Like[]
 }
 
 model SongPost {
@@ -32,6 +33,7 @@ model SongPost {
   date           DateTime @default(now())
   user           User     @relation(fields: [userId], references: [id])
   userId         Int
+  likes          Like[]
 }
 
 model Friendship {
@@ -49,4 +51,15 @@ model DeviceToken {
   token     String   @unique
   platform  String
   createdAt DateTime @default(now())
+}
+
+model Like {
+  id         Int      @id @default(autoincrement())
+  user       User     @relation(fields: [userId], references: [id])
+  userId     Int
+  songPost   SongPost @relation(fields: [songPostId], references: [id], onDelete: Cascade)
+  songPostId Int
+  createdAt  DateTime @default(now())
+
+  @@unique([userId, songPostId])
 }

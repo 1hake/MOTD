@@ -11,6 +11,8 @@ type Post = {
     appleMusicLink?: string;
     coverUrl?: string;
     date: string;
+    likeCount?: number;
+    isLikedByUser?: boolean;
     user?: {
         id: number;
         email: string;
@@ -20,38 +22,36 @@ type Post = {
 interface PostsSectionProps {
     title: string;
     posts: Post[];
-    variant: 'purple' | 'blue';
-    gradientFrom: string;
-    gradientTo: string;
     showCount?: boolean;
     emptyMessage?: React.ReactNode;
+    onLikeChange?: (postId: number, isLiked: boolean, newLikeCount: number) => void;
 }
 
 const PostsSection: React.FC<PostsSectionProps> = ({
     title,
     posts,
-    variant,
-    gradientFrom,
-    gradientTo,
     showCount = false,
-    emptyMessage
+    emptyMessage,
+    onLikeChange
 }) => {
     return (
-        <div className="space-y-4">
-            <div className="flex items-center gap-3">
-                <div className={`h-8 w-1 bg-gradient-to-b ${gradientFrom} ${gradientTo} rounded-full`}></div>
-                <h2 className={`text-xl font-bold bg-gradient-to-r ${gradientFrom} ${gradientTo} bg-clip-text text-transparent`}>
+        <div className="space-y-6 animate-in">
+            <div className="flex items-start gap-3">
+                <div className="h-8 w-1 bg-gradient-to-b from-music-500 to-accent-500 rounded-full"></div>
+                <h2 className="text-xl font-bold gradient-text">
                     {title}
                     {showCount && posts.length > 0 && (
-                        <span className="ml-2 bg-blue-100 text-blue-800 text-sm font-medium px-2.5 py-0.5 rounded-full">
+                        <span className="ml-2 bg-music-100/70 text-music-700 text-sm font-medium px-3 py-1 rounded-2xl backdrop-blur-sm">
                             {posts.length}
                         </span>
                     )}
                 </h2>
             </div>
 
-            {posts.length === 0 && emptyMessage ? (
-                emptyMessage
+            {posts.length === 0 ? (
+                emptyMessage || (
+                    <p className="text-primary-500 text-center py-8 italic">Aucune chanson pour le moment.</p>
+                )
             ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     {posts.map((post) => (
@@ -66,8 +66,11 @@ const PostsSection: React.FC<PostsSectionProps> = ({
                             appleMusicLink={post.appleMusicLink}
                             coverUrl={post.coverUrl}
                             sharedBy={post.user?.email}
-                            variant={variant}
-                            className="transform hover:scale-105 transition-all duration-300"
+                            likeCount={post.likeCount}
+                            isLikedByUser={post.isLikedByUser}
+                            showLikes={!!post.user?.email} // Only show likes for shared posts
+                            onLikeChange={onLikeChange}
+                            className="animate-up"
                         />
                     ))}
                 </div>
