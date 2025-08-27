@@ -70,7 +70,7 @@ export default function PostSong() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-8rem)] bg-gradient-to-br from-slate-50 via-white to-emerald-50 p-4 overflow-hidden">
+    <div className="min-h-[calc(100vh-8rem)] p-4 overflow-hidden">
       <div className={`w-full max-w-2xl mx-auto transition-all duration-500 ${isSearching ? 'pt-0' : 'pt-24'}`}>
         {!selected ? (
           <div className="flex flex-col items-center">

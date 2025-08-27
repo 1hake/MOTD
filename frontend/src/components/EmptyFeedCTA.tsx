@@ -11,7 +11,7 @@ const EmptyFeedCTA: React.FC<EmptyFeedCTAProps> = ({ show }) => {
     if (!show) return null;
 
     return (
-        <div className="sticky top-20 z-10 bg-gradient-to-r from-music-500 via-accent-500 to-music-600 rounded-3xl shadow-xl p-6 border border-music-200/50 backdrop-blur-sm animate-in">
+        <div className="z-10 bg-gradient-to-r from-music-500 via-accent-500 to-music-600 rounded-3xl shadow-xl p-6 border border-music-200/50 backdrop-blur-sm animate-in">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div className="flex items-center space-x-4">
                     <div className="bg-white/20 backdrop-blur-sm rounded-2xl p-3 shadow-inner">

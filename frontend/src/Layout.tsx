@@ -4,9 +4,9 @@ import Navigation from './components/Navigation';
 
 const Layout: React.FC = () => {
     return (
-        <div className="min-h-screen pb-24 relative ">
+        <div className="min-h-screen pb-24 relative bg-primary-800">
             {/* Background with gradient */}
-            <div className="fixed inset-0 bg-gradient-to-br from-primary-50 via-white to-music-50/50 -z-10" />
+            <div className="fixed inset-0 bg-primary-800 from-primary-50 via-white to-music-50/50 -z-10" />
 
             {/* Subtle background patterns */}
             <div className="fixed inset-0 -z-10 opacity-30">
