@@ -108,7 +108,7 @@ export default function Feed() {
             <div className="max-w-4xl mx-auto px-4 py-6 space-y-8">
                 {/* image logo */}
                 <div className="w-full flex justify-center ">
-                    <img src={logo2} alt="DIGGER" className={myPosts.length === 0 ? "w-3/4 mb-4 mt-8" : "w-1/2"} />
+                    <img src={logo2} alt="DIGGER" className={myPosts.length === 0 ? "w-screen mb-4 mt-8" : "w-screen"} />
                 </div>
                 {/* Empty feed CTA */}
                 <EmptyFeedCTA show={myPosts.length === 0} />

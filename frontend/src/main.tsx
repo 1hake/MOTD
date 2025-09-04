@@ -9,6 +9,7 @@ import Feed from './pages/Feed';
 import PostSong from './pages/PostSong';
 import Friends from './pages/Friends';
 import Profile from './pages/Profile';
+import EditProfile from './pages/EditProfile';
 
 import Layout from './Layout';
 
@@ -24,6 +25,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
           <Route path="/post" element={<PostSong />} />
           <Route path="/friends" element={<Friends />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/profile/edit" element={<EditProfile />} />
           <Route path="/profile/:userId" element={<Profile />} />
         </Route>
       </Routes>
