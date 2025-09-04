@@ -22,7 +22,7 @@ const Navigation: React.FC = () => {
 
     return (
         <nav className="fixed bottom-6 left-8 right-8 flex justify-center z-50">
-            <div className="bg-white/70 backdrop-blur-md border border-white/30 shadow-lg rounded-3xl px-3 py-2 max-w-sm w-full">
+            <div className="bg-[#EEE1CF]/50 backdrop-blur-md border border-white/30 shadow-lg rounded-3xl px-3 py-2 max-w-sm w-full">
                 <ul className="flex justify-between items-center gap-1">
                     {navItems.map(({ path, label, icon }) => {
                         const active = isActive(path);

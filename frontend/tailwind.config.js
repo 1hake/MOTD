@@ -50,7 +50,7 @@ export default {
                 '4xl': '2rem',
             },
             backdropBlur: {
-                xs: '2px',
+                xs: '5px',
             },
             animation: {
                 'fade-in': 'fadeIn 0.5s ease-in-out',

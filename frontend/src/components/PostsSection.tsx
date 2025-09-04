@@ -37,8 +37,8 @@ const PostsSection: React.FC<PostsSectionProps> = ({
     return (
         <div className="space-y-6 animate-in">
             <div className="flex items-start gap-3">
-                <div className="h-8 w-1 bg-gradient-to-b from-music-500 to-accent-500 rounded-full"></div>
-                <h2 className="text-xl font-bold gradient-text">
+                <div className="h-8 w-1 bg-white from-music-500 to-accent-500 rounded-full"></div>
+                <h2 className="text-xl font-bold text-white">
                     {title}
                     {showCount && posts.length > 0 && (
                         <span className="ml-2 bg-music-100/70 text-music-700 text-sm font-medium px-3 py-1 rounded-2xl backdrop-blur-sm">

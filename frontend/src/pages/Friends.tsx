@@ -58,7 +58,7 @@ export default function Friends() {
   };
 
   return (
-    <div className="min-h-screen text-gray-100">
+    <div className="h-screen text-gray-100">
       <div className="max-w-2xl mx-auto px-4 py-10">
         {/* Header */}
         <div className="mb-10">
