@@ -31,6 +31,17 @@ export default function Feed() {
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
+    // Scroll to top when component mounts (for navigation from other pages)
+    useEffect(() => {
+        // Only scroll to top if we're significantly scrolled down
+        if (window.scrollY > 200) {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+    }, []);
+
     const handleLikeChange = (postId: number, isLiked: boolean, newLikeCount: number) => {
         // Update the friends posts array
         setFriendsPosts(prev => prev.map(post =>
@@ -63,13 +74,13 @@ export default function Feed() {
                 const myPostsRes = await api.get(`/posts/me?userId=${userId}`);
                 const allMyPosts = myPostsRes.data;
 
-                // Filter to get only today's posts
-                const today = new Date();
-                today.setHours(0, 0, 0, 0);
+                // Filter to get only today's posts (comparing in UTC to match backend)
+                const now = new Date();
+                const today = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0, 0));
                 const todayMyPosts = allMyPosts.filter((post: Post) => {
                     const postDate = new Date(post.date);
-                    postDate.setHours(0, 0, 0, 0);
-                    return postDate.getTime() === today.getTime();
+                    const postDateUTC = new Date(Date.UTC(postDate.getUTCFullYear(), postDate.getUTCMonth(), postDate.getUTCDate(), 0, 0, 0, 0));
+                    return postDateUTC.getTime() === today.getTime();
                 });
 
                 // Fetch friends' posts specifically
@@ -105,7 +116,7 @@ export default function Feed() {
         <div className="min-h-[calc(100vh-8rem)]">
 
 
-            <div className="max-w-4xl mx-auto px-4 py-6 space-y-8">
+            <div className="max-w-4xl mx-auto px-4 py-6 space-y-8 pb-24">
                 {/* image logo */}
                 <div className="w-full flex justify-center ">
                     <img src={logo2} alt="DIGGER" className={myPosts.length === 0 ? "w-screen mb-4 mt-8" : "w-screen"} />

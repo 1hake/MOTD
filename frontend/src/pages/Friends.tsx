@@ -3,17 +3,19 @@ import React, { useState, useEffect } from 'react';
 import { api } from '../lib/api';
 import { getToken, getUserIdFromToken } from '../lib/storage';
 import { useNavigate } from 'react-router-dom';
-import AddFriendButton from '../components/AddFriendButton';
 import LoadingState from '../components/LoadingState';
+import FriendsSearch from '../components/FriendsSearch';
 
 type Friend = {
   id: number;
   email: string;
+  name?: string;
 };
 
 export default function Friends() {
   const [friends, setFriends] = useState<Friend[]>([]);
   const [loading, setLoading] = useState(false);
+  const [currentUserId, setCurrentUserId] = useState<number | null>(null);
   const navigate = useNavigate();
 
   const fetchData = async () => {
@@ -27,6 +29,8 @@ export default function Friends() {
         console.error('Could not get user ID from token');
         return navigate('/');
       }
+
+      setCurrentUserId(userId);
 
       // Fetch friends list
       const friendsRes = await api.get(`/friends?userId=${userId}`);
@@ -42,32 +46,26 @@ export default function Friends() {
     fetchData();
   }, [navigate]);
 
-  const addFriend = async (email: string) => {
-    const token = await getToken();
-    if (!token) return navigate('/');
-
-    const userId = getUserIdFromToken(token);
-    if (!userId) {
-      console.error('Could not get user ID from token');
-      return navigate('/');
-    }
-
-    await api.post('/friends', { userId, friendEmail: email });
-    // Refresh data after adding friend
-    fetchData();
-  };
-
   return (
     <div className="h-screen text-gray-100">
       <div className="max-w-2xl mx-auto px-4 py-10">
         {/* Header */}
         <div className="mb-10">
-          <h1 className="text-3xl font-bold tracking-tight text-white mb-2">Mes amis</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-white mb-6">Mes amis</h1>
+
+          {/* Search Bar */}
+          {currentUserId && (
+            <div className="mb-6">
+              <FriendsSearch
+                currentUserId={currentUserId}
+              />
+            </div>
+          )}
+
           <div className="flex items-center justify-between">
             <p className="text-gray-400">
               {friends.length === 0 ? 'Aucun ami pour le moment' : `${friends.length} ami${friends.length > 1 ? 's' : ''}`}
             </p>
-            <AddFriendButton onAdd={addFriend} />
           </div>
         </div>
 
@@ -105,7 +103,7 @@ export default function Friends() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <h3 className="font-medium text-gray-100 truncate group-hover:text-white">
-                      {friend.email.split('@')[0]}
+                      {friend.name || friend.email.split('@')[0]}
                     </h3>
                     <p className="text-sm text-gray-500 truncate">{friend.email}</p>
                   </div>

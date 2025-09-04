@@ -5,6 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import SongCard from '../components/SongCard';
 import LoadingState from '../components/LoadingState';
 import LogoutButton from '../components/LogoutButton';
+import FollowButton from '../components/FollowButton';
 
 type Post = {
     id: number;
@@ -224,6 +225,16 @@ export default function Profile() {
                                         <LogoutButton />
                                     </div>
                                 )}
+
+                                {/* Show follow button for other users' profiles */}
+                                {currentUserId && user.id !== currentUserId && (
+                                    <div className="flex justify-center md:justify-start">
+                                        <FollowButton
+                                            currentUserId={currentUserId}
+                                            targetUserId={user.id}
+                                        />
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -237,11 +248,11 @@ export default function Profile() {
                         <p className="text-lg text-gray-500">L'aventure musicale commence ici !</p>
                     </div>
                 ) : (
-                    <div className="space-y-16">
+                    <div className="space-y-10 mb-24">
                         {sortedDates.map(date => {
                             const dateDisplay = getDateDisplay(date);
                             return (
-                                <div key={date} className="space-y-8">
+                                <div key={date} className="space-y-2">
                                     {/* Elegant date header */}
                                     <div className="flex justify-center">
                                         <div className="text-center">
