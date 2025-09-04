@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Ensure all dependencies are installed
+echo "Ensuring all dependencies are installed..."
+npm install
+
 # Wait for database to be ready
 echo "Waiting for database to be ready..."
 until pg_isready -h db -p 5432 -U postgres; do

@@ -4,8 +4,12 @@ A Node.js/Express backend with Prisma ORM, PostgreSQL database, and automated se
 
 ## 🚀 Quick Start
 
-### One-Command Setup
+### Option 1: Automated Setup (Recommended)
+```bash
+./setup.sh
+```
 
+### Option 2: Manual Setup
 ```bash
 docker-compose up -d
 ```
@@ -106,6 +110,14 @@ The following environment variables are configured in `docker-compose.yaml`:
 - **API Documentation**: RESTful API endpoints
 
 ## 🚨 Troubleshooting
+
+### "Cannot find module 'object-assign'" error:
+```bash
+# This is usually fixed by rebuilding the container
+docker-compose down -v
+docker-compose build --no-cache
+docker-compose up -d
+```
 
 ### Container won't start:
 
