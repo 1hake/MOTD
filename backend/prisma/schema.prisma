@@ -8,17 +8,18 @@ datasource db {
 }
 
 model User {
-  id           Int           @id @default(autoincrement())
-  email        String        @unique
-  name         String?
-  profileImage String?
-  passwordHash String?
-  createdAt    DateTime      @default(now())
-  posts        SongPost[]
-  friends      Friendship[]  @relation("UserFriends")
-  friendOf     Friendship[]  @relation("FriendOf")
-  devices      DeviceToken[]
-  likes        Like[]
+  id                 Int           @id @default(autoincrement())
+  email              String        @unique
+  name               String?
+  profileImage       String?
+  platformPreference String? // 'spotify', 'apple', 'deezer', 'youtube'
+  passwordHash       String?
+  createdAt          DateTime      @default(now())
+  posts              SongPost[]
+  friends            Friendship[]  @relation("UserFriends")
+  friendOf           Friendship[]  @relation("FriendOf")
+  devices            DeviceToken[]
+  likes              Like[]
 }
 
 model SongPost {
