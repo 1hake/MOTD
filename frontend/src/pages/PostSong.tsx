@@ -48,7 +48,7 @@ export default function PostSong() {
         deezerLink: musicLinks.deezer,
         spotifyLink: musicLinks.spotify,
         appleMusicLink: musicLinks.appleMusic,
-        userId
+        userId: user.id
       })
 
       navigate('/feed')

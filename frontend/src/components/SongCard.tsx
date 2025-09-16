@@ -10,6 +10,7 @@ type SongCardProps = {
   deezerLink?: string
   spotifyLink?: string
   appleMusicLink?: string
+  youtubeLink?: string
   coverUrl?: string
   sharedBy?: string
   likeCount?: number
@@ -27,6 +28,7 @@ export default function SongCard({
   deezerLink,
   spotifyLink,
   appleMusicLink,
+  youtubeLink,
   coverUrl,
   sharedBy,
   likeCount = 0,
@@ -127,6 +129,58 @@ export default function SongCard({
         >
           {artist}
         </p>
+
+        {/* Platform links */}
+        <div className="flex items-center gap-2 mb-3">
+          {deezerLink && (
+            <a
+              href={deezerLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-orange-500/90 hover:bg-orange-600/90 text-white rounded-full backdrop-blur-sm transition-all duration-200 hover:scale-105"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <span className="text-sm">🎵</span>
+              <span className="text-xs font-medium">Deezer</span>
+            </a>
+          )}
+          {spotifyLink && (
+            <a
+              href={spotifyLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-green-500/90 hover:bg-green-600/90 text-white rounded-full backdrop-blur-sm transition-all duration-200 hover:scale-105"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <span className="text-sm">🎧</span>
+              <span className="text-xs font-medium">Spotify</span>
+            </a>
+          )}
+          {appleMusicLink && (
+            <a
+              href={appleMusicLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-800/90 hover:bg-gray-900/90 text-white rounded-full backdrop-blur-sm transition-all duration-200 hover:scale-105"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <span className="text-sm">🎼</span>
+              <span className="text-xs font-medium">Apple</span>
+            </a>
+          )}
+          {youtubeLink && (
+            <a
+              href={youtubeLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-red-500/90 hover:bg-red-600/90 text-white rounded-full backdrop-blur-sm transition-all duration-200 hover:scale-105"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <span className="text-sm">📺</span>
+              <span className="text-xs font-medium">YouTube</span>
+            </a>
+          )}
+        </div>
 
         {/* Like button and count */}
         {showLikes && (

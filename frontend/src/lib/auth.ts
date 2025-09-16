@@ -165,6 +165,25 @@ class AuthService {
     return getUser()
   }
 
+  // Get user data from server
+  async getUserFromServer(userId: number): Promise<User | null> {
+    try {
+      const accessToken = await getAccessToken()
+      const response = await authApi.get(`/users/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        }
+      })
+      const userData = response.data
+      // Mettre à jour les données locales
+      await setUser(userData)
+      return userData
+    } catch (error) {
+      console.error('Error fetching user from server:', error)
+      return null
+    }
+  }
+
   // Check if user is authenticated
   async isAuthenticated(): Promise<boolean> {
     const token = await getAccessToken()

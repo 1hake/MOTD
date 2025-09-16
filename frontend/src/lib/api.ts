@@ -63,3 +63,20 @@ export const likePost = async (postId: number) => {
 export const unlikePost = async (postId: number) => {
   return api.delete(`/posts/${postId}/like`)
 }
+
+// User profile functions
+export const updateUserProfile = async (
+  userId: number,
+  profileData: {
+    name?: string
+    email?: string
+    platformPreference?: string
+    profileImage?: string
+  }
+) => {
+  return api.put(`/users/${userId}`, profileData)
+}
+
+export const updatePlatformPreference = async (userId: number, platformPreference: string) => {
+  return api.put(`/users/${userId}`, { platformPreference })
+}

@@ -102,7 +102,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const refreshUser = async () => {
     try {
       const currentUser = await authService.getCurrentUser()
-      setUser(currentUser)
+      if (currentUser?.id) {
+        // Récupérer les données fraîches du serveur
+        const response = await authService.getUserFromServer(currentUser.id)
+        if (response) {
+          setUser(response)
+        } else {
+          setUser(currentUser)
+        }
+      } else {
+        setUser(null)
+      }
     } catch (error) {
       console.error('Refresh user error:', error)
       setUser(null)

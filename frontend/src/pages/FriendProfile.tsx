@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { api } from '../lib/api'
 import { useAuth } from '../hooks/useAuth'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import SongCard from '../components/SongCard'
 import LoadingState from '../components/LoadingState'
-import LogoutButton from '../components/LogoutButton'
-import AutoSavePlatformSelector from '../components/AutoSavePlatformSelector'
+import FollowButton from '../components/FollowButton'
 
 type Post = {
   id: number
@@ -29,11 +28,12 @@ type User = {
   platformPreference?: string
 }
 
-export default function Profile() {
+export default function FriendProfile() {
   const [posts, setPosts] = useState<Post[]>([])
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
   const navigate = useNavigate()
+  const { userId } = useParams()
   const { user: currentUser, isAuthenticated } = useAuth()
 
   useEffect(() => {
@@ -43,22 +43,35 @@ export default function Profile() {
         return
       }
 
+      if (!userId) {
+        navigate('/friends')
+        return
+      }
+
+      const targetUserId = parseInt(userId, 10)
+      if (!Number.isFinite(targetUserId)) {
+        navigate('/friends')
+        return
+      }
+
       try {
         setLoading(true)
+
         // Fetch user info
-        const userRes = await api.get(`/users/${currentUser.id}`)
+        const userRes = await api.get(`/users/${targetUserId}`)
         setUser(userRes.data)
 
         // Fetch user's posts
-        const postsRes = await api.get('/posts/me')
+        const postsRes = await api.get(`/posts/friends/${targetUserId}`)
         setPosts(postsRes.data)
       } catch (error) {
-        console.error('Error fetching profile data:', error)
+        console.error('Error fetching friend profile data:', error)
+        navigate('/friends')
       } finally {
         setLoading(false)
       }
     })()
-  }, [navigate, isAuthenticated, currentUser])
+  }, [navigate, userId, isAuthenticated, currentUser])
 
   const handleLikeChange = (postId: number, isLiked: boolean, newLikeCount: number) => {
     setPosts((prevPosts) =>
@@ -154,83 +167,76 @@ export default function Profile() {
   return (
     <div className="min-h-screen text-gray-100">
       <div className="max-w-4xl mx-auto px-6 py-12">
-        {/* Profile Header */}
-        <div className="relative mb-16">
-          {/* Background Banner */}
-          <div className="relative ">
-            <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
-              {/* Avatar */}
-              <div className="relative">
-                <div className="w-32 h-32 bg-gradient-to-br from-indigo-500 to-fuchsia-600 rounded-full flex items-center justify-center text-white text-4xl font-bold shadow-2xl ring-4 ring-indigo-400/30">
-                  {user.name ? user.name.charAt(0).toUpperCase() : user.email.charAt(0).toUpperCase()}
-                </div>
-              </div>
-
-              {/* User Info */}
-              <div className="flex-1 text-center md:text-left">
-                <div className="mb-4">
-                  <h1 className="text-4xl font-bold text-white mb-2 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
-                    {user.name || user.email.split('@')[0]}
-                  </h1>
-                  <p className="text-lg text-indigo-300 mb-1">@{user.email.split('@')[0]}</p>
-                </div>
-
-                {/* Stats */}
-                <div className="flex justify-center md:justify-start gap-8 mb-6">
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-white">{posts.length}</div>
-                    <div className="text-sm text-gray-400 uppercase tracking-wide">
-                      Chanson{posts.length > 1 ? 's' : ''}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Member since */}
-                <div className="flex justify-center md:justify-start items-center gap-2 text-gray-500 text-sm mb-4">
-                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                    <path
-                      fillRule="evenodd"
-                      d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  <span>
-                    Membre depuis{' '}
-                    {posts.length > 0
-                      ? new Date(posts[posts.length - 1].date).toLocaleDateString('fr-FR', {
-                          month: 'long',
-                          year: 'numeric'
-                        })
-                      : 'récemment'}
-                  </span>
-                </div>
-
-                {/* Action buttons for current user's profile */}
-                <div className="flex justify-center md:justify-start gap-3">
-                  <button
-                    onClick={() => navigate('/profile/edit')}
-                    className="px-4 py-2 bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 border border-indigo-500/30 hover:border-indigo-500/50 rounded-lg transition-all duration-200 flex items-center gap-2"
-                  >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                      />
-                    </svg>
-                    Modifier
-                  </button>
-                  <LogoutButton />
-                </div>
-              </div>
-            </div>
-          </div>
+        {/* Back button */}
+        <div className="mb-6">
+          <button
+            onClick={() => navigate('/friends')}
+            className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+            Retour aux amis
+          </button>
         </div>
 
-        {/* Platform Preference Section */}
-        <div className="mb-16">
-          <AutoSavePlatformSelector disabled={false} showClearOption={true} />
+        {/* Profile Header */}
+        <div className="relative mb-16">
+          <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
+            {/* Avatar */}
+            <div className="relative">
+              <div className="w-32 h-32 bg-gradient-to-br from-indigo-500 to-fuchsia-600 rounded-full flex items-center justify-center text-white text-4xl font-bold shadow-2xl ring-4 ring-indigo-400/30">
+                {user.name ? user.name.charAt(0).toUpperCase() : user.email.charAt(0).toUpperCase()}
+              </div>
+            </div>
+
+            {/* User Info */}
+            <div className="flex-1 text-center md:text-left">
+              <div className="mb-4">
+                <h1 className="text-4xl font-bold text-white mb-2 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+                  {user.name || user.email.split('@')[0]}
+                </h1>
+                <p className="text-lg text-indigo-300 mb-1">@{user.email.split('@')[0]}</p>
+              </div>
+
+              {/* Stats */}
+              <div className="flex justify-center md:justify-start gap-8 mb-6">
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-white">{posts.length}</div>
+                  <div className="text-sm text-gray-400 uppercase tracking-wide">
+                    Chanson{posts.length > 1 ? 's' : ''}
+                  </div>
+                </div>
+              </div>
+
+              {/* Member since */}
+              <div className="flex justify-center md:justify-start items-center gap-2 text-gray-500 text-sm mb-4">
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                  <path
+                    fillRule="evenodd"
+                    d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                <span>
+                  Membre depuis{' '}
+                  {posts.length > 0
+                    ? new Date(posts[posts.length - 1].date).toLocaleDateString('fr-FR', {
+                        month: 'long',
+                        year: 'numeric'
+                      })
+                    : 'récemment'}
+                </span>
+              </div>
+
+              {/* Follow button */}
+              {currentUser && user.id !== currentUser.id && (
+                <div className="flex justify-center md:justify-start">
+                  <FollowButton currentUserId={currentUser.id} targetUserId={user.id} />
+                </div>
+              )}
+            </div>
+          </div>
         </div>
 
         {/* Posts History */}

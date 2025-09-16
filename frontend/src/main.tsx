@@ -9,6 +9,7 @@ import Feed from './pages/Feed'
 import PostSong from './pages/PostSong'
 import Friends from './pages/Friends'
 import Profile from './pages/Profile'
+import FriendProfile from './pages/FriendProfile'
 import EditProfile from './pages/EditProfile'
 import ProtectedRoute from './components/ProtectedRoute'
 import Layout from './Layout'
@@ -48,6 +49,14 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
               }
             />
             <Route
+              path="/friends/profile/:userId"
+              element={
+                <ProtectedRoute>
+                  <FriendProfile />
+                </ProtectedRoute>
+              }
+            />
+            <Route
               path="/profile"
               element={
                 <ProtectedRoute>
@@ -60,14 +69,6 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
               element={
                 <ProtectedRoute>
                   <EditProfile />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/profile/:userId"
-              element={
-                <ProtectedRoute>
-                  <Profile />
                 </ProtectedRoute>
               }
             />
