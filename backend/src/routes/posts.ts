@@ -6,7 +6,7 @@ import { getAllPlatformLinks } from '../services/musicService'
 const router = Router()
 
 router.post('/', authenticateToken, async (req, res) => {
-  const { title, artist, link, coverUrl, deezerLink, spotifyLink, appleMusicLink, youtubeLink } = req.body
+  const { title, artist, link, coverUrl } = req.body
   if (!title || !artist) {
     return res.status(400).json({ error: 'Missing fields' })
   }
@@ -29,24 +29,20 @@ router.post('/', authenticateToken, async (req, res) => {
     })
     if (existing) return res.status(400).json({ error: 'Already posted today' })
 
-    // If no platform links are provided, try to fetch them automatically
-    let finalDeezerLink = deezerLink
-    let finalSpotifyLink = spotifyLink
-    let finalAppleMusicLink = appleMusicLink
-    let finalYoutubeLink = youtubeLink
-    console.log('par là')
+    let finalDeezerLink = undefined
+    let finalSpotifyLink = undefined
+    let finalAppleMusicLink = undefined
+    let finalYoutubeLink = undefined
     // Only fetch links if none are provided
-    if (!deezerLink && !spotifyLink && !appleMusicLink && !youtubeLink) {
-      try {
-        const platformLinks = await getAllPlatformLinks(artist, title)
-        finalDeezerLink = platformLinks.deezerLink
-        finalSpotifyLink = platformLinks.spotifyLink
-        finalAppleMusicLink = platformLinks.appleMusicLink
-        finalYoutubeLink = platformLinks.youtubeLink
-      } catch (error) {
-        console.error('Error fetching platform links:', error)
-        // Continue with empty links if fetching fails
-      }
+    try {
+      const platformLinks = await getAllPlatformLinks(artist, title)
+      finalDeezerLink = platformLinks.deezerLink
+      finalSpotifyLink = platformLinks.spotifyLink
+      finalAppleMusicLink = platformLinks.appleMusicLink
+      finalYoutubeLink = platformLinks.youtubeLink
+    } catch (error) {
+      console.error('Error fetching platform links:', error)
+      // Continue with empty links if fetching fails
     }
 
     const post = await prisma.songPost.create({

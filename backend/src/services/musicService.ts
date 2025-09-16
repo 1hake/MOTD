@@ -36,34 +36,13 @@ export async function getAllPlatformLinks(artist: string, track: string): Promis
   try {
     // First, get a Deezer URL to use as input for song.link
     const deezerUrl = await searchDeezer(artist, track)
-
     // Use song.link API to get all platform links
     const response = await axios.get(`https://api.song.link/v1-alpha.1/links?url=${deezerUrl}&userCountry=FR`)
-    const allLinksObject = response.data.entitiesByUniqueId as Record<string, any>
 
-    let spotifyId: string | undefined
-    let deezerId: string | undefined
-    let youtubeId: string | undefined
-    let appleMusicId: string | undefined
-
-    // Extract IDs from the response
-    for (const key in allLinksObject) {
-      if (key.startsWith('SPOTIFY_SONG::')) {
-        spotifyId = key.replace('SPOTIFY_SONG::', '')
-      } else if (key.startsWith('DEEZER_SONG::')) {
-        deezerId = key.replace('DEEZER_SONG::', '')
-      } else if (key.startsWith('YOUTUBE_VIDEO::')) {
-        youtubeId = key.replace('YOUTUBE_VIDEO::', '')
-      } else if (key.startsWith('APPLE_MUSIC_SONG::')) {
-        appleMusicId = key.replace('APPLE_MUSIC_SONG::', '')
-      }
-    }
-    // Generate the appropriate links
-    const spotifyLink = spotifyId ? `spotify:track:${spotifyId}` : undefined
-    const deezerLink = deezerId ? `https://dzr.page.link/${deezerId}` : undefined
-    const youtubeLink = youtubeId ? `https://music.youtube.com/watch?v=${youtubeId}` : undefined
-    const appleMusicLink = appleMusicId ? `https://music.apple.com/track/${appleMusicId}` : undefined
-
+    const spotifyLink = response.data.linksByPlatform?.spotify?.nativeAppUriDesktop || undefined
+    const youtubeLink = response.data.linksByPlatform.youtubeMusic.url || undefined
+    const appleMusicLink = response.data.linksByPlatform.appleMusic.nativeAppUriMobile || undefined
+    const deezerLink = response.data.linksByPlatform.deezer.url || undefined
     return {
       deezerLink,
       spotifyLink,
