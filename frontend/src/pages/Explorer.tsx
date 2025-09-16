@@ -10,6 +10,7 @@ type Post = {
   id: number
   title: string
   artist: string
+  description?: string
   link: string
   deezerLink?: string
   spotifyLink?: string
@@ -229,6 +230,7 @@ export default function Explorer() {
                     id={post.id}
                     title={post.title}
                     artist={post.artist}
+                    description={post.description}
                     link={post.link}
                     deezerLink={post.deezerLink}
                     spotifyLink={post.spotifyLink}

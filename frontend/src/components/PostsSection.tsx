@@ -5,6 +5,7 @@ type Post = {
   id: number
   title: string
   artist: string
+  description?: string
   link: string
   deezerLink?: string
   spotifyLink?: string
@@ -53,6 +54,7 @@ const PostsSection: React.FC<PostsSectionProps> = ({ title, posts, showCount = f
               id={post.id}
               title={post.title}
               artist={post.artist}
+              description={post.description}
               link={post.link}
               deezerLink={post.deezerLink}
               spotifyLink={post.spotifyLink}

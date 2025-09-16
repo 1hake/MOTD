@@ -3,7 +3,7 @@ import { api } from '../lib/api'
 import { useAuth } from '../hooks/useAuth'
 import { useNavigate } from 'react-router-dom'
 import LoadingState from '../components/LoadingState'
-import PlatformSelector from '../components/PlatformSelector'
+import AutoSavePlatformSelector from '../components/AutoSavePlatformSelector'
 import { useToast } from '../components/Toast'
 
 type User = {
@@ -36,7 +36,7 @@ export default function EditProfile() {
   const { showToast } = useToast()
 
   useEffect(() => {
-    ;(async () => {
+    ; (async () => {
       if (!isAuthenticated || !currentUser) {
         navigate('/login')
         return
@@ -72,15 +72,12 @@ export default function EditProfile() {
     try {
       const updateData: any = {}
 
-      // Only include fields that have changed
+      // Only include fields that have changed (excluding platformPreference which is handled separately)
       if (formData.name !== originalDataRef.current.name) {
         updateData.name = formData.name || null
       }
       if (formData.email !== originalDataRef.current.email) {
         updateData.email = formData.email
-      }
-      if (formData.platformPreference !== originalDataRef.current.platformPreference) {
-        updateData.platformPreference = formData.platformPreference || null
       }
 
       // Only make the request if there are changes
@@ -111,7 +108,7 @@ export default function EditProfile() {
       console.error('Error updating profile:', error)
       setSaveStatus('error')
       const errorMessage = error.response?.data?.error || 'Erreur lors de la mise à jour du profil'
-      
+
       // Show error toast
       showToast(errorMessage, 'error')
 
@@ -127,12 +124,11 @@ export default function EditProfile() {
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
 
-    // Check if there are changes
+    // Check if there are changes (excluding platformPreference which is handled separately)
     const newFormData = { ...formData, [field]: value }
     const hasFormChanges =
       newFormData.name !== originalDataRef.current.name ||
-      newFormData.email !== originalDataRef.current.email ||
-      newFormData.platformPreference !== originalDataRef.current.platformPreference
+      newFormData.email !== originalDataRef.current.email
 
     setHasChanges(hasFormChanges)
 
@@ -191,10 +187,10 @@ export default function EditProfile() {
               <h1 className="text-3xl font-bold text-white">Modifier le profil</h1>
               <p className="text-gray-400">Personnalisez vos informations et préférences</p>
             </div>
-            {/* Auto-save status indicator */}
+            {/* Auto-save status indicator - compact version */}
             <div className="flex items-center gap-2">
               {saveStatus === 'saving' && (
-                <>
+                <div className="flex items-center justify-center w-8 h-8 bg-blue-500/20 rounded-full">
                   <svg className="animate-spin h-4 w-4 text-blue-400" fill="none" viewBox="0 0 24 24">
                     <circle
                       className="opacity-25"
@@ -210,27 +206,26 @@ export default function EditProfile() {
                       d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                     ></path>
                   </svg>
-                  <span className="text-sm text-blue-400">Sauvegarde...</span>
-                </>
+                </div>
               )}
               {saveStatus === 'saved' && (
-                <>
+                <div className="flex items-center justify-center w-8 h-8 bg-green-500/20 rounded-full animate-pulse">
                   <svg className="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  <span className="text-sm text-green-400">Sauvegardé</span>
-                </>
+                </div>
               )}
               {saveStatus === 'error' && (
-                <>
+                <div className="flex items-center justify-center w-8 h-8 bg-red-500/20 rounded-full animate-pulse">
                   <svg className="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                   </svg>
-                  <span className="text-sm text-red-400">Erreur</span>
-                </>
+                </div>
               )}
               {hasChanges && saveStatus === 'idle' && (
-                <span className="text-sm text-yellow-400">Modifications en attente...</span>
+                <div className="flex items-center justify-center w-8 h-8 bg-yellow-500/20 rounded-full">
+                  <div className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></div>
+                </div>
               )}
             </div>
           </div>
@@ -304,9 +299,18 @@ export default function EditProfile() {
             </div>
 
             {/* Platform Preference Section */}
-            <PlatformSelector
-              selectedPlatform={formData.platformPreference}
-              onPlatformChange={(platformId) => handleInputChange('platformPreference', platformId)}
+            <AutoSavePlatformSelector
+              user={user}
+              onUserUpdate={(updatedUser) => {
+                // Update the form data when the platform preference is saved
+                setFormData(prev => ({
+                  ...prev,
+                  platformPreference: updatedUser.platformPreference || ''
+                }))
+                // Update the original data reference to prevent conflicts
+                originalDataRef.current.platformPreference = updatedUser.platformPreference || ''
+                setUser(updatedUser)
+              }}
               disabled={saving}
               showClearOption={true}
             />
@@ -327,6 +331,62 @@ export default function EditProfile() {
             </div>
           </div>
         </div>
+
+        {/* Floating save status indicator */}
+        {(saveStatus !== 'idle' || hasChanges) && (
+          <div className="fixed bottom-8 right-8 z-50">
+            <div className={`
+              flex items-center gap-3 px-4 py-3 rounded-full shadow-xl backdrop-blur-md border transition-all duration-300 transform
+              ${saveStatus === 'saving' ? 'bg-blue-500/20 border-blue-500/30 text-blue-200' : ''}
+              ${saveStatus === 'saved' ? 'bg-green-500/20 border-green-500/30 text-green-200 scale-105' : ''}
+              ${saveStatus === 'error' ? 'bg-red-500/20 border-red-500/30 text-red-200' : ''}
+              ${hasChanges && saveStatus === 'idle' ? 'bg-yellow-500/20 border-yellow-500/30 text-yellow-200' : ''}
+            `}>
+              {saveStatus === 'saving' && (
+                <>
+                  <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
+                  <span className="text-sm font-medium">Sauvegarde en cours...</span>
+                </>
+              )}
+              {saveStatus === 'saved' && (
+                <>
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span className="text-sm font-medium">Sauvegardé</span>
+                </>
+              )}
+              {saveStatus === 'error' && (
+                <>
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                  <span className="text-sm font-medium">Erreur de sauvegarde</span>
+                </>
+              )}
+              {hasChanges && saveStatus === 'idle' && (
+                <>
+                  <div className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></div>
+                  <span className="text-sm font-medium">Modifications en attente</span>
+                </>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )

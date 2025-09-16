@@ -19,6 +19,7 @@ const EmptyFeedCTA: React.FC<EmptyFeedCTAProps> = ({ show }) => {
     cover?: string | null
     id?: number
   } | null>(null)
+  const [description, setDescription] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [isSearching, setIsSearching] = useState(false)
@@ -86,10 +87,10 @@ const EmptyFeedCTA: React.FC<EmptyFeedCTAProps> = ({ show }) => {
       // Generate links for all music services
       const musicLinks = selected.id
         ? generateMusicServiceLinks({
-            id: selected.id,
-            title: selected.title,
-            artist: selected.artist
-          })
+          id: selected.id,
+          title: selected.title,
+          artist: selected.artist
+        })
         : {}
 
       await api.post('/posts', {
@@ -97,6 +98,7 @@ const EmptyFeedCTA: React.FC<EmptyFeedCTAProps> = ({ show }) => {
         artist: selected.artist,
         link: selected.link,
         coverUrl: selected.cover,
+        description: description.trim() || undefined,
         ...musicLinks
       })
 
@@ -116,6 +118,7 @@ const EmptyFeedCTA: React.FC<EmptyFeedCTAProps> = ({ show }) => {
 
   const handleCancel = () => {
     setSelected(null)
+    setDescription('')
     setError(null)
     setIsSearching(false)
     setSearchQuery('')
@@ -125,17 +128,15 @@ const EmptyFeedCTA: React.FC<EmptyFeedCTAProps> = ({ show }) => {
 
   return (
     <div
-      className={`text-white rounded-2xl p-6 transition-all duration-500 ease-out ${
-        isSearching ? 'pb-24 transform' : ''
-      }`}
+      className={`text-white rounded-2xl p-6 transition-all duration-500 ease-out ${isSearching ? 'pb-24 transform' : ''
+        }`}
     >
       {!selected ? (
         <div className="space-y-6">
           {/* Header */}
           <div
-            className={`text-center space-y-3 transition-all duration-300 ${
-              isSearching ? 'opacity-75 scale-95' : 'opacity-100 scale-100'
-            }`}
+            className={`text-center space-y-3 transition-all duration-300 ${isSearching ? 'opacity-75 scale-95' : 'opacity-100 scale-100'
+              }`}
           >
             <div>
               <h3 className="text-xl font-bold mb-2">Partagez votre chanson du jour</h3>
@@ -200,18 +201,43 @@ const EmptyFeedCTA: React.FC<EmptyFeedCTAProps> = ({ show }) => {
               </div>
             </div>
 
+            {/* Description Input */}
+            <div className="pt-2">
+              <textarea
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Ajouter une description (optionnel)..."
+                maxLength={280}
+                rows={3}
+                className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-black focus:ring-2 focus:ring-black/10 transition-all duration-200 resize-none text-black placeholder-gray-500"
+                style={{ minHeight: '80px' }}
+              />
+              <div className="flex justify-between items-center mt-2">
+                <span className="text-xs text-gray-500">
+                  {description.length}/280 caractères
+                </span>
+                {description.length > 0 && (
+                  <button
+                    onClick={() => setDescription('')}
+                    className="text-xs text-gray-500 hover:text-gray-700 transition-colors"
+                  >
+                    Effacer
+                  </button>
+                )}
+              </div>
+            </div>
+
             {/* Actions */}
             <div className="flex flex-col gap-3 pt-2">
               <button
                 onClick={handlePostSong}
                 disabled={isSubmitting || !!error}
-                className={`w-full px-6 py-3 rounded-lg font-bold transition-all duration-300 flex items-center justify-center gap-2 ${
-                  error
+                className={`w-full px-6 py-3 rounded-lg font-bold transition-all duration-300 flex items-center justify-center gap-2 ${error
                     ? 'bg-red-50 text-red-600 border border-red-200 cursor-not-allowed'
                     : isSubmitting
-                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                    : 'bg-black text-white hover:bg-gray-800 active:bg-gray-900 shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98]'
-                }`}
+                      ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                      : 'bg-black text-white hover:bg-gray-800 active:bg-gray-900 shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98]'
+                  }`}
               >
                 {error ? (
                   <>

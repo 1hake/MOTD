@@ -10,6 +10,7 @@ type Post = {
   id: number
   title: string
   artist: string
+  description?: string
   link: string
   deezerLink?: string
   spotifyLink?: string
@@ -263,11 +264,10 @@ export default function FriendProfile() {
                   {viewMode === 'grid' || dateDisplay.isToday ? (
                     <div className="flex items-center gap-4">
                       <div className="h-px bg-gradient-to-r from-transparent via-gray-600 to-transparent flex-1"></div>
-                      <h2 className={`text-lg font-semibold px-4 py-2 rounded-full ${
-                        dateDisplay.isToday 
-                          ? 'bg-indigo-600/20 text-indigo-300 border border-indigo-500/30' 
+                      <h2 className={`text-lg font-semibold px-4 py-2 rounded-full ${dateDisplay.isToday
+                          ? 'bg-indigo-600/20 text-indigo-300 border border-indigo-500/30'
                           : 'bg-gray-800/50 text-gray-300 border border-gray-700/30'
-                      }`}>
+                        }`}>
                         {dateDisplay.displayText}
                       </h2>
                       <div className="h-px bg-gradient-to-r from-transparent via-gray-600 to-transparent flex-1"></div>
@@ -295,6 +295,7 @@ export default function FriendProfile() {
                         id={post.id}
                         title={post.title}
                         artist={post.artist}
+                        description={post.description}
                         link={post.link}
                         deezerLink={post.deezerLink}
                         spotifyLink={post.spotifyLink}

@@ -6,6 +6,7 @@ type SongCardProps = {
   id: number
   title: string
   artist: string
+  description?: string
   link: string
   deezerLink?: string
   spotifyLink?: string
@@ -36,6 +37,7 @@ export default function SongCard({
   id,
   title,
   artist,
+  description,
   link,
   deezerLink,
   spotifyLink,
@@ -173,6 +175,20 @@ export default function SongCard({
           >
             {artist}
           </p>
+          {description && (
+            <p
+              className="text-gray-400 text-xs mt-1 italic"
+              style={{
+                display: '-webkit-box',
+                WebkitLineClamp: 2,
+                WebkitBoxOrient: 'vertical',
+                overflow: 'hidden'
+              }}
+              title={description}
+            >
+              "{description}"
+            </p>
+          )}
         </div>
 
         {/* Play and Like buttons */}
@@ -302,6 +318,20 @@ export default function SongCard({
           >
             {artist}
           </p>
+          {description && (
+            <p
+              className="text-white/80 text-sm italic drop-shadow-md mb-4 leading-relaxed"
+              style={{
+                display: '-webkit-box',
+                WebkitLineClamp: 3,
+                WebkitBoxOrient: 'vertical',
+                overflow: 'hidden'
+              }}
+              title={description}
+            >
+              "{description}"
+            </p>
+          )}
 
           {/* Action buttons */}
           <div className="flex items-center gap-3">
