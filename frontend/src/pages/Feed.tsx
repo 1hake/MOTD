@@ -63,23 +63,13 @@ export default function Feed() {
       }
 
       try {
-        // Fetch user's own posts for today
-        const myPostsRes = await api.get('/posts/me')
-        const allMyPosts = myPostsRes.data
-
-        // Filter to get only today's posts (comparing in UTC to match backend)
-        const now = new Date()
-        const today = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0, 0))
-        const todayMyPosts = allMyPosts.filter((post: Post) => {
-          const postDate = new Date(post.date)
-          const postDateUTC = new Date(
-            Date.UTC(postDate.getUTCFullYear(), postDate.getUTCMonth(), postDate.getUTCDate(), 0, 0, 0, 0)
-          )
-          return postDateUTC.getTime() === today.getTime()
-        })
+        // Fetch user's own posts for today using server-side filtering
+        const timezoneOffset = new Date().getTimezoneOffset()
+        const myPostsRes = await api.get(`/posts/me?today=true&timezoneOffset=${timezoneOffset}`)
+        const todayMyPosts = myPostsRes.data
 
         // Fetch friends' posts specifically
-        const friendsPostsRes = await api.get('/friends/posts')
+        const friendsPostsRes = await api.get(`/friends/posts?timezoneOffset=${timezoneOffset}`)
         const friendsPostsData = friendsPostsRes.data
 
         setMyPosts(todayMyPosts)
@@ -108,11 +98,11 @@ export default function Feed() {
   }
 
   return (
-    <div className="min-h-[calc(100vh-8rem)]">
+    <div className="min-h-screen">
       <div className="max-w-4xl mx-auto px-4 py-6 space-y-8 pb-24">
         {/* image logo */}
         <div className="w-full flex justify-center ">
-          <img src={logo2} alt="DIGGER" className={myPosts.length === 0 ? 'w-12 mb-4 mt-8' : 'w-56'} />
+          <img src={logo2} alt="DIGGER" className={myPosts.length === 0 ? 'w-64 mb-4 mt-8' : 'w-56'} />
         </div>
         {/* Empty feed CTA */}
         <EmptyFeedCTA show={myPosts.length === 0} />

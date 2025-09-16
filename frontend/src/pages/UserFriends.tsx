@@ -79,94 +79,103 @@ export default function UserFriends() {
     const canViewFriends = isOwnProfile
 
     return (
-        <div className="min-h-screen text-gray-100">
-            <div className="max-w-4xl mx-auto px-6 py-12">
+        <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-gray-100">
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
                 {/* Back button */}
-                <div className="mb-6">
+                <div className="mb-8">
                     <button
                         onClick={() => navigate(isOwnProfile ? '/profile' : `/profile/${user.id}`)}
-                        className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors"
+                        className="group flex items-center gap-3 text-gray-400 hover:text-white transition-all duration-300 hover:translate-x-1"
                     >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                        </svg>
-                        Retour au profil
+                        <div className="p-2 rounded-full bg-gray-800/50 group-hover:bg-gray-700/50 transition-colors">
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                            </svg>
+                        </div>
+                        <span className="font-medium">Retour au profil</span>
                     </button>
                 </div>
 
                 {/* Header */}
                 <div className="mb-8">
-                    <div className="bg-gray-900/30 backdrop-blur-sm rounded-2xl border border-gray-800/30 p-6">
-                        <h1 className="text-2xl font-semibold text-white mb-2">
-                            {isOwnProfile ? 'Mes amis' : `Amis de ${user.name || user.email.split('@')[0]}`}
-                        </h1>
-                        {canViewFriends && (
-                            <p className="text-gray-400">
-                                {friends.length} ami{friends.length > 1 ? 's' : ''}
-                            </p>
-                        )}
-                    </div>
+                    <h1 className="text-3xl font-bold text-white mb-2">
+                        {isOwnProfile ? 'Mes amis' : `Amis de ${user.name || user.email.split('@')[0]}`}
+                    </h1>
+                    {canViewFriends && (
+                        <p className="text-gray-400">
+                            {friends.length} ami{friends.length > 1 ? 's' : ''}
+                        </p>
+                    )}
                 </div>
 
                 {/* Friends List */}
                 {!canViewFriends ? (
-                    <div className="text-center py-20">
-                        <div className="text-8xl mb-6">🔒</div>
-                        <h3 className="text-2xl font-semibold text-gray-200 mb-4">
-                            Liste d'amis privée
-                        </h3>
-                        <p className="text-lg text-gray-500">
-                            Cette personne a choisi de garder sa liste d'amis privée.
-                        </p>
+                    <div className="text-center py-24">
+                        <div className="relative">
+                            <div className="w-32 h-32 mx-auto bg-gradient-to-br from-gray-700/50 to-gray-800/50 rounded-full flex items-center justify-center text-6xl mb-8 shadow-2xl border border-gray-600/30">
+                                🔒
+                            </div>
+                            <div className="max-w-md mx-auto">
+                                <h3 className="text-3xl font-bold text-white mb-4">
+                                    Liste d'amis privée
+                                </h3>
+                                <p className="text-lg text-gray-400 leading-relaxed">
+                                    Cette personne a choisi de garder sa liste d'amis privée.
+                                </p>
+                            </div>
+                        </div>
                     </div>
                 ) : friends.length === 0 ? (
-                    <div className="text-center py-20">
-                        <div className="text-8xl mb-6">👥</div>
-                        <h3 className="text-2xl font-semibold text-gray-200 mb-4">
-                            {isOwnProfile ? 'Aucun ami pour le moment' : 'Aucun ami à afficher'}
-                        </h3>
-                        <p className="text-lg text-gray-500 mb-6">
-                            {isOwnProfile ? 'Commencez à suivre des personnes pour agrandir votre réseau !' : 'Cette personne n\'a pas encore d\'amis.'}
-                        </p>
-                        {isOwnProfile && (
-                            <button
-                                onClick={() => navigate('/explorer')}
-                                className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors"
-                            >
-                                Découvrir des amis
-                            </button>
-                        )}
+                    <div className="text-center py-24">
+                        <div className="relative">
+                            <div className="w-32 h-32 mx-auto bg-gradient-to-br from-indigo-500/20 via-purple-500/20 to-pink-500/20 rounded-full flex items-center justify-center text-6xl mb-8 shadow-2xl border border-indigo-500/30">
+                                👥
+                            </div>
+                            <div className="max-w-md mx-auto">
+                                <h3 className="text-3xl font-bold text-white mb-4">
+                                    {isOwnProfile ? 'Aucun ami pour le moment' : 'Aucun ami à afficher'}
+                                </h3>
+                                <p className="text-lg text-gray-400 mb-8 leading-relaxed">
+                                    {isOwnProfile ? 'Commencez à suivre des personnes pour agrandir votre réseau !' : 'Cette personne n\'a pas encore d\'amis.'}
+                                </p>
+                                {isOwnProfile && (
+                                    <button
+                                        onClick={() => navigate('/explorer')}
+                                        className="group px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-2xl font-semibold transition-all duration-300 transform hover:scale-105 hover:shadow-2xl shadow-lg"
+                                    >
+                                        <span className="flex items-center gap-2">
+                                            🔍 Découvrir des amis
+                                        </span>
+                                    </button>
+                                )}
+                            </div>
+                        </div>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div className="space-y-4">
                         {friends.map((friend) => (
                             <div
                                 key={friend.id}
-                                className="bg-gray-900/30 hover:bg-gray-900/50 backdrop-blur-sm rounded-xl border border-gray-800/30 hover:border-gray-700/50 transition-all duration-300 p-5"
+                                onClick={() => navigate(`/profile/${friend.id}`)}
+                                className="bg-gray-800/50 hover:bg-gray-800/70 rounded-xl border border-gray-700/50 hover:border-gray-600/50 transition-all duration-200 p-4 cursor-pointer group"
                             >
-                                {/* Avatar and basic info */}
-                                <div className="flex items-center gap-3 mb-4">
-                                    <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-fuchsia-600 rounded-lg flex items-center justify-center text-white text-lg font-bold">
+                                <div className="flex items-center gap-4">
+                                    <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center text-white text-lg font-bold group-hover:scale-105 transition-transform duration-200">
                                         {friend.name ? friend.name.charAt(0).toUpperCase() : friend.email.charAt(0).toUpperCase()}
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                        <h3 className="font-semibold text-white text-base leading-tight">
+                                        <h3 className="font-semibold text-white text-base group-hover:text-gray-100 transition-colors">
                                             {friend.name || friend.email.split('@')[0]}
                                         </h3>
-                                        <p className="text-gray-400 text-sm">@{friend.email.split('@')[0]}</p>
+                                        <p className="text-gray-400 text-sm group-hover:text-gray-300 transition-colors">@{friend.email.split('@')[0]}</p>
                                     </div>
-                                </div>
-
-                                {/* Action buttons */}
-                                <div className="flex gap-2">
-                                    <button
-                                        onClick={() => navigate(`/profile/${friend.id}`)}
-                                        className="flex-1 px-3 py-2 bg-gray-800/50 hover:bg-gray-700/50 text-gray-300 hover:text-white border border-gray-700/50 hover:border-gray-600/50 rounded-lg transition-all duration-200 text-sm font-medium"
-                                    >
-                                        Voir le profil
-                                    </button>
                                     {currentUser && friend.id !== currentUser.id && (
-                                        <FollowButton currentUserId={currentUser.id} targetUserId={friend.id} />
+                                        <div
+                                            className="flex-shrink-0"
+                                            onClick={(e) => e.stopPropagation()}
+                                        >
+                                            <FollowButton currentUserId={currentUser.id} targetUserId={friend.id} />
+                                        </div>
                                     )}
                                 </div>
                             </div>

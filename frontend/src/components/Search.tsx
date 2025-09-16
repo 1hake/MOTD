@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState, useCallback, useRef } from "react";
+import SongCard from "./SongCard";
 
 type DeezerTrack = {
     id: number;
@@ -137,13 +138,23 @@ export default function Search({ onSelect, onSearchChange }: SearchProps) {
     }, [tracks]);
 
     const SkeletonCard = () => (
-        <div className="bg-gray-50 p-4 rounded-lg border border-gray-200 animate-pulse">
-            <div className="flex gap-3 items-center">
-                <div className="h-12 w-12 rounded-lg bg-gray-200 flex-shrink-0"></div>
-                <div className="flex-1 space-y-2">
-                    <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                    <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+        <div className="flex items-stretch gap-0 bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700/50 overflow-hidden animate-pulse">
+            {/* Cover Image skeleton */}
+            <div className="flex-shrink-0 w-20">
+                <div className="w-full h-full bg-gradient-to-br from-gray-600 to-gray-700"></div>
+            </div>
+
+            {/* Song Info skeleton */}
+            <div className="flex-grow min-w-0 p-4 flex flex-col justify-center">
+                <div className="space-y-2">
+                    <div className="h-4 bg-gray-600 rounded w-3/4"></div>
+                    <div className="h-3 bg-gray-700 rounded w-1/2"></div>
                 </div>
+            </div>
+
+            {/* Buttons skeleton */}
+            <div className="flex-shrink-0 flex items-center gap-2 p-4">
+                <div className="h-8 w-16 bg-gray-600 rounded-full"></div>
             </div>
         </div>
     );
@@ -156,23 +167,82 @@ export default function Search({ onSelect, onSearchChange }: SearchProps) {
 
     return (
         <div className="w-full">
-            <div className="mb-4">
-                <div className="relative">
-                    <svg className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <div className="mb-6">
+                <div className="relative group">
+                    {/* Search icon with enhanced animations */}
+                    <svg className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 group-focus-within:text-indigo-500 group-hover:text-gray-500 transition-all duration-300 group-focus-within:scale-110" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+
+                    {/* Loading spinner when searching */}
+                    {loading && (
+                        <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                            <div className="animate-spin rounded-full h-5 w-5 border-2 border-indigo-200 border-t-indigo-500"></div>
+                        </div>
+                    )}
+
+                    {/* Clear button when there's text */}
+                    {q && !loading && (
+                        <button
+                            onClick={() => setQ("")}
+                            className="absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 hover:text-gray-600 transition-colors duration-200 rounded-full hover:bg-gray-100 p-1"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-3 h-3">
+                                <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
+                            </svg>
+                        </button>
+                    )}
+
                     <input
                         id="mb-search"
                         type="text"
                         value={q}
                         onChange={(e) => setQ(e.target.value)}
-                        placeholder={`Recherchez votre chanson...`}
-                        className="w-full text-black rounded-lg border border-gray-300 bg-white pl-12 pr-4 py-3 text-sm outline-none focus:ring-2 focus:ring-black focus:border-black transition-all"
+                        placeholder="Recherchez votre chanson..."
+                        className="w-full text-gray-900 rounded-xl border-2 border-gray-200 bg-white/90 backdrop-blur-sm pl-12 pr-12 py-3.5 text-base font-medium outline-none focus:ring-3 focus:ring-indigo-500/20 focus:border-indigo-500 hover:border-gray-300 hover:bg-white transition-all duration-300 shadow-md hover:shadow-lg focus:shadow-xl placeholder:text-gray-400 group-focus-within:bg-white"
                     />
+
+                    {/* Enhanced gradient overlay */}
+                    <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-indigo-500/3 via-purple-500/3 to-pink-500/3 opacity-0 group-focus-within:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+
+                    {/* Subtle glow effect */}
+                    <div className="absolute inset-0 rounded-xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-300 pointer-events-none bg-gradient-to-r from-indigo-400/10 to-purple-400/10 blur-xl"></div>
                 </div>
+
+                {/* Search status indicator */}
+                {debouncedQ && (
+                    <div className="mt-2 flex items-center gap-2 text-sm">
+                        <div className="flex items-center gap-1.5 text-gray-500">
+                            {loading ? (
+                                <>
+                                    <div className="animate-pulse h-2 w-2 bg-indigo-400 rounded-full"></div>
+                                    <span>Recherche en cours...</span>
+                                </>
+                            ) : tracks.length > 0 ? (
+                                <>
+                                    <div className="h-2 w-2 bg-green-400 rounded-full"></div>
+                                    <span>{tracks.length} résultat{tracks.length > 1 ? 's' : ''} trouvé{tracks.length > 1 ? 's' : ''}</span>
+                                </>
+                            ) : (
+                                <>
+                                    <div className="h-2 w-2 bg-amber-400 rounded-full"></div>
+                                    <span>Aucun résultat</span>
+                                </>
+                            )}
+                        </div>
+                    </div>
+                )}
             </div>
 
             {error && (
-                <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
-                    {error}
+                <div className="mb-6 rounded-2xl border-2 border-red-200 bg-gradient-to-r from-red-50 to-red-100/50 p-5 text-sm text-red-800 shadow-lg backdrop-blur-sm">
+                    <div className="flex items-center gap-3">
+                        <svg className="h-5 w-5 text-red-500 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clipRule="evenodd" />
+                        </svg>
+                        <span className="font-medium">{error}</span>
+                    </div>
                 </div>
             )}
 
@@ -183,40 +253,25 @@ export default function Search({ onSelect, onSearchChange }: SearchProps) {
             )}
 
             {!loading && !error && tracks.length > 0 && (
-                <div className="space-y-2 max-h-96 overflow-y-auto">
+                <div className="space-y-3 max-h-[500px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
                     {items.map((it, index) => (
                         <div
                             key={it.id}
                             ref={index === items.length - 1 ? lastTrackElementRef : null}
-                            className="group rounded-lg border border-gray-200 bg-white hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 p-3 flex gap-3 items-center cursor-pointer transform hover:scale-[1.01] animate-in fade-in slide-in-from-bottom-2 duration-300"
+                            className="animate-in fade-in slide-in-from-bottom-2 duration-300"
                             style={{ animationDelay: `${Math.min(index * 50, 300)}ms` }}
                             onClick={() => onSelect?.(it)}
                         >
-                            <div className="h-12 w-12 rounded-lg bg-gray-100 overflow-hidden flex-shrink-0 shadow-sm">
-                                {it.cover ? (
-                                    <img
-                                        src={it.cover}
-                                        alt={`${it.title} cover`}
-                                        className="h-full w-full object-cover transition-transform group-hover:scale-105"
-                                        loading="lazy"
-                                    />
-                                ) : (
-                                    <div className="h-full w-full grid place-items-center text-gray-400 text-lg">
-                                        🎵
-                                    </div>
-                                )}
-                            </div>
-                            <div className="min-w-0 flex-1">
-                                <div className="font-semibold text-gray-900 text-sm truncate group-hover:text-black transition-colors" title={it.title}>
-                                    {it.title}
-                                </div>
-                                <div className="text-xs text-gray-600 truncate group-hover:text-gray-700 transition-colors" title={it.artist}>
-                                    {it.artist}
-                                </div>
-                            </div>
-                            <div className="text-gray-400 group-hover:text-gray-600 transition-all transform group-hover:translate-x-1">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                            </div>
+                            <SongCard
+                                id={it.id}
+                                title={it.title}
+                                artist={it.artist}
+                                link="#" // We'll use the first available platform link
+                                coverUrl={it.cover || undefined}
+                                horizontal={true}
+                                showLikes={false}
+                                className="transform hover:scale-[1.02] transition-transform duration-200"
+                            />
                         </div>
                     ))}
 
@@ -225,10 +280,10 @@ export default function Search({ onSelect, onSearchChange }: SearchProps) {
 
                     {/* Load more manually button (fallback) */}
                     {!loadingMore && hasMore && tracks.length > 0 && (
-                        <div className="pt-4 text-center">
+                        <div className="pt-6 text-center">
                             <button
                                 onClick={loadMoreResults}
-                                className="px-4 py-2 text-sm text-gray-600 hover:text-black hover:bg-gray-50 rounded-lg transition-all duration-200 border border-gray-200 hover:border-gray-300"
+                                className="px-8 py-4 text-base font-semibold text-gray-700 hover:text-black hover:bg-gradient-to-r hover:from-gray-50 hover:to-gray-100 rounded-2xl transition-all duration-300 border-2 border-gray-200 hover:border-gray-300 shadow-lg hover:shadow-xl transform hover:scale-105 backdrop-blur-sm"
                             >
                                 Charger plus de résultats
                             </button>
@@ -238,10 +293,10 @@ export default function Search({ onSelect, onSearchChange }: SearchProps) {
             )}
 
             {!loading && !error && debouncedQ && items.length === 0 && (
-                <div className="text-center py-8">
-                    <div className="text-3xl mb-2 text-gray-300">🔍</div>
-                    <p className="text-sm text-gray-500 font-medium mb-1">Aucun résultat trouvé</p>
-                    <p className="text-xs text-gray-400">Essayez avec d'autres mots-clés</p>
+                <div className="text-center py-16 px-8 rounded-2xl bg-gradient-to-br from-gray-50 to-gray-100/50 border-2 border-gray-200 shadow-inner">
+                    <div className="text-6xl mb-4 text-gray-300 animate-pulse">🔍</div>
+                    <p className="text-lg text-gray-600 font-bold mb-2">Aucun résultat trouvé</p>
+                    <p className="text-sm text-gray-500 font-medium">Essayez avec d'autres mots-clés</p>
                 </div>
             )}
         </div>

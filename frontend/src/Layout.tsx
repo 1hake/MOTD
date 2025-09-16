@@ -12,9 +12,9 @@ const Layout: React.FC = () => {
   }
 
   return (
-    <div className="h-screen pb-24 relative bg-primary-800">
+    <div className="pb-24 relative bg-[#181616]">
       {/* Background with gradient */}
-      <div className="fixed inset-0 bg-primary-800 from-primary-50 via-white to-music-50/50 -z-10" />
+      <div className="fixed inset-0  via-white to-music-50/50 -z-10" />
 
       {/* Subtle background patterns */}
       <div className="fixed inset-0 -z-10 opacity-30">

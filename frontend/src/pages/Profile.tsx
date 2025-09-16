@@ -143,7 +143,7 @@ export default function Profile() {
       <div className="max-w-4xl mx-auto px-6 py-12">
         {/* Profile Header */}
         <div className="mb-12">
-          <div className="bg-gray-900/30 backdrop-blur-sm rounded-2xl border border-gray-800/30 p-8">
+          <div className="bg-gray-800/50 backdrop-blur-sm rounded-2xl border border-gray-800/30 p-8">
             <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
               {/* Avatar */}
               <div className="w-24 h-24 bg-gradient-to-br from-indigo-500 to-fuchsia-600 rounded-2xl flex items-center justify-center text-white text-2xl font-bold shadow-lg">

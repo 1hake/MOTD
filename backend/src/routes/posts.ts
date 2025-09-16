@@ -13,9 +13,14 @@ router.post('/', authenticateToken, async (req, res) => {
 
   const uid = req.user!.id
 
-  // Get today's date in UTC to properly compare with database timestamps
+  // Get timezone offset from request body (in minutes), default to UTC
+  const timezoneOffset = req.body.timezoneOffset || 0
+
+  // Calculate today's start based on user's timezone
   const now = new Date()
-  const today = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0, 0))
+  const userLocalTime = new Date(now.getTime() - (timezoneOffset * 60 * 1000))
+  const todayStartInUserTz = new Date(userLocalTime.getFullYear(), userLocalTime.getMonth(), userLocalTime.getDate(), 0, 0, 0, 0)
+  const today = new Date(todayStartInUserTz.getTime() + (timezoneOffset * 60 * 1000))
 
   try {
     // Check if user exists
@@ -114,8 +119,25 @@ router.get('/me', authenticateToken, async (req, res) => {
   const uid = req.user!.id
 
   try {
+    // Check if we need to filter for today's posts
+    const { today } = req.query
+    let whereClause: any = { userId: uid }
+
+    if (today === 'true') {
+      // Get timezone offset from query params (in minutes), default to UTC
+      const timezoneOffset = req.query.timezoneOffset ? parseInt(req.query.timezoneOffset as string) : 0
+
+      // Calculate today's start based on user's timezone
+      const now = new Date()
+      const userLocalTime = new Date(now.getTime() - (timezoneOffset * 60 * 1000))
+      const todayStartInUserTz = new Date(userLocalTime.getFullYear(), userLocalTime.getMonth(), userLocalTime.getDate(), 0, 0, 0, 0)
+      const todayStartUTC = new Date(todayStartInUserTz.getTime() + (timezoneOffset * 60 * 1000))
+
+      whereClause.date = { gte: todayStartUTC }
+    }
+
     const posts = await prisma.songPost.findMany({
-      where: { userId: uid },
+      where: whereClause,
       include: {
         likes: {
           select: {
@@ -207,7 +229,8 @@ router.post('/:postId/like', authenticateToken, async (req, res) => {
     })
 
     if (existingLike) {
-      return res.status(400).json({ error: 'Already liked this post' })
+      // If already liked, return the existing like (idempotent behavior)
+      return res.json({ success: true, like: existingLike })
     }
 
     // Create like
@@ -247,7 +270,8 @@ router.delete('/:postId/like', authenticateToken, async (req, res) => {
     })
 
     if (!existingLike) {
-      return res.status(400).json({ error: 'Like not found' })
+      // If like doesn't exist, treat as idempotent (already unliked)
+      return res.json({ success: true })
     }
 
     // Delete like
@@ -275,9 +299,14 @@ router.get('/explore', authenticateToken, async (req, res) => {
   const skip = (page - 1) * limit
 
   try {
-    // Get today's date in UTC
+    // Get timezone offset from query params (in minutes), default to UTC
+    const timezoneOffset = req.query.timezoneOffset ? parseInt(req.query.timezoneOffset as string) : 0
+
+    // Calculate today's start based on user's timezone
     const now = new Date()
-    const today = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0, 0))
+    const userLocalTime = new Date(now.getTime() - (timezoneOffset * 60 * 1000))
+    const todayStartInUserTz = new Date(userLocalTime.getFullYear(), userLocalTime.getMonth(), userLocalTime.getDate(), 0, 0, 0, 0)
+    const today = new Date(todayStartInUserTz.getTime() + (timezoneOffset * 60 * 1000))
 
     // Get total count for pagination
     const totalPosts = await prisma.songPost.count({

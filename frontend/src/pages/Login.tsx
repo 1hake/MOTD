@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
-import logo2 from '../assets/img/logoblack.png'
+import logo2 from '../assets/img/logo2.png'
 import DiggerButton from '../components/DiggerButton'
 
 export default function Login() {
@@ -26,7 +26,7 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen bg-[#EEE1CF]">
+    <div className="min-h-screen bg-gray-900">
       <div className="max-w-4xl mx-auto px-4 py-6 space-y-8">
         {/* Logo */}
         <div className="w-full flex justify-center mb-4 mt-8">
@@ -36,8 +36,8 @@ export default function Login() {
         <div className="w-full max-w-md mx-auto  rounded-4xl overflow-hidden relative z-10 animate-in">
           <div className="p-2">
             <div className="text-center mb-8">
-              <h1 className="text-4xl font-bold  mb-2">Connexion</h1>
-              <p className="text-primary-600 text-lg">Partagez votre musique du jour</p>
+              <h1 className="text-4xl font-bold text-white mb-2">Connexion</h1>
+              <p className="text-gray-300 text-lg">Partagez votre musique du jour</p>
             </div>
 
             <form onSubmit={handleLogin} className="space-y-6">
@@ -48,14 +48,14 @@ export default function Login() {
                 </div>
               )}
               <div className="space-y-2">
-                <label htmlFor="email" className="block text-sm font-semibold text-primary-700">
+                <label htmlFor="email" className="block text-sm font-semibold text-gray-200">
                   Email
                 </label>
                 <input
                   id="email"
                   type="email"
                   required
-                  className="input-field"
+                  className="input-field bg-gray-800 border-gray-600 text-white placeholder-gray-400"
                   placeholder="votre@email.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -63,14 +63,14 @@ export default function Login() {
                 />
               </div>
               <div className="space-y-2">
-                <label htmlFor="password" className="block text-sm font-semibold text-primary-700">
+                <label htmlFor="password" className="block text-sm font-semibold text-gray-200">
                   Mot de passe
                 </label>
                 <input
                   id="password"
                   type="password"
                   required
-                  className="input-field"
+                  className="input-field bg-gray-800 border-gray-600 text-white placeholder-gray-400"
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -80,7 +80,7 @@ export default function Login() {
               <DiggerButton
                 type="submit"
                 disabled={isLoading}
-                className="w-full border-black border-2 rounded-xl py-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full border-white border-2 rounded-xl py-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isLoading ? (
                   <span className="flex items-center justify-center gap-2">
@@ -96,11 +96,11 @@ export default function Login() {
             </form>
 
             <div className="text-center mt-8">
-              <p className="text-primary-600">
+              <p className="text-gray-300">
                 Pas encore de compte?{' '}
                 <Link
                   to="/signup"
-                  className="font-semibold text-music-600 hover:text-music-500 transition-colors underline decoration-2 underline-offset-2"
+                  className="font-semibold text-blue-400 hover:text-blue-300 transition-colors underline decoration-2 underline-offset-2"
                 >
                   S'inscrire
                 </Link>

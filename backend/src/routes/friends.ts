@@ -63,9 +63,14 @@ router.get('/posts', authenticateToken, async (req, res) => {
   })
   const friendIds = friends.map((f) => f.friendId)
 
-  // Get today's date in UTC to properly compare with database timestamps
+  // Get timezone offset from query params (in minutes), default to UTC
+  const timezoneOffset = req.query.timezoneOffset ? parseInt(req.query.timezoneOffset as string) : 0
+
+  // Calculate today's start based on user's timezone
   const now = new Date()
-  const today = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0, 0))
+  const userLocalTime = new Date(now.getTime() - (timezoneOffset * 60 * 1000))
+  const todayStartInUserTz = new Date(userLocalTime.getFullYear(), userLocalTime.getMonth(), userLocalTime.getDate(), 0, 0, 0, 0)
+  const today = new Date(todayStartInUserTz.getTime() + (timezoneOffset * 60 * 1000))
 
   const posts = await prisma.songPost.findMany({
     where: {

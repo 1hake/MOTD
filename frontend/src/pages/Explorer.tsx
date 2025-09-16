@@ -72,7 +72,8 @@ export default function Explorer() {
   const loadInitialPosts = async () => {
     try {
       setLoading(true)
-      const response = await api.get('/posts/explore?page=1&limit=10')
+      const timezoneOffset = new Date().getTimezoneOffset()
+      const response = await api.get(`/posts/explore?page=1&limit=10&timezoneOffset=${timezoneOffset}`)
       setPosts(response.data.posts)
       setHasMore(response.data.hasMore)
       setPage(2)
@@ -88,7 +89,8 @@ export default function Explorer() {
 
     try {
       setLoadingMore(true)
-      const response = await api.get(`/posts/explore?page=${page}&limit=10`)
+      const timezoneOffset = new Date().getTimezoneOffset()
+      const response = await api.get(`/posts/explore?page=${page}&limit=10&timezoneOffset=${timezoneOffset}`)
       setPosts(prev => [...prev, ...response.data.posts])
       setHasMore(response.data.hasMore)
       setPage(prev => prev + 1)
