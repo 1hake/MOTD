@@ -141,31 +141,29 @@ export default function Explorer() {
       <div className="max-w-4xl mx-auto px-6 py-12">
         {/* Header */}
         <div className="mb-8">
-          <div className="bg-gray-900/30 backdrop-blur-sm rounded-2xl border border-gray-800/30 p-6">
 
-            {/* Search Bar */}
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          {/* Search Bar */}
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+            <input
+              type="text"
+              className="w-full pl-10 pr-4 py-3 bg-gray-800/60 border border-gray-700/50 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all duration-200"
+              placeholder="Rechercher des utilisateurs..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            {isSearching && (
+              <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
+                <svg className="animate-spin h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
               </div>
-              <input
-                type="text"
-                className="w-full pl-10 pr-4 py-3 bg-gray-800/60 border border-gray-700/50 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all duration-200"
-                placeholder="Rechercher des utilisateurs..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-              {isSearching && (
-                <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
-                  <svg className="animate-spin h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                </div>
-              )}
-            </div>
+            )}
           </div>
         </div>
 
@@ -226,39 +224,8 @@ export default function Explorer() {
           ) : (
             <div className="space-y-6">
               {posts.map((post, index) => (
-                <div
-                  key={post.id}
-                  ref={index === posts.length - 1 ? lastPostElementRef : null}
-                  className="bg-gray-900/30 backdrop-blur-sm rounded-xl border border-gray-800/30 p-6"
-                >
-                  {/* User info header */}
-                  <div className="flex items-center gap-3 mb-4">
-                    <button
-                      onClick={() => navigate(`/profile/${post.user.id}`)}
-                      className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-fuchsia-600 rounded-lg flex items-center justify-center text-white text-sm font-bold hover:scale-105 transition-transform"
-                    >
-                      {post.user.name ? post.user.name.charAt(0).toUpperCase() : post.user.email.charAt(0).toUpperCase()}
-                    </button>
-                    <div className="flex-1 min-w-0">
-                      <button
-                        onClick={() => navigate(`/profile/${post.user.id}`)}
-                        className="font-medium text-white hover:text-indigo-300 transition-colors text-left"
-                      >
-                        {post.user.name || post.user.email.split('@')[0]}
-                      </button>
-                      <p className="text-gray-400 text-sm">@{post.user.email.split('@')[0]}</p>
-                    </div>
-                    <div className="text-xs text-gray-500">
-                      {new Date(post.date).toLocaleDateString('fr-FR', {
-                        day: 'numeric',
-                        month: 'short'
-                      })}
-                    </div>
-                  </div>
-
-                  {/* Song card */}
+                <div key={post.id} ref={index === posts.length - 1 ? lastPostElementRef : null}>
                   <SongCard
-                    key={post.id}
                     id={post.id}
                     title={post.title}
                     artist={post.artist}
@@ -273,6 +240,15 @@ export default function Explorer() {
                     onLikeChange={handleLikeChange}
                     showLikes={true}
                     userPlatformPreference={currentUser?.platformPreference}
+                    showUserHeader={true}
+                    userInfo={{
+                      id: post.user.id,
+                      name: post.user.name,
+                      email: post.user.email,
+                      username: post.user.email.split('@')[0]
+                    }}
+                    date={post.date}
+                    onUserClick={() => navigate(`/profile/${post.user.id}`)}
                   />
                 </div>
               ))}

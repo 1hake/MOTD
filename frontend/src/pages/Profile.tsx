@@ -33,7 +33,7 @@ export default function Profile() {
   const [posts, setPosts] = useState<Post[]>([])
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('list')
   const [friendsCount, setFriendsCount] = useState(0)
   const navigate = useNavigate()
   const { user: currentUser, isAuthenticated } = useAuth()
@@ -250,11 +250,10 @@ export default function Profile() {
                   {viewMode === 'grid' || dateDisplay.isToday ? (
                     <div className="flex items-center gap-4">
                       <div className="h-px bg-gradient-to-r from-transparent via-gray-600 to-transparent flex-1"></div>
-                      <h2 className={`text-lg font-semibold px-4 py-2 rounded-full ${
-                        dateDisplay.isToday 
-                          ? 'bg-indigo-600/20 text-indigo-300 border border-indigo-500/30' 
+                      <h2 className={`text-lg font-semibold px-4 py-2 rounded-full ${dateDisplay.isToday
+                          ? 'bg-indigo-600/20 text-indigo-300 border border-indigo-500/30'
                           : 'bg-gray-800/50 text-gray-300 border border-gray-700/30'
-                      }`}>
+                        }`}>
                         {dateDisplay.displayText}
                       </h2>
                       <div className="h-px bg-gradient-to-r from-transparent via-gray-600 to-transparent flex-1"></div>

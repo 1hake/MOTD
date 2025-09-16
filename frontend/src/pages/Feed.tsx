@@ -56,7 +56,7 @@ export default function Feed() {
   }
 
   useEffect(() => {
-    ;(async () => {
+    ; (async () => {
       if (!isAuthenticated || !user) {
         navigate('/login')
         return
@@ -94,7 +94,7 @@ export default function Feed() {
         }
 
         // Initialize push listeners safely (no-op on web)
-        initPushSafe().catch(() => {})
+        initPushSafe().catch(() => { })
       } catch (error) {
         console.error('Error fetching feed data:', error)
       } finally {
@@ -112,7 +112,7 @@ export default function Feed() {
       <div className="max-w-4xl mx-auto px-4 py-6 space-y-8 pb-24">
         {/* image logo */}
         <div className="w-full flex justify-center ">
-          <img src={logo2} alt="DIGGER" className={myPosts.length === 0 ? 'w-screen mb-4 mt-8' : 'w-screen'} />
+          <img src={logo2} alt="DIGGER" className={myPosts.length === 0 ? 'w-12 mb-4 mt-8' : 'w-56'} />
         </div>
         {/* Empty feed CTA */}
         <EmptyFeedCTA show={myPosts.length === 0} />
