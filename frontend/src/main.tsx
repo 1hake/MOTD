@@ -11,6 +11,7 @@ import Friends from './pages/Friends'
 import Profile from './pages/Profile'
 import FriendProfile from './pages/FriendProfile'
 import EditProfile from './pages/EditProfile'
+import UserFriends from './pages/UserFriends'
 import ProtectedRoute from './components/ProtectedRoute'
 import Layout from './Layout'
 
@@ -49,10 +50,18 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
               }
             />
             <Route
-              path="/friends/profile/:userId"
+              path="/friends/me"
               element={
                 <ProtectedRoute>
-                  <FriendProfile />
+                  <UserFriends />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/friends/:userId"
+              element={
+                <ProtectedRoute>
+                  <UserFriends />
                 </ProtectedRoute>
               }
             />
@@ -61,6 +70,14 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
               element={
                 <ProtectedRoute>
                   <Profile />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/profile/:userId"
+              element={
+                <ProtectedRoute>
+                  <FriendProfile />
                 </ProtectedRoute>
               }
             />

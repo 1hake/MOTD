@@ -31,7 +31,7 @@ export default function EditProfile() {
     email: '',
     platformPreference: ''
   })
-  const { user: currentUser, isAuthenticated } = useAuth()
+  const { user: currentUser, isAuthenticated, refreshUser } = useAuth()
 
   useEffect(() => {
     ;(async () => {
@@ -91,6 +91,9 @@ export default function EditProfile() {
         originalDataRef.current = { ...formData }
         setHasChanges(false)
 
+        // Refresh the user data in AuthContext to ensure Profile page shows updated data
+        await refreshUser()
+
         // Reset status after a delay
         setTimeout(() => {
           setSaveStatus('idle')
@@ -112,7 +115,7 @@ export default function EditProfile() {
     } finally {
       setSaving(false)
     }
-  }, [formData, user, saving])
+  }, [formData, user, saving, refreshUser])
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }))

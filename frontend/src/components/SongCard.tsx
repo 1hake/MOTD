@@ -17,6 +17,8 @@ type SongCardProps = {
   isLikedByUser?: boolean
   showLikes?: boolean
   className?: string
+  horizontal?: boolean
+  userPlatformPreference?: string
   onLikeChange?: (postId: number, isLiked: boolean, newLikeCount: number) => void
 }
 
@@ -35,6 +37,8 @@ export default function SongCard({
   isLikedByUser = false,
   showLikes = true,
   className = '',
+  horizontal = false,
+  userPlatformPreference,
   onLikeChange
 }: SongCardProps) {
   const [liked, setLiked] = useState(isLikedByUser)
@@ -71,6 +75,130 @@ export default function SongCard({
       setIsLiking(false)
     }
   }
+
+  // Get the preferred platform URL and display info
+  const getPreferredPlatform = () => {
+    const preference = userPlatformPreference?.toLowerCase()
+
+    switch (preference) {
+      case 'spotify':
+        return spotifyLink ? { url: spotifyLink, name: 'Spotify', icon: '🎧', color: 'bg-green-500' } : null
+      case 'deezer':
+        return deezerLink ? { url: deezerLink, name: 'Deezer', icon: '🎵', color: 'bg-orange-500' } : null
+      case 'apple music':
+      case 'applemusic':
+        return appleMusicLink ? { url: appleMusicLink, name: 'Apple Music', icon: '🎼', color: 'bg-gray-800' } : null
+      case 'youtube':
+        return youtubeLink ? { url: youtubeLink, name: 'YouTube', icon: '📺', color: 'bg-red-500' } : null
+      default:
+        // Fallback to first available platform
+        if (spotifyLink) return { url: spotifyLink, name: 'Spotify', icon: '🎧', color: 'bg-green-500' }
+        if (deezerLink) return { url: deezerLink, name: 'Deezer', icon: '🎵', color: 'bg-orange-500' }
+        if (appleMusicLink) return { url: appleMusicLink, name: 'Apple Music', icon: '🎼', color: 'bg-gray-800' }
+        if (youtubeLink) return { url: youtubeLink, name: 'YouTube', icon: '📺', color: 'bg-red-500' }
+        return null
+    }
+  }
+
+  const preferredPlatform = getPreferredPlatform()
+  if (horizontal) {
+    return (
+      <div
+        className={`flex items-stretch gap-0 bg-gray-800/50 hover:bg-gray-800/70 backdrop-blur-sm rounded-xl border border-gray-700/50 hover:border-gray-600/50 transition-all duration-300 cursor-pointer overflow-hidden ${className}`}
+      >
+        {/* Cover Image - full height with no padding */}
+        <div className="flex-shrink-0 w-20">
+          {coverUrl ? (
+            <img
+              src={coverUrl}
+              alt={`${title} cover`}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <div className="w-full h-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+              <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M18 3a1 1 0 00-1.447-.894L8.763 6H5a3 3 0 000 6h.28l1.771 5.316A1 1 0 008 18h1a1 1 0 001-1v-4.382l6.553 3.276A1 1 0 0018 15V3z" clipRule="evenodd" />
+              </svg>
+            </div>
+          )}
+        </div>
+
+        {/* Song Info */}
+        <div className="flex-grow min-w-0 p-4 flex flex-col justify-center">
+          {sharedBy && (
+            <div className="flex items-center gap-2 mb-1">
+              <div className="w-4 h-4 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white text-xs font-bold">
+                {sharedBy.charAt(0).toUpperCase()}
+              </div>
+              <span className="text-xs text-gray-400">Partagé par {sharedBy}</span>
+            </div>
+          )}
+
+          <h3
+            className="font-semibold text-white text-base leading-tight mb-1"
+            style={{
+              display: '-webkit-box',
+              WebkitLineClamp: 1,
+              WebkitBoxOrient: 'vertical',
+              overflow: 'hidden'
+            }}
+            title={title}
+          >
+            {title}
+          </h3>
+          <p
+            className="text-gray-300 text-sm"
+            style={{
+              display: '-webkit-box',
+              WebkitLineClamp: 1,
+              WebkitBoxOrient: 'vertical',
+              overflow: 'hidden'
+            }}
+            title={artist}
+          >
+            {artist}
+          </p>
+        </div>
+
+        {/* Play and Like buttons */}
+        <div className="flex-shrink-0 flex items-center gap-2 p-4">
+          {/* Play button */}
+          {preferredPlatform && (
+            <a
+              href={preferredPlatform.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`flex items-center gap-1.5 px-3 py-2 ${preferredPlatform.color}/90 hover:${preferredPlatform.color} text-white rounded-full transition-all duration-200 hover:scale-105`}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <span className="text-sm">{preferredPlatform.icon}</span>
+              <span className="text-xs font-medium">Écouter</span>
+            </a>
+          )}
+
+          {/* Like button */}
+          {showLikes && (
+            <button
+              onClick={handleLikeToggle}
+              disabled={isLiking}
+              className={`flex items-center gap-1.5 px-3 py-2 rounded-full transition-all duration-200 ${liked ? 'bg-red-500/20 text-red-400 hover:bg-red-500/30' : 'bg-gray-700/50 text-gray-400 hover:bg-gray-700/70 hover:text-white'
+                } ${isLiking ? 'opacity-50 cursor-not-allowed' : ''}`}
+            >
+              <svg
+                className={`w-4 h-4 ${liked ? 'fill-current' : 'stroke-current fill-none'}`}
+                viewBox="0 0 24 24"
+                strokeWidth="2"
+              >
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+              </svg>
+              <span className="text-sm font-medium">{likes}</span>
+            </button>
+          )}
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div
       key={id}
@@ -78,13 +206,13 @@ export default function SongCard({
       style={
         coverUrl
           ? {
-              backgroundImage: `url(${coverUrl})`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center'
-            }
+            backgroundImage: `url(${coverUrl})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center'
+          }
           : {
-              backgroundColor: '#f3f4f6'
-            }
+            backgroundColor: '#f3f4f6'
+          }
       }
     >
       {/* Gradient overlay for better text readability */}
@@ -129,67 +257,29 @@ export default function SongCard({
           {artist}
         </p>
 
-        {/* Platform links */}
-        <div className="flex items-center gap-2 mb-3">
-          {deezerLink && (
+        {/* Action buttons */}
+        <div className="flex items-center gap-3">
+          {/* Play button */}
+          {preferredPlatform && (
             <a
-              href={deezerLink}
+              href={preferredPlatform.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-orange-500/90 hover:bg-orange-600/90 text-white rounded-full backdrop-blur-sm transition-all duration-200 hover:scale-105"
+              className={`flex items-center gap-1.5 px-4 py-2 ${preferredPlatform.color}/90 hover:${preferredPlatform.color} text-white rounded-full backdrop-blur-sm transition-all duration-200 hover:scale-105`}
               onClick={(e) => e.stopPropagation()}
             >
-              <span className="text-sm">🎵</span>
-              <span className="text-xs font-medium">Deezer</span>
+              <span className="text-sm">{preferredPlatform.icon}</span>
+              <span className="text-sm font-medium">Écouter sur {preferredPlatform.name}</span>
             </a>
           )}
-          {spotifyLink && (
-            <a
-              href={spotifyLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-green-500/90 hover:bg-green-600/90 text-white rounded-full backdrop-blur-sm transition-all duration-200 hover:scale-105"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <span className="text-sm">🎧</span>
-              <span className="text-xs font-medium">Spotify</span>
-            </a>
-          )}
-          {appleMusicLink && (
-            <a
-              href={appleMusicLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-800/90 hover:bg-gray-900/90 text-white rounded-full backdrop-blur-sm transition-all duration-200 hover:scale-105"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <span className="text-sm">🎼</span>
-              <span className="text-xs font-medium">Apple</span>
-            </a>
-          )}
-          {youtubeLink && (
-            <a
-              href={youtubeLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-red-500/90 hover:bg-red-600/90 text-white rounded-full backdrop-blur-sm transition-all duration-200 hover:scale-105"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <span className="text-sm">📺</span>
-              <span className="text-xs font-medium">YouTube</span>
-            </a>
-          )}
-        </div>
 
-        {/* Like button and count */}
-        {showLikes && (
-          <div className="flex items-center gap-2">
+          {/* Like button */}
+          {showLikes && (
             <button
               onClick={handleLikeToggle}
               disabled={isLiking}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full backdrop-blur-sm transition-all duration-200 ${
-                liked ? 'bg-red-500/90 text-white' : 'bg-white/20 text-white hover:bg-white/30'
-              } ${isLiking ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'}`}
+              className={`flex items-center gap-1.5 px-3 py-2 rounded-full backdrop-blur-sm transition-all duration-200 ${liked ? 'bg-red-500/90 text-white' : 'bg-white/20 text-white hover:bg-white/30'
+                } ${isLiking ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'}`}
             >
               <svg
                 className={`w-4 h-4 ${liked ? 'fill-current' : 'stroke-current fill-none'}`}
@@ -200,8 +290,8 @@ export default function SongCard({
               </svg>
               <span className="text-sm font-medium">{likes}</span>
             </button>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   )

@@ -49,7 +49,7 @@ const Navigation: React.FC = () => {
 
   const isActive = (path: string) => {
     if (path === '/profile') return pathname === '/profile' || pathname === '/profile/edit'
-    if (path === '/friends') return pathname === '/friends' || pathname.startsWith('/friends/profile/')
+    if (path === '/friends') return pathname === '/friends' || pathname.startsWith('/friends/')
     if (path === '/feed') return pathname === '/feed' || pathname === '/home'
     return pathname === path
   }

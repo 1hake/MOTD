@@ -87,7 +87,7 @@ export default function Friends() {
               <div
                 key={friend.id}
                 className="group rounded-xl p-4  border border-gray-800 hover:border-indigo-500/40 hover:bg-gray-900 transition-colors duration-200 cursor-pointer backdrop-blur-sm"
-                onClick={() => navigate(`/friends/profile/${friend.id}`)}
+                onClick={() => navigate(`/profile/${friend.id}`)}
               >
                 <div className="flex items-center space-x-4">
                   <div className="relative">

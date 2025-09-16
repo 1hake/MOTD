@@ -84,47 +84,48 @@ export default function PlatformSelector({
     setLocalSelectedPlatform(selectedPlatform)
   }, [selectedPlatform])
 
-  // Utiliser l'état local si autoSave est activé, sinon utiliser selectedPlatform
+  // Utiliser l'état local si autoSave est activé, sinon utiliser selectedPlatform directement
   const currentSelectedPlatform = autoSave ? localSelectedPlatform : selectedPlatform
 
   const handlePlatformChange = async (platformId: string) => {
-    // Mettre à jour immédiatement l'état local pour un feedback visuel instantané
-    if (autoSave) {
-      setLocalSelectedPlatform(platformId)
-    }
-
-    // Appeler la fonction de callback parent
+    // Appeler la fonction de callback parent en premier
     onPlatformChange(platformId)
 
-    // Si autoSave est activé et qu'on a un utilisateur connecté
-    if (autoSave && user?.id) {
-      setIsSaving(true)
-      setSaveStatus('saving')
+    // Si autoSave est activé, gérer la sauvegarde automatique et l'état local
+    if (autoSave) {
+      // Mettre à jour immédiatement l'état local pour un feedback visuel instantané
+      setLocalSelectedPlatform(platformId)
 
-      try {
-        await updatePlatformPreference(user.id, platformId)
-        setSaveStatus('success')
+      // Si on a un utilisateur connecté, sauvegarder
+      if (user?.id) {
+        setIsSaving(true)
+        setSaveStatus('saving')
 
-        // Rafraîchir les données utilisateur
-        await refreshUser()
+        try {
+          await updatePlatformPreference(user.id, platformId)
+          setSaveStatus('success')
 
-        // Réinitialiser le statut après 2 secondes
-        setTimeout(() => {
-          setSaveStatus('idle')
-        }, 2000)
-      } catch (error) {
-        console.error('Erreur lors de la sauvegarde de la préférence:', error)
-        setSaveStatus('error')
+          // Rafraîchir les données utilisateur
+          await refreshUser()
 
-        // En cas d'erreur, revenir à la sélection précédente
-        setLocalSelectedPlatform(selectedPlatform)
+          // Réinitialiser le statut après 2 secondes
+          setTimeout(() => {
+            setSaveStatus('idle')
+          }, 2000)
+        } catch (error) {
+          console.error('Erreur lors de la sauvegarde de la préférence:', error)
+          setSaveStatus('error')
 
-        // Réinitialiser le statut après 3 secondes
-        setTimeout(() => {
-          setSaveStatus('idle')
-        }, 3000)
-      } finally {
-        setIsSaving(false)
+          // En cas d'erreur, revenir à la sélection précédente
+          setLocalSelectedPlatform(selectedPlatform)
+
+          // Réinitialiser le statut après 3 secondes
+          setTimeout(() => {
+            setSaveStatus('idle')
+          }, 3000)
+        } finally {
+          setIsSaving(false)
+        }
       }
     }
   }
