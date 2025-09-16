@@ -1,50 +1,44 @@
-
-import React, { useState, useEffect } from 'react';
-import { api } from '../lib/api';
-import { getToken, getUserIdFromToken } from '../lib/storage';
-import { useNavigate } from 'react-router-dom';
-import LoadingState from '../components/LoadingState';
-import FriendsSearch from '../components/FriendsSearch';
+import React, { useState, useEffect } from 'react'
+import { api } from '../lib/api'
+import { useAuth } from '../hooks/useAuth'
+import { useNavigate } from 'react-router-dom'
+import LoadingState from '../components/LoadingState'
+import FriendsSearch from '../components/FriendsSearch'
 
 type Friend = {
-  id: number;
-  email: string;
-  name?: string;
-};
+  id: number
+  email: string
+  name?: string
+}
 
 export default function Friends() {
-  const [friends, setFriends] = useState<Friend[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [currentUserId, setCurrentUserId] = useState<number | null>(null);
-  const navigate = useNavigate();
+  const [friends, setFriends] = useState<Friend[]>([])
+  const [loading, setLoading] = useState(false)
+  const navigate = useNavigate()
+  const { user, isAuthenticated } = useAuth()
 
   const fetchData = async () => {
+    if (!isAuthenticated || !user) {
+      navigate('/login')
+      return
+    }
+
     try {
-      setLoading(true);
-      const token = await getToken();
-      if (!token) return navigate('/');
-
-      const userId = getUserIdFromToken(token);
-      if (!userId) {
-        console.error('Could not get user ID from token');
-        return navigate('/');
-      }
-
-      setCurrentUserId(userId);
+      setLoading(true)
 
       // Fetch friends list
-      const friendsRes = await api.get(`/friends?userId=${userId}`);
-      setFriends(friendsRes.data);
+      const friendsRes = await api.get('/friends')
+      setFriends(friendsRes.data)
     } catch (error) {
-      console.error('Error fetching data:', error);
+      console.error('Error fetching data:', error)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   useEffect(() => {
-    fetchData();
-  }, [navigate]);
+    fetchData()
+  }, [navigate])
 
   return (
     <div className="h-screen text-gray-100">
@@ -54,17 +48,17 @@ export default function Friends() {
           <h1 className="text-3xl font-bold tracking-tight text-white mb-6">Mes amis</h1>
 
           {/* Search Bar */}
-          {currentUserId && (
+          {user && (
             <div className="mb-6">
-              <FriendsSearch
-                currentUserId={currentUserId}
-              />
+              <FriendsSearch currentUserId={user.id} />
             </div>
           )}
 
           <div className="flex items-center justify-between">
             <p className="text-gray-400">
-              {friends.length === 0 ? 'Aucun ami pour le moment' : `${friends.length} ami${friends.length > 1 ? 's' : ''}`}
+              {friends.length === 0
+                ? 'Aucun ami pour le moment'
+                : `${friends.length} ami${friends.length > 1 ? 's' : ''}`}
             </p>
           </div>
         </div>
@@ -119,5 +113,5 @@ export default function Friends() {
         )}
       </div>
     </div>
-  );
+  )
 }

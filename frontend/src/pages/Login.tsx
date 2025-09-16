@@ -1,35 +1,29 @@
-
-import React, { useState } from 'react';
-import { api } from '../lib/api';
-import { setToken } from '../lib/storage';
-import { useNavigate, Link } from 'react-router-dom';
-import logo2 from '../assets/img/logoblack.png';
-import DiggerButton from '../components/DiggerButton';
+import React, { useState } from 'react'
+import { useNavigate, Link } from 'react-router-dom'
+import { useAuth } from '../hooks/useAuth'
+import logo2 from '../assets/img/logoblack.png'
+import DiggerButton from '../components/DiggerButton'
 
 export default function Login() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+  const navigate = useNavigate()
+  const { login, isLoading } = useAuth()
 
   const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
+    e.preventDefault()
+    setError('')
 
     try {
-      const res = await api.post('/auth/login', { email, password });
-      await setToken(res.data.token);
-      navigate('/feed');
+      await login({ email, password })
+      navigate('/feed')
     } catch (error: any) {
-      console.error('Login failed:', error);
-      const errorMessage = error.response?.data?.error || 'Login failed. Please try again.';
-      setError(errorMessage);
-    } finally {
-      setLoading(false);
+      console.error('Login failed:', error)
+      const errorMessage = error.response?.data?.error || 'Login failed. Please try again.'
+      setError(errorMessage)
     }
-  };
+  }
 
   return (
     <div className="min-h-screen bg-[#EEE1CF]">
@@ -42,9 +36,7 @@ export default function Login() {
         <div className="w-full max-w-md mx-auto  rounded-4xl overflow-hidden relative z-10 animate-in">
           <div className="p-2">
             <div className="text-center mb-8">
-              <h1 className="text-4xl font-bold  mb-2">
-                Connexion
-              </h1>
+              <h1 className="text-4xl font-bold  mb-2">Connexion</h1>
               <p className="text-primary-600 text-lg">Partagez votre musique du jour</p>
             </div>
 
@@ -67,7 +59,7 @@ export default function Login() {
                   placeholder="votre@email.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  disabled={loading}
+                  disabled={isLoading}
                 />
               </div>
               <div className="space-y-2">
@@ -82,15 +74,15 @@ export default function Login() {
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  disabled={loading}
+                  disabled={isLoading}
                 />
               </div>
               <DiggerButton
                 type="submit"
-                disabled={loading}
+                disabled={isLoading}
                 className="w-full border-black border-2 rounded-xl py-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {loading ? (
+                {isLoading ? (
                   <span className="flex items-center justify-center gap-2">
                     <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                     Connexion...
@@ -118,5 +110,5 @@ export default function Login() {
         </div>
       </div>
     </div>
-  );
+  )
 }

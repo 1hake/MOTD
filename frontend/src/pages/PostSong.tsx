@@ -1,44 +1,44 @@
-import React, { useState } from 'react';
-import { api } from '../lib/api';
-import { getToken, getUserIdFromToken } from '../lib/storage';
-import { useNavigate } from 'react-router-dom';
-import Search from '../components/Search';
-import { generateMusicServiceLinks } from '../lib/musicServices';
+import React, { useState } from 'react'
+import { api } from '../lib/api'
+import { useAuth } from '../hooks/useAuth'
+import { useNavigate } from 'react-router-dom'
+import Search from '../components/Search'
+import { generateMusicServiceLinks } from '../lib/musicServices'
 
 export default function PostSong() {
   const [selected, setSelected] = useState<{
-    title: string;
-    artist: string;
-    link: string;
-    cover?: string | null;
-    id?: number;
-  } | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [isSearching, setIsSearching] = useState(false);
-  const navigate = useNavigate();
+    title: string
+    artist: string
+    link: string
+    cover?: string | null
+    id?: number
+  } | null>(null)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [isSearching, setIsSearching] = useState(false)
+  const navigate = useNavigate()
+  const { user, isAuthenticated } = useAuth()
 
   const submit = async () => {
-    if (!selected || isSubmitting) return;
+    if (!selected || isSubmitting) return
+
+    if (!isAuthenticated || !user) {
+      navigate('/login')
+      return
+    }
 
     try {
-      setIsSubmitting(true);
-      setError(null);
-
-      const token = await getToken();
-      if (!token) return navigate('/');
-
-      const userId = getUserIdFromToken(token);
-      if (!userId) return navigate('/');
+      setIsSubmitting(true)
+      setError(null)
 
       // Generate links for all music services
       const musicLinks = selected.id
         ? generateMusicServiceLinks({
-          id: selected.id,
-          title: selected.title,
-          artist: selected.artist
-        })
-        : {};
+            id: selected.id,
+            title: selected.title,
+            artist: selected.artist
+          })
+        : {}
 
       await api.post('/posts', {
         title: selected.title,
@@ -49,25 +49,25 @@ export default function PostSong() {
         spotifyLink: musicLinks.spotify,
         appleMusicLink: musicLinks.appleMusic,
         userId
-      });
+      })
 
-      navigate('/feed');
+      navigate('/feed')
     } catch (err: any) {
-      setIsSubmitting(false);
+      setIsSubmitting(false)
 
       // Handle 400 error (already posted today)
       if (err.response?.status === 400) {
-        setError('Déjà posté aujourd\'hui');
+        setError("Déjà posté aujourd'hui")
       } else {
-        setError('Erreur lors de la publication. Veuillez réessayer.');
+        setError('Erreur lors de la publication. Veuillez réessayer.')
       }
     }
-  };
+  }
 
   const handleCancel = () => {
-    setSelected(null);
-    setError(null);
-  };
+    setSelected(null)
+    setError(null)
+  }
 
   return (
     <div className="min-h-[calc(100vh-8rem)] p-4 overflow-hidden">
@@ -79,20 +79,22 @@ export default function PostSong() {
               <h1 className="text-4xl font-bold bg-gradient-to-r from-emerald-600 to-green-600 bg-clip-text text-transparent mb-2">
                 Partager votre son du jour
               </h1>
-              <p className="text-gray-600 text-lg">Recherchez et sélectionnez la musique que vous souhaitez partager.</p>
+              <p className="text-gray-600 text-lg">
+                Recherchez et sélectionnez la musique que vous souhaitez partager.
+              </p>
             </div>
             {/* Search Component */}
             <div className="w-full">
               <Search
-                onSelect={track => {
+                onSelect={(track) => {
                   setSelected({
                     title: track.title,
                     artist: track.artist,
                     link: `https://www.deezer.com/track/${track.id}`,
                     cover: track.cover || null,
                     id: track.id
-                  });
-                  setError(null);
+                  })
+                  setError(null)
                 }}
                 onSearchChange={(query) => setIsSearching(!!query)}
               />
@@ -116,36 +118,38 @@ export default function PostSong() {
               </div>
 
               {/* Track Info */}
-              <h3 className="text-3xl font-bold text-gray-900 truncate" title={selected.title}>{selected.title}</h3>
-              <p className="text-xl text-gray-600 truncate" title={selected.artist}>{selected.artist}</p>
+              <h3 className="text-3xl font-bold text-gray-900 truncate" title={selected.title}>
+                {selected.title}
+              </h3>
+              <p className="text-xl text-gray-600 truncate" title={selected.artist}>
+                {selected.artist}
+              </p>
 
               {/* Actions */}
               <div className="mt-8 flex flex-col gap-4">
                 <button
                   onClick={submit}
                   disabled={isSubmitting || !!error}
-                  className={`w-full px-8 py-4 rounded-2xl font-bold text-lg transition-all duration-200 ${error
-                    ? 'bg-red-100 text-red-600 cursor-not-allowed border-2 border-red-200'
-                    : isSubmitting
+                  className={`w-full px-8 py-4 rounded-2xl font-bold text-lg transition-all duration-200 ${
+                    error
+                      ? 'bg-red-100 text-red-600 cursor-not-allowed border-2 border-red-200'
+                      : isSubmitting
                       ? 'bg-emerald-400 text-white cursor-not-allowed'
                       : 'bg-gradient-to-r from-emerald-500 to-green-600 text-white hover:from-emerald-600 hover:to-green-700 hover:shadow-xl transform hover:scale-105 active:scale-95'
-                    } shadow-lg`}
+                  } shadow-lg`}
                 >
-                  {error
-                    ? error
-                    : isSubmitting
-                      ? (
-                        <span className="flex items-center justify-center gap-2">
-                          <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                          Publication...
-                        </span>
-                      )
-                      : (
-                        <span className="flex items-center justify-center gap-2">
-                          ✨ <span>Publier</span>
-                        </span>
-                      )
-                  }
+                  {error ? (
+                    error
+                  ) : isSubmitting ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      Publication...
+                    </span>
+                  ) : (
+                    <span className="flex items-center justify-center gap-2">
+                      ✨ <span>Publier</span>
+                    </span>
+                  )}
                 </button>
                 <button
                   onClick={handleCancel}
@@ -160,5 +164,5 @@ export default function PostSong() {
         )}
       </div>
     </div>
-  );
+  )
 }

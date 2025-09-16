@@ -1,12 +1,65 @@
-import axios from 'axios';
+import axios, { AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios'
+import { authService } from './auth'
 
-export const api = axios.create({ baseURL: import.meta.env.VITE_API_URL || 'http://localhost:4000' });
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000'
 
-// Like/Unlike functions
-export const likePost = async (postId: number, userId: number) => {
-    return api.post(`/posts/${postId}/like`, { userId });
-};
+export const api = axios.create({
+  baseURL: API_BASE_URL,
+  headers: {
+    'Content-Type': 'application/json'
+  }
+})
 
-export const unlikePost = async (postId: number, userId: number) => {
-    return api.delete(`/posts/${postId}/like`, { data: { userId } });
-};
+// Request interceptor to add auth token
+api.interceptors.request.use(
+  async (config) => {
+    const authHeader = await authService.getAuthHeader()
+    if (authHeader) {
+      config.headers.Authorization = authHeader
+    }
+    return config
+  },
+  (error) => {
+    return Promise.reject(error)
+  }
+)
+
+// Response interceptor to handle token refresh
+api.interceptors.response.use(
+  (response: AxiosResponse) => {
+    return response
+  },
+  async (error: AxiosError) => {
+    const originalRequest = error.config as AxiosRequestConfig & { _retry?: boolean }
+
+    // If error is 401 and we haven't already tried to refresh
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true
+
+      try {
+        const tokens = await authService.refreshAccessToken()
+        if (tokens && originalRequest.headers) {
+          originalRequest.headers.Authorization = `Bearer ${tokens.accessToken}`
+          return api(originalRequest)
+        }
+      } catch (refreshError) {
+        console.error('Token refresh failed:', refreshError)
+        // Redirect to login or handle auth failure
+        await authService.logout()
+        window.location.href = '/login'
+        return Promise.reject(refreshError)
+      }
+    }
+
+    return Promise.reject(error)
+  }
+)
+
+// Like/Unlike functions (updated to not require userId in body)
+export const likePost = async (postId: number) => {
+  return api.post(`/posts/${postId}/like`)
+}
+
+export const unlikePost = async (postId: number) => {
+  return api.delete(`/posts/${postId}/like`)
+}
