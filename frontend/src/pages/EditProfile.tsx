@@ -4,6 +4,7 @@ import { useAuth } from '../hooks/useAuth'
 import { useNavigate } from 'react-router-dom'
 import LoadingState from '../components/LoadingState'
 import PlatformSelector from '../components/PlatformSelector'
+import { useToast } from '../components/Toast'
 
 type User = {
   id: number
@@ -32,6 +33,7 @@ export default function EditProfile() {
     platformPreference: ''
   })
   const { user: currentUser, isAuthenticated, refreshUser } = useAuth()
+  const { showToast } = useToast()
 
   useEffect(() => {
     ;(async () => {
@@ -94,6 +96,9 @@ export default function EditProfile() {
         // Refresh the user data in AuthContext to ensure Profile page shows updated data
         await refreshUser()
 
+        // Show success toast
+        showToast('Profil mis à jour avec succès !', 'success')
+
         // Reset status after a delay
         setTimeout(() => {
           setSaveStatus('idle')
@@ -106,7 +111,9 @@ export default function EditProfile() {
       console.error('Error updating profile:', error)
       setSaveStatus('error')
       const errorMessage = error.response?.data?.error || 'Erreur lors de la mise à jour du profil'
-      console.error(errorMessage)
+      
+      // Show error toast
+      showToast(errorMessage, 'error')
 
       // Reset error status after a delay
       setTimeout(() => {
@@ -115,7 +122,7 @@ export default function EditProfile() {
     } finally {
       setSaving(false)
     }
-  }, [formData, user, saving, refreshUser])
+  }, [formData, user, saving, refreshUser, showToast])
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }))

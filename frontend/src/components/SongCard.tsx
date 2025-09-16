@@ -85,6 +85,7 @@ export default function SongCard({
         return spotifyLink ? { url: spotifyLink, name: 'Spotify', icon: '🎧', color: 'bg-green-500' } : null
       case 'deezer':
         return deezerLink ? { url: deezerLink, name: 'Deezer', icon: '🎵', color: 'bg-orange-500' } : null
+      case 'apple':
       case 'apple music':
       case 'applemusic':
         return appleMusicLink ? { url: appleMusicLink, name: 'Apple Music', icon: '🎼', color: 'bg-gray-800' } : null

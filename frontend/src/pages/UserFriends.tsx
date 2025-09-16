@@ -59,10 +59,6 @@ export default function UserFriends() {
         })()
     }, [navigate, userId, isAuthenticated, currentUser])
 
-    // Helper function to capitalize first letter
-    const capitalizeFirstLetter = (str: string) => {
-        return str.charAt(0).toUpperCase() + str.slice(1)
-    }
 
     if (loading) {
         return <LoadingState message="Chargement des amis..." />
@@ -100,14 +96,16 @@ export default function UserFriends() {
 
                 {/* Header */}
                 <div className="mb-8">
-                    <h1 className="text-3xl font-bold text-white mb-2">
-                        {isOwnProfile ? 'Mes amis' : `Amis de ${user.name || user.email.split('@')[0]}`}
-                    </h1>
-                    {canViewFriends && (
-                        <p className="text-gray-400">
-                            {friends.length} ami{friends.length > 1 ? 's' : ''}
-                        </p>
-                    )}
+                    <div className="bg-gray-900/30 backdrop-blur-sm rounded-2xl border border-gray-800/30 p-6">
+                        <h1 className="text-2xl font-semibold text-white mb-2">
+                            {isOwnProfile ? 'Mes amis' : `Amis de ${user.name || user.email.split('@')[0]}`}
+                        </h1>
+                        {canViewFriends && (
+                            <p className="text-gray-400">
+                                {friends.length} ami{friends.length > 1 ? 's' : ''}
+                            </p>
+                        )}
+                    </div>
                 </div>
 
                 {/* Friends List */}
@@ -132,7 +130,7 @@ export default function UserFriends() {
                         </p>
                         {isOwnProfile && (
                             <button
-                                onClick={() => navigate('/friends')}
+                                onClick={() => navigate('/explorer')}
                                 className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors"
                             >
                                 Découvrir des amis
@@ -140,40 +138,30 @@ export default function UserFriends() {
                         )}
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {friends.map((friend) => (
                             <div
                                 key={friend.id}
-                                className="bg-gray-800/50 hover:bg-gray-800/70 backdrop-blur-sm rounded-xl border border-gray-700/50 hover:border-gray-600/50 transition-all duration-300 p-6"
+                                className="bg-gray-900/30 hover:bg-gray-900/50 backdrop-blur-sm rounded-xl border border-gray-800/30 hover:border-gray-700/50 transition-all duration-300 p-5"
                             >
                                 {/* Avatar and basic info */}
-                                <div className="flex items-center gap-4 mb-4">
-                                    <div className="w-16 h-16 bg-gradient-to-br from-indigo-500 to-fuchsia-600 rounded-full flex items-center justify-center text-white text-xl font-bold">
+                                <div className="flex items-center gap-3 mb-4">
+                                    <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-fuchsia-600 rounded-lg flex items-center justify-center text-white text-lg font-bold">
                                         {friend.name ? friend.name.charAt(0).toUpperCase() : friend.email.charAt(0).toUpperCase()}
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                        <h3 className="font-semibold text-white text-lg leading-tight">
+                                        <h3 className="font-semibold text-white text-base leading-tight">
                                             {friend.name || friend.email.split('@')[0]}
                                         </h3>
-                                        <p className="text-indigo-300 text-sm">@{friend.email.split('@')[0]}</p>
+                                        <p className="text-gray-400 text-sm">@{friend.email.split('@')[0]}</p>
                                     </div>
                                 </div>
-
-                                {/* Platform preference */}
-                                {friend.platformPreference && (
-                                    <div className="flex items-center gap-2 text-gray-400 text-sm mb-4">
-                                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                            <path d="M10 2L3 7v11h4v-6h6v6h4V7l-7-5z" />
-                                        </svg>
-                                        <span>{capitalizeFirstLetter(friend.platformPreference)}</span>
-                                    </div>
-                                )}
 
                                 {/* Action buttons */}
                                 <div className="flex gap-2">
                                     <button
                                         onClick={() => navigate(`/profile/${friend.id}`)}
-                                        className="flex-1 px-4 py-2 bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 border border-indigo-500/30 hover:border-indigo-500/50 rounded-lg transition-all duration-200 text-sm font-medium"
+                                        className="flex-1 px-3 py-2 bg-gray-800/50 hover:bg-gray-700/50 text-gray-300 hover:text-white border border-gray-700/50 hover:border-gray-600/50 rounded-lg transition-all duration-200 text-sm font-medium"
                                     >
                                         Voir le profil
                                     </button>

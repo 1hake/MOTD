@@ -2,12 +2,13 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import './index.css'
+import { ToastProvider } from './components/Toast'
 import { AuthProvider } from './contexts/AuthContext'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
 import Feed from './pages/Feed'
 import PostSong from './pages/PostSong'
-import Friends from './pages/Friends'
+import Explorer from './pages/Explorer'
 import Profile from './pages/Profile'
 import FriendProfile from './pages/FriendProfile'
 import EditProfile from './pages/EditProfile'
@@ -17,81 +18,91 @@ import Layout from './Layout'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <AuthProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/" element={<Navigate to="/login" replace />} />
-          <Route element={<Layout />}>
-            <Route
-              path="/feed"
-              element={
-                <ProtectedRoute>
-                  <Feed />
-                </ProtectedRoute>
-              }
-            />
-            <Route path="/home" element={<Navigate to="/feed" replace />} />
-            <Route
-              path="/post"
-              element={
-                <ProtectedRoute>
-                  <PostSong />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/friends"
-              element={
-                <ProtectedRoute>
-                  <Friends />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/friends/me"
-              element={
-                <ProtectedRoute>
-                  <UserFriends />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/friends/:userId"
-              element={
-                <ProtectedRoute>
-                  <UserFriends />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/profile"
-              element={
-                <ProtectedRoute>
-                  <Profile />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/profile/:userId"
-              element={
-                <ProtectedRoute>
-                  <FriendProfile />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/profile/edit"
-              element={
-                <ProtectedRoute>
-                  <EditProfile />
-                </ProtectedRoute>
-              }
-            />
-          </Route>
-        </Routes>
-      </BrowserRouter>
-    </AuthProvider>
+    <ToastProvider>
+      <AuthProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/" element={<Navigate to="/login" replace />} />
+            <Route element={<Layout />}>
+              <Route
+                path="/feed"
+                element={
+                  <ProtectedRoute>
+                    <Feed />
+                  </ProtectedRoute>
+                }
+              />
+              <Route path="/home" element={<Navigate to="/feed" replace />} />
+              <Route
+                path="/post"
+                element={
+                  <ProtectedRoute>
+                    <PostSong />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/explorer"
+                element={
+                  <ProtectedRoute>
+                    <Explorer />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/friends"
+                element={
+                  <ProtectedRoute>
+                    <Explorer />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/friends/me"
+                element={
+                  <ProtectedRoute>
+                    <UserFriends />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/friends/:userId"
+                element={
+                  <ProtectedRoute>
+                    <UserFriends />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/profile"
+                element={
+                  <ProtectedRoute>
+                    <Profile />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/profile/:userId"
+                element={
+                  <ProtectedRoute>
+                    <FriendProfile />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/profile/edit"
+                element={
+                  <ProtectedRoute>
+                    <EditProfile />
+                  </ProtectedRoute>
+                }
+              />
+            </Route>
+          </Routes>
+        </BrowserRouter>
+      </AuthProvider>
+    </ToastProvider>
   </React.StrictMode>
 )

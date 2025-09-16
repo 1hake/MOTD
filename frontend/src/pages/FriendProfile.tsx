@@ -46,13 +46,13 @@ export default function FriendProfile() {
       }
 
       if (!userId) {
-        navigate('/friends')
+        navigate('/explorer')
         return
       }
 
       const targetUserId = parseInt(userId, 10)
       if (!Number.isFinite(targetUserId)) {
-        navigate('/friends')
+        navigate('/explorer')
         return
       }
 
@@ -72,7 +72,7 @@ export default function FriendProfile() {
         setFriendsCount(friendsRes.data.count)
       } catch (error) {
         console.error('Error fetching friend profile data:', error)
-        navigate('/friends')
+        navigate('/explorer')
       } finally {
         setLoading(false)
       }
@@ -85,10 +85,6 @@ export default function FriendProfile() {
     )
   }
 
-  // Helper function to capitalize first letter
-  const capitalizeFirstLetter = (str: string) => {
-    return str.charAt(0).toUpperCase() + str.slice(1)
-  }
 
   // Simple and clean date display
   const getDateDisplay = (dateString: string) => {
@@ -160,13 +156,13 @@ export default function FriendProfile() {
         {/* Back button */}
         <div className="mb-6">
           <button
-            onClick={() => navigate('/friends')}
+            onClick={() => navigate('/explorer')}
             className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
-            Retour aux amis
+            Retour à l'explorateur
           </button>
         </div>
 
@@ -205,14 +201,6 @@ export default function FriendProfile() {
                       ami{friendsCount > 1 ? 's' : ''}
                     </span>
                   </button>
-                  {user.platformPreference && (
-                    <div className="text-center">
-                      <span className="text-sm text-gray-400">préfère </span>
-                      <span className="text-sm font-medium text-indigo-300">
-                        {capitalizeFirstLetter(user.platformPreference)}
-                      </span>
-                    </div>
-                  )}
                 </div>
 
                 {/* Follow button */}

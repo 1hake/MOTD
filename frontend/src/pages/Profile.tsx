@@ -72,10 +72,6 @@ export default function Profile() {
     )
   }
 
-  // Helper function to capitalize first letter
-  const capitalizeFirstLetter = (str: string) => {
-    return str.charAt(0).toUpperCase() + str.slice(1)
-  }
 
   // Simple and clean date display
   const getDateDisplay = (dateString: string) => {
@@ -179,14 +175,6 @@ export default function Profile() {
                       ami{friendsCount > 1 ? 's' : ''}
                     </span>
                   </button>
-                  {user.platformPreference && (
-                    <div className="text-center">
-                      <span className="text-sm text-gray-400">préfère </span>
-                      <span className="text-sm font-medium text-indigo-300">
-                        {capitalizeFirstLetter(user.platformPreference)}
-                      </span>
-                    </div>
-                  )}
                 </div>
 
                 {/* Action buttons */}
