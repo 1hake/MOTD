@@ -53,9 +53,9 @@ router.put('/:id', authenticateToken, async (req, res) => {
     return res.status(403).json({ error: 'You can only update your own profile' })
   }
 
-  // Validate platform preference if provided
+  // Validate platform preference if provided (allow empty string or null to clear selection)
   const validPlatforms = ['spotify', 'apple', 'deezer', 'youtube']
-  if (platformPreference && !validPlatforms.includes(platformPreference)) {
+  if (platformPreference !== undefined && platformPreference !== null && platformPreference !== '' && !validPlatforms.includes(platformPreference)) {
     return res.status(400).json({
       error: 'Invalid platform preference. Must be one of: spotify, apple, deezer, youtube'
     })
@@ -87,7 +87,7 @@ router.put('/:id', authenticateToken, async (req, res) => {
       data: {
         ...(name !== undefined && { name }),
         ...(email !== undefined && { email }),
-        ...(platformPreference !== undefined && { platformPreference }),
+        ...(platformPreference !== undefined && { platformPreference: platformPreference || null }),
         ...(profileImage !== undefined && { profileImage })
       },
       select: {

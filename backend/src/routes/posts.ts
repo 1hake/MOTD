@@ -6,7 +6,7 @@ import { getAllPlatformLinks } from '../services/musicService'
 const router = Router()
 
 router.post('/', authenticateToken, async (req, res) => {
-  const { title, artist, link, coverUrl } = req.body
+  const { title, artist, link, coverUrl, description } = req.body
   if (!title || !artist) {
     return res.status(400).json({ error: 'Missing fields' })
   }
@@ -49,6 +49,7 @@ router.post('/', authenticateToken, async (req, res) => {
       data: {
         title,
         artist,
+        description,
         link: link || finalDeezerLink || finalSpotifyLink || finalAppleMusicLink || finalYoutubeLink || '', // Fallback for backward compatibility
         deezerLink: finalDeezerLink,
         spotifyLink: finalSpotifyLink,
@@ -262,6 +263,73 @@ router.delete('/:postId/like', authenticateToken, async (req, res) => {
     res.json({ success: true })
   } catch (e) {
     console.error('[DELETE /posts/:postId/like] error:', e)
+    res.status(500).json({ error: 'Server error' })
+  }
+})
+
+// Explorer endpoint - get all users' posts for today with pagination
+router.get('/explore', authenticateToken, async (req, res) => {
+  const currentUserId = req.user!.id
+  const page = parseInt(req.query.page as string) || 1
+  const limit = parseInt(req.query.limit as string) || 10
+  const skip = (page - 1) * limit
+
+  try {
+    // Get today's date in UTC
+    const now = new Date()
+    const today = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0, 0))
+
+    // Get total count for pagination
+    const totalPosts = await prisma.songPost.count({
+      where: {
+        date: { gte: today }
+      }
+    })
+
+    // Get posts with user information and likes
+    const posts = await prisma.songPost.findMany({
+      where: {
+        date: { gte: today }
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            platformPreference: true
+          }
+        },
+        likes: {
+          select: {
+            userId: true
+          }
+        }
+      },
+      orderBy: { date: 'desc' },
+      skip,
+      take: limit
+    })
+
+    // Add like information
+    const postsWithLikes = posts.map((post) => ({
+      ...post,
+      likeCount: post.likes.length,
+      isLikedByUser: post.likes.some((like) => like.userId === currentUserId),
+      likes: undefined // Remove the likes array from response
+    }))
+
+    const hasMore = skip + posts.length < totalPosts
+
+    res.json({
+      posts: postsWithLikes,
+      hasMore,
+      total: totalPosts,
+      page,
+      limit
+    })
+  } catch (error) {
+    console.error('[GET /posts/explore] error:', error)
     res.status(500).json({ error: 'Server error' })
   }
 })

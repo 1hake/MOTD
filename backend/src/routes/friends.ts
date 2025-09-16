@@ -121,6 +121,26 @@ router.get('/status', authenticateToken, async (req, res) => {
   }
 })
 
+// Get friends count for a specific user
+router.get('/:userId/count', authenticateToken, async (req, res) => {
+  const userId = parseInt(req.params.userId, 10)
+
+  if (isNaN(userId)) {
+    return res.status(400).json({ error: 'Invalid userId format' })
+  }
+
+  try {
+    const friendsCount = await prisma.friendship.count({
+      where: { userId: userId }
+    })
+
+    res.json({ count: friendsCount })
+  } catch (error) {
+    console.error('Error fetching friends count:', error)
+    res.status(500).json({ error: 'Server error' })
+  }
+})
+
 // Unfollow a user
 router.delete('/', authenticateToken, async (req, res) => {
   const { friendId } = req.body

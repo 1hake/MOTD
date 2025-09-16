@@ -26,6 +26,7 @@ model SongPost {
   id             Int      @id @default(autoincrement())
   title          String
   artist         String
+  description    String? // Optional description field
   link           String // Keep for backward compatibility
   deezerLink     String?
   spotifyLink    String?
