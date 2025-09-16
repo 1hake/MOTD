@@ -97,9 +97,7 @@ const EmptyFeedCTA: React.FC<EmptyFeedCTAProps> = ({ show }) => {
         artist: selected.artist,
         link: selected.link,
         coverUrl: selected.cover,
-        deezerLink: musicLinks.deezer,
-        spotifyLink: musicLinks.spotify,
-        appleMusicLink: musicLinks.appleMusic
+        ...musicLinks
       })
 
       // Reload the page to show the new post

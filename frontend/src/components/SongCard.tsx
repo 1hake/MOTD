@@ -41,7 +41,6 @@ export default function SongCard({
   const [likes, setLikes] = useState(likeCount)
   const [isLiking, setIsLiking] = useState(false)
   const { isAuthenticated } = useAuth()
-
   const handleLikeToggle = async (e: React.MouseEvent) => {
     e.stopPropagation()
 

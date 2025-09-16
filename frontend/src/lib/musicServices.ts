@@ -1,18 +1,14 @@
 export interface MusicServiceLinks {
-  deezer?: string
-  spotify?: string
-  appleMusic?: string
-  youtube?: string
+  trackId: number
+  title: string
+  artist: string
 }
 
 export function generateMusicServiceLinks(track: { id: number; title: string; artist: string }): MusicServiceLinks {
-  const searchQuery = encodeURIComponent(`${track.artist} ${track.title}`)
-
   return {
-    deezer: `https://www.deezer.com/track/${track.id}`,
-    spotify: `https://open.spotify.com/search/${searchQuery}`,
-    appleMusic: `https://music.apple.com/search?term=${searchQuery}`,
-    youtube: `https://music.youtube.com/search?q=${searchQuery}`
+    trackId: track.id,
+    title: track.title,
+    artist: track.artist
   }
 }
 

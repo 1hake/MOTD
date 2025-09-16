@@ -39,17 +39,16 @@ export default function PostSong() {
             artist: selected.artist
           })
         : {}
-
-      await api.post('/posts', {
-        title: selected.title,
-        artist: selected.artist,
-        link: selected.link,
-        coverUrl: selected.cover,
-        deezerLink: musicLinks.deezer,
-        spotifyLink: musicLinks.spotify,
-        appleMusicLink: musicLinks.appleMusic,
-        userId: user.id
-      })
+      console.log(selected.id)
+      // await api.post('/posts', {
+      //   title: selected.title,
+      //   artist: selected.artist,
+      //   link: selected.link,
+      //   coverUrl: selected.cover,
+      //   trackId: selected.id,
+      //   ...musicLinks,
+      //   userId: user.id
+      // })
 
       navigate('/feed')
     } catch (err: any) {
