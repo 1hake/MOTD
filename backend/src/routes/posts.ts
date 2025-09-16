@@ -1,11 +1,12 @@
 import { Router } from 'express'
 import prisma from '../prismaClient'
 import { authenticateToken } from '../middleware/auth'
+import { getAllPlatformLinks } from '../services/musicService'
 
 const router = Router()
 
 router.post('/', authenticateToken, async (req, res) => {
-  const { title, artist, link, coverUrl, deezerLink, spotifyLink, appleMusicLink } = req.body
+  const { title, artist, link, coverUrl, deezerLink, spotifyLink, appleMusicLink, youtubeLink } = req.body
   if (!title || !artist) {
     return res.status(400).json({ error: 'Missing fields' })
   }
@@ -28,14 +29,35 @@ router.post('/', authenticateToken, async (req, res) => {
     })
     if (existing) return res.status(400).json({ error: 'Already posted today' })
 
+    // If no platform links are provided, try to fetch them automatically
+    let finalDeezerLink = deezerLink
+    let finalSpotifyLink = spotifyLink
+    let finalAppleMusicLink = appleMusicLink
+    let finalYoutubeLink = youtubeLink
+    console.log('par là')
+    // Only fetch links if none are provided
+    if (!deezerLink && !spotifyLink && !appleMusicLink && !youtubeLink) {
+      try {
+        const platformLinks = await getAllPlatformLinks(artist, title)
+        finalDeezerLink = platformLinks.deezerLink
+        finalSpotifyLink = platformLinks.spotifyLink
+        finalAppleMusicLink = platformLinks.appleMusicLink
+        finalYoutubeLink = platformLinks.youtubeLink
+      } catch (error) {
+        console.error('Error fetching platform links:', error)
+        // Continue with empty links if fetching fails
+      }
+    }
+
     const post = await prisma.songPost.create({
       data: {
         title,
         artist,
-        link: link || deezerLink || spotifyLink || appleMusicLink || '', // Fallback for backward compatibility
-        deezerLink,
-        spotifyLink,
-        appleMusicLink,
+        link: link || finalDeezerLink || finalSpotifyLink || finalAppleMusicLink || finalYoutubeLink || '', // Fallback for backward compatibility
+        deezerLink: finalDeezerLink,
+        spotifyLink: finalSpotifyLink,
+        appleMusicLink: finalAppleMusicLink,
+        youtubeLink: finalYoutubeLink,
         userId: uid,
         coverUrl
       }
@@ -118,6 +140,44 @@ router.get('/me', authenticateToken, async (req, res) => {
     res.json(postsWithLikes)
   } catch (e) {
     console.error('[GET /posts/me] error:', e)
+    res.status(500).json({ error: 'Server error' })
+  }
+})
+
+// Get posts by specific user ID (for friends profiles)
+router.get('/friends/:userId', authenticateToken, async (req, res) => {
+  const { userId } = req.params
+  const currentUserId = req.user!.id
+  const targetUserId = parseInt(userId, 10)
+
+  if (!Number.isFinite(targetUserId)) {
+    return res.status(400).json({ error: 'Invalid userId' })
+  }
+
+  try {
+    const posts = await prisma.songPost.findMany({
+      where: { userId: targetUserId },
+      include: {
+        likes: {
+          select: {
+            userId: true
+          }
+        }
+      },
+      orderBy: { date: 'desc' }
+    })
+
+    // Add like count and user's like status to each post
+    const postsWithLikes = posts.map((post) => ({
+      ...post,
+      likeCount: post.likes.length,
+      isLikedByUser: post.likes.some((like) => like.userId === currentUserId),
+      likes: undefined // Remove the likes array from response for cleaner data
+    }))
+
+    res.json(postsWithLikes)
+  } catch (e) {
+    console.error('[GET /posts/friends/:userId] error:', e)
     res.status(500).json({ error: 'Server error' })
   }
 })

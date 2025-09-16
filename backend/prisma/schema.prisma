@@ -30,6 +30,7 @@ model SongPost {
   deezerLink     String?
   spotifyLink    String?
   appleMusicLink String?
+  youtubeLink    String?
   coverUrl       String?
   date           DateTime @default(now())
   user           User     @relation(fields: [userId], references: [id])
