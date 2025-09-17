@@ -129,11 +129,10 @@ export default function PlatformSelector({
               className={`
                                 aspect-square w-full sm:w-20 sm:aspect-auto sm:flex-shrink-0 
                                 p-3 sm:p-3 rounded-xl sm:rounded-2xl border-2 transition-all duration-300 group relative overflow-hidden
-                                ${
-                                  currentSelectedPlatform === platform.id
-                                    ? `border-transparent bg-gradient-to-br ${platform.color} text-white shadow-lg transform scale-105`
-                                    : 'border-gray-700/50 bg-gray-800/40 text-gray-300 hover:border-gray-600/50 hover:bg-gray-800/60 hover:scale-105 hover:shadow-lg'
-                                }
+                                ${currentSelectedPlatform === platform.id
+                  ? `border-transparent bg-gradient-to-br ${platform.color} text-white shadow-lg transform scale-105`
+                  : 'border-gray-700/50 bg-gray-800/40 text-gray-300 hover:border-gray-600/50 hover:bg-gray-800/60 hover:scale-105 hover:shadow-lg'
+                }
                                 ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
                             `}
             >
@@ -147,11 +146,10 @@ export default function PlatformSelector({
                 <div
                   className={`
                                     transition-all duration-300 group-hover:scale-110
-                                    ${
-                                      currentSelectedPlatform === platform.id
-                                        ? 'text-white drop-shadow-lg'
-                                        : 'text-gray-400 group-hover:text-gray-200'
-                                    }
+                                    ${currentSelectedPlatform === platform.id
+                      ? 'text-white drop-shadow-lg'
+                      : 'text-gray-400 group-hover:text-gray-200'
+                    }
                                 `}
                 >
                   <div className="w-6 h-6 sm:w-7 sm:h-7">

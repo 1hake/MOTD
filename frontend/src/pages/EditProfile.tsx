@@ -311,10 +311,10 @@ export default function EditProfile() {
                 }))
                 // Update the original data reference to prevent conflicts
                 originalDataRef.current.platformPreference = newPlatformPreference
-                
+
                 // Update the user state with the new platform preference
                 setUser(prevUser => prevUser ? { ...prevUser, platformPreference: newPlatformPreference } : null)
-                
+
                 // Reset any pending changes indicator for platform preference
                 setHasChanges(false)
               }}
