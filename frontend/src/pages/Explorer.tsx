@@ -243,6 +243,7 @@ export default function Explorer() {
                     isLikedByUser={post.isLikedByUser}
                     onLikeChange={handleLikeChange}
                     showLikes={true}
+                    isOwnPost={post.user.id === currentUser?.id}
                     userPlatformPreference={currentUser?.platformPreference}
                     showUserHeader={true}
                     userInfo={{

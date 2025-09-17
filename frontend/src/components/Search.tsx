@@ -270,6 +270,7 @@ export default function Search({ onSelect, onSearchChange }: SearchProps) {
                                 coverUrl={it.cover || undefined}
                                 horizontal={true}
                                 showLikes={false}
+                                isOwnPost={false}
                                 className="transform hover:scale-[1.02] transition-transform duration-200"
                             />
                         </div>

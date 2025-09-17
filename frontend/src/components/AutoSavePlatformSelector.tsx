@@ -29,17 +29,14 @@ export default function AutoSavePlatformSelector({
     // car la sauvegarde est gérée automatiquement dans PlatformSelector
     console.log('Platform changed to:', platformId)
 
-    // Si on a un callback de mise à jour, l'appeler après un délai
+    // Si on a un callback de mise à jour, l'appeler immédiatement avec la nouvelle valeur
     if (onUserUpdate && propUser) {
-      setTimeout(async () => {
-        try {
-          // Rafraîchir les données utilisateur depuis le serveur
-          const response = await api.get(`/users/${propUser.id}`)
-          onUserUpdate(response.data)
-        } catch (error) {
-          console.error('Error refreshing user data:', error)
-        }
-      }, 1000) // Attendre 1 seconde pour que la sauvegarde soit terminée
+      // Mettre à jour immédiatement avec la nouvelle préférence
+      const updatedUser = {
+        ...propUser,
+        platformPreference: platformId || undefined
+      }
+      onUserUpdate(updatedUser)
     }
   }
 

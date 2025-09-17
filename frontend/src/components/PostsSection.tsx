@@ -27,9 +27,10 @@ interface PostsSectionProps {
   showCount?: boolean
   emptyMessage?: React.ReactNode
   onLikeChange?: (postId: number, isLiked: boolean, newLikeCount: number) => void
+  currentUserId?: number
 }
 
-const PostsSection: React.FC<PostsSectionProps> = ({ title, posts, showCount = false, emptyMessage, onLikeChange }) => {
+const PostsSection: React.FC<PostsSectionProps> = ({ title, posts, showCount = false, emptyMessage, onLikeChange, currentUserId }) => {
   return (
     <div className="space-y-6 animate-in">
       <div className="flex items-start gap-3">
@@ -64,6 +65,7 @@ const PostsSection: React.FC<PostsSectionProps> = ({ title, posts, showCount = f
               likeCount={post.likeCount}
               isLikedByUser={post.isLikedByUser}
               showLikes={!!post.user?.email} // Only show likes for shared posts
+              isOwnPost={post.user?.id === currentUserId}
               onLikeChange={onLikeChange}
               className="animate-up"
             />

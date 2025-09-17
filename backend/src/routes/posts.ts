@@ -218,6 +218,11 @@ router.post('/:postId/like', authenticateToken, async (req, res) => {
     })
     if (!post) return res.status(404).json({ error: 'Post not found' })
 
+    // Prevent users from liking their own posts
+    if (post.userId === uid) {
+      return res.status(400).json({ error: 'You cannot like your own post' })
+    }
+
     // Check if user already liked this post
     const existingLike = await prisma.like.findUnique({
       where: {
@@ -287,6 +292,67 @@ router.delete('/:postId/like', authenticateToken, async (req, res) => {
     res.json({ success: true })
   } catch (e) {
     console.error('[DELETE /posts/:postId/like] error:', e)
+    res.status(500).json({ error: 'Server error' })
+  }
+})
+
+// Get liked posts by current user
+router.get('/liked', authenticateToken, async (req, res) => {
+  const uid = req.user!.id
+
+  try {
+    const likedPosts = await prisma.like.findMany({
+      where: { userId: uid },
+      include: {
+        songPost: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+                platformPreference: true
+              }
+            },
+            likes: {
+              select: {
+                userId: true
+              }
+            }
+          }
+        }
+      },
+      orderBy: { createdAt: 'desc' }
+    })
+
+    // Transform the data to match the expected format
+    const postsWithLikes = likedPosts.map((like) => ({
+      ...like.songPost,
+      likeDate: like.createdAt, // Add the date when user liked this post
+      likeCount: like.songPost.likes.length,
+      isLikedByUser: true, // Always true since these are user's liked posts
+      likes: undefined // Remove the likes array from response for cleaner data
+    }))
+
+    res.json(postsWithLikes)
+  } catch (e) {
+    console.error('[GET /posts/liked] error:', e)
+    res.status(500).json({ error: 'Server error' })
+  }
+})
+
+// Get liked posts count for current user
+router.get('/liked/count', authenticateToken, async (req, res) => {
+  const uid = req.user!.id
+
+  try {
+    const count = await prisma.like.count({
+      where: { userId: uid }
+    })
+
+    res.json({ count })
+  } catch (e) {
+    console.error('[GET /posts/liked/count] error:', e)
     res.status(500).json({ error: 'Server error' })
   }
 })

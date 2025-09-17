@@ -108,7 +108,7 @@ export default function Feed() {
         <EmptyFeedCTA show={myPosts.length === 0} />
 
         {/* My posts today */}
-        {myPosts.length > 0 && <PostsSection title="Ma chanson du jour" posts={myPosts} />}
+        {myPosts.length > 0 && <PostsSection title="Ma chanson du jour" posts={myPosts} currentUserId={user?.id} />}
 
         {/* Friends' posts */}
         {myPosts.length > 0 && (
@@ -118,6 +118,7 @@ export default function Feed() {
             showCount={true}
             emptyMessage={<EmptyFriendsState />}
             onLikeChange={handleLikeChange}
+            currentUserId={user?.id}
           />
         )}
       </div>

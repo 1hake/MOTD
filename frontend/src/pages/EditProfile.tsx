@@ -138,7 +138,8 @@ export default function EditProfile() {
     }
 
     // Set new timeout for auto-save (2 seconds after user stops typing)
-    if (hasFormChanges) {
+    // Only for non-platform preference fields
+    if (hasFormChanges && field !== 'platformPreference') {
       saveTimeoutRef.current = setTimeout(() => {
         autoSave()
       }, 2000)
@@ -303,15 +304,21 @@ export default function EditProfile() {
               user={user}
               onUserUpdate={(updatedUser) => {
                 // Update the form data when the platform preference is saved
+                const newPlatformPreference = updatedUser.platformPreference || ''
                 setFormData(prev => ({
                   ...prev,
-                  platformPreference: updatedUser.platformPreference || ''
+                  platformPreference: newPlatformPreference
                 }))
                 // Update the original data reference to prevent conflicts
-                originalDataRef.current.platformPreference = updatedUser.platformPreference || ''
-                setUser(updatedUser)
+                originalDataRef.current.platformPreference = newPlatformPreference
+                
+                // Update the user state with the new platform preference
+                setUser(prevUser => prevUser ? { ...prevUser, platformPreference: newPlatformPreference } : null)
+                
+                // Reset any pending changes indicator for platform preference
+                setHasChanges(false)
               }}
-              disabled={saving}
+              disabled={false}
               showClearOption={true}
             />
 

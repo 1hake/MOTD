@@ -73,8 +73,6 @@ export default function PlatformSelector({
   autoSave = false
 }: PlatformSelectorProps) {
   const { user, refreshUser } = useAuth()
-  const [isSaving, setIsSaving] = useState(false)
-  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'success' | 'error'>('idle')
 
   // État local pour la sélection immédiate quand autoSave est activé
   const [localSelectedPlatform, setLocalSelectedPlatform] = useState(selectedPlatform)
@@ -96,35 +94,18 @@ export default function PlatformSelector({
       // Mettre à jour immédiatement l'état local pour un feedback visuel instantané
       setLocalSelectedPlatform(platformId)
 
-      // Si on a un utilisateur connecté, sauvegarder
+      // Si on a un utilisateur connecté, sauvegarder silencieusement
       if (user?.id) {
-        setIsSaving(true)
-        setSaveStatus('saving')
-
         try {
           await updatePlatformPreference(user.id, platformId)
-          setSaveStatus('success')
-
           // Rafraîchir les données utilisateur
           await refreshUser()
-
-          // Réinitialiser le statut après 2 secondes
-          setTimeout(() => {
-            setSaveStatus('idle')
-          }, 2000)
         } catch (error) {
           console.error('Erreur lors de la sauvegarde de la préférence:', error)
-          setSaveStatus('error')
-
           // En cas d'erreur, revenir à la sélection précédente
           setLocalSelectedPlatform(selectedPlatform)
-
-          // Réinitialiser le statut après 3 secondes
-          setTimeout(() => {
-            setSaveStatus('idle')
-          }, 3000)
-        } finally {
-          setIsSaving(false)
+          // Notifier le parent de l'échec en renvoyant la valeur précédente
+          onPlatformChange(selectedPlatform)
         }
       }
     }
@@ -132,35 +113,7 @@ export default function PlatformSelector({
   return (
     <div className="space-y-6 bg-gray-900/30 backdrop-blur-sm rounded-xl border border-gray-800/30 p-6">
       <div className="border-b border-gray-700/50 pb-3">
-        <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-white">Plateforme musicale préférée</h3>
-          {autoSave && saveStatus !== 'idle' && (
-            <div className="flex items-center gap-2">
-              {saveStatus === 'saving' && (
-                <>
-                  <div className="w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
-                  <span className="text-sm text-gray-400">Sauvegarde...</span>
-                </>
-              )}
-              {saveStatus === 'success' && (
-                <>
-                  <svg className="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  <span className="text-sm text-green-400">Sauvegardé</span>
-                </>
-              )}
-              {saveStatus === 'error' && (
-                <>
-                  <svg className="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                  <span className="text-sm text-red-400">Erreur</span>
-                </>
-              )}
-            </div>
-          )}
-        </div>
+        <h3 className="text-lg font-semibold text-white">Plateforme musicale préférée</h3>
         <p className="text-sm text-gray-400 mt-1">Sélectionnez votre plateforme préférée pour les liens musicaux</p>
       </div>
 
@@ -172,7 +125,7 @@ export default function PlatformSelector({
               key={platform.id}
               type="button"
               onClick={() => handlePlatformChange(platform.id)}
-              disabled={disabled || isSaving}
+              disabled={disabled}
               className={`
                                 aspect-square w-full sm:w-20 sm:aspect-auto sm:flex-shrink-0 
                                 p-3 sm:p-3 rounded-xl sm:rounded-2xl border-2 transition-all duration-300 group relative overflow-hidden
@@ -227,7 +180,7 @@ export default function PlatformSelector({
           <button
             type="button"
             onClick={() => handlePlatformChange('')}
-            disabled={disabled || isSaving}
+            disabled={disabled}
             className="text-sm text-gray-400 hover:text-gray-300 underline transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Effacer la sélection

@@ -36,6 +36,7 @@ export default function Profile() {
   const [loading, setLoading] = useState(true)
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('list')
   const [friendsCount, setFriendsCount] = useState(0)
+  const [likedCount, setLikedCount] = useState(0)
   const navigate = useNavigate()
   const { user: currentUser, isAuthenticated } = useAuth()
 
@@ -59,6 +60,10 @@ export default function Profile() {
         // Fetch friends count
         const friendsRes = await api.get(`/friends/${currentUser.id}/count`)
         setFriendsCount(friendsRes.data.count)
+
+        // Fetch liked posts count
+        const likedRes = await api.get('/posts/liked/count')
+        setLikedCount(likedRes.data.count)
       } catch (error) {
         console.error('Error fetching profile data:', error)
       } finally {
@@ -174,6 +179,15 @@ export default function Profile() {
                     <span className="text-lg font-semibold text-white">{friendsCount}</span>
                     <span className="text-sm text-gray-400 ml-1">
                       ami{friendsCount > 1 ? 's' : ''}
+                    </span>
+                  </button>
+                  <button
+                    onClick={() => navigate('/liked')}
+                    className="text-center hover:text-indigo-300 transition-colors"
+                  >
+                    <span className="text-lg font-semibold text-white">{likedCount}</span>
+                    <span className="text-sm text-gray-400 ml-1">
+                      j'aime
                     </span>
                   </button>
                 </div>
@@ -293,6 +307,7 @@ export default function Profile() {
                         isLikedByUser={post.isLikedByUser}
                         onLikeChange={handleLikeChange}
                         showLikes={true}
+                        isOwnPost={true}
                         horizontal={!dateDisplay.isToday && viewMode === 'list'}
                         userPlatformPreference={user?.platformPreference}
                       />
