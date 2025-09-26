@@ -79,7 +79,7 @@ router.get('/posts', authenticateToken, async (req, res) => {
     },
     include: {
       user: true,
-      likes: {
+      saves: {
         select: {
           userId: true
         }
@@ -88,15 +88,15 @@ router.get('/posts', authenticateToken, async (req, res) => {
     orderBy: { date: 'desc' }
   })
 
-  // Add like count and user's like status to each post
-  const postsWithLikes = posts.map((post) => ({
+  // Add save count and user's save status to each post
+  const postsWithSaves = posts.map((post) => ({
     ...post,
-    likeCount: post.likes.length,
-    isLikedByUser: post.likes.some((like) => like.userId === userIdNumber),
-    likes: undefined // Remove the likes array from response for cleaner data
+    saveCount: post.saves.length,
+    isSavedByUser: post.saves.some((save) => save.userId === userIdNumber),
+    saves: undefined // Remove the saves array from response for cleaner data
   }))
 
-  res.json(postsWithLikes)
+  res.json(postsWithSaves)
 })
 
 // Check if user1 follows user2

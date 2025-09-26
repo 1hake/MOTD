@@ -91,7 +91,7 @@ router.get('/today', authenticateToken, async (req, res) => {
       where: { userId: { in: friendIds }, date: { gte: today } },
       include: {
         user: true,
-        likes: {
+        saves: {
           select: {
             userId: true
           }
@@ -100,15 +100,15 @@ router.get('/today', authenticateToken, async (req, res) => {
       orderBy: { date: 'desc' }
     })
 
-    // Add like count and user's like status to each post
-    const postsWithLikes = posts.map((post) => ({
+    // Add save count and user's save status to each post
+    const postsWithSaves = posts.map((post) => ({
       ...post,
-      likeCount: post.likes.length,
-      isLikedByUser: post.likes.some((like) => like.userId === uid),
-      likes: undefined // Remove the likes array from response for cleaner data
+      saveCount: post.saves.length,
+      isSavedByUser: post.saves.some((save) => save.userId === uid),
+      saves: undefined // Remove the saves array from response for cleaner data
     }))
 
-    res.json(postsWithLikes)
+    res.json(postsWithSaves)
   } catch (e) {
     console.error('[GET /posts/today] error:', e)
     res.status(500).json({ error: 'Server error' })
@@ -139,7 +139,7 @@ router.get('/me', authenticateToken, async (req, res) => {
     const posts = await prisma.songPost.findMany({
       where: whereClause,
       include: {
-        likes: {
+        saves: {
           select: {
             userId: true
           }
@@ -148,15 +148,15 @@ router.get('/me', authenticateToken, async (req, res) => {
       orderBy: { date: 'desc' }
     })
 
-    // Add like count to each post
-    const postsWithLikes = posts.map((post) => ({
+    // Add save count to each post
+    const postsWithSaves = posts.map((post) => ({
       ...post,
-      likeCount: post.likes.length,
-      isLikedByUser: false, // User can't like their own posts, or set to true if you want to allow it
-      likes: undefined // Remove the likes array from response for cleaner data
+      saveCount: post.saves.length,
+      isSavedByUser: false, // User can't save their own posts, or set to true if you want to allow it
+      saves: undefined // Remove the saves array from response for cleaner data
     }))
 
-    res.json(postsWithLikes)
+    res.json(postsWithSaves)
   } catch (e) {
     console.error('[GET /posts/me] error:', e)
     res.status(500).json({ error: 'Server error' })
@@ -177,7 +177,7 @@ router.get('/friends/:userId', authenticateToken, async (req, res) => {
     const posts = await prisma.songPost.findMany({
       where: { userId: targetUserId },
       include: {
-        likes: {
+        saves: {
           select: {
             userId: true
           }
@@ -186,23 +186,23 @@ router.get('/friends/:userId', authenticateToken, async (req, res) => {
       orderBy: { date: 'desc' }
     })
 
-    // Add like count and user's like status to each post
-    const postsWithLikes = posts.map((post) => ({
+    // Add save count and user's save status to each post
+    const postsWithSaves = posts.map((post) => ({
       ...post,
-      likeCount: post.likes.length,
-      isLikedByUser: post.likes.some((like) => like.userId === currentUserId),
-      likes: undefined // Remove the likes array from response for cleaner data
+      saveCount: post.saves.length,
+      isSavedByUser: post.saves.some((save) => save.userId === currentUserId),
+      saves: undefined // Remove the saves array from response for cleaner data
     }))
 
-    res.json(postsWithLikes)
+    res.json(postsWithSaves)
   } catch (e) {
     console.error('[GET /posts/friends/:userId] error:', e)
     res.status(500).json({ error: 'Server error' })
   }
 })
 
-// Like a post
-router.post('/:postId/like', authenticateToken, async (req, res) => {
+// Save a post
+router.post('/:postId/save', authenticateToken, async (req, res) => {
   const { postId } = req.params
   const uid = req.user!.id
   const pid = Number(postId)
@@ -218,13 +218,13 @@ router.post('/:postId/like', authenticateToken, async (req, res) => {
     })
     if (!post) return res.status(404).json({ error: 'Post not found' })
 
-    // Prevent users from liking their own posts
+    // Prevent users from saving their own posts
     if (post.userId === uid) {
-      return res.status(400).json({ error: 'You cannot like your own post' })
+      return res.status(400).json({ error: 'You cannot save your own post' })
     }
 
-    // Check if user already liked this post
-    const existingLike = await prisma.like.findUnique({
+    // Check if user already saved this post
+    const existingSave = await prisma.save.findUnique({
       where: {
         userId_songPostId: {
           userId: uid,
@@ -233,28 +233,28 @@ router.post('/:postId/like', authenticateToken, async (req, res) => {
       }
     })
 
-    if (existingLike) {
-      // If already liked, return the existing like (idempotent behavior)
-      return res.json({ success: true, like: existingLike })
+    if (existingSave) {
+      // If already saved, return the existing save (idempotent behavior)
+      return res.json({ success: true, save: existingSave })
     }
 
-    // Create like
-    const like = await prisma.like.create({
+    // Create save
+    const save = await prisma.save.create({
       data: {
         userId: uid,
         songPostId: pid
       }
     })
 
-    res.json({ success: true, like })
+    res.json({ success: true, save })
   } catch (e) {
-    console.error('[POST /posts/:postId/like] error:', e)
+    console.error('[POST /posts/:postId/save] error:', e)
     res.status(500).json({ error: 'Server error' })
   }
 })
 
-// Unlike a post
-router.delete('/:postId/like', authenticateToken, async (req, res) => {
+// Unsave a post
+router.delete('/:postId/save', authenticateToken, async (req, res) => {
   const { postId } = req.params
   const uid = req.user!.id
   const pid = Number(postId)
@@ -264,8 +264,8 @@ router.delete('/:postId/like', authenticateToken, async (req, res) => {
   }
 
   try {
-    // Check if like exists
-    const existingLike = await prisma.like.findUnique({
+    // Check if save exists
+    const existingSave = await prisma.save.findUnique({
       where: {
         userId_songPostId: {
           userId: uid,
@@ -274,13 +274,13 @@ router.delete('/:postId/like', authenticateToken, async (req, res) => {
       }
     })
 
-    if (!existingLike) {
-      // If like doesn't exist, treat as idempotent (already unliked)
+    if (!existingSave) {
+      // If save doesn't exist, treat as idempotent (already unsaved)
       return res.json({ success: true })
     }
 
-    // Delete like
-    await prisma.like.delete({
+    // Delete save
+    await prisma.save.delete({
       where: {
         userId_songPostId: {
           userId: uid,
@@ -291,17 +291,17 @@ router.delete('/:postId/like', authenticateToken, async (req, res) => {
 
     res.json({ success: true })
   } catch (e) {
-    console.error('[DELETE /posts/:postId/like] error:', e)
+    console.error('[DELETE /posts/:postId/save] error:', e)
     res.status(500).json({ error: 'Server error' })
   }
 })
 
-// Get liked posts by current user
-router.get('/liked', authenticateToken, async (req, res) => {
+// Get saved posts by current user
+router.get('/saved', authenticateToken, async (req, res) => {
   const uid = req.user!.id
 
   try {
-    const likedPosts = await prisma.like.findMany({
+    const savedPosts = await prisma.save.findMany({
       where: { userId: uid },
       include: {
         songPost: {
@@ -314,7 +314,7 @@ router.get('/liked', authenticateToken, async (req, res) => {
                 platformPreference: true
               }
             },
-            likes: {
+            saves: {
               select: {
                 userId: true
               }
@@ -326,33 +326,33 @@ router.get('/liked', authenticateToken, async (req, res) => {
     })
 
     // Transform the data to match the expected format
-    const postsWithLikes = likedPosts.map((like) => ({
-      ...like.songPost,
-      likeDate: like.createdAt, // Add the date when user liked this post
-      likeCount: like.songPost.likes.length,
-      isLikedByUser: true, // Always true since these are user's liked posts
-      likes: undefined // Remove the likes array from response for cleaner data
+    const postsWithSaves = savedPosts.map((save) => ({
+      ...save.songPost,
+      saveDate: save.createdAt, // Add the date when user saved this post
+      saveCount: save.songPost.saves.length,
+      isSavedByUser: true, // Always true since these are user's saved posts
+      saves: undefined // Remove the saves array from response for cleaner data
     }))
 
-    res.json(postsWithLikes)
+    res.json(postsWithSaves)
   } catch (e) {
-    console.error('[GET /posts/liked] error:', e)
+    console.error('[GET /posts/saved] error:', e)
     res.status(500).json({ error: 'Server error' })
   }
 })
 
-// Get liked posts count for current user
-router.get('/liked/count', authenticateToken, async (req, res) => {
+// Get saved posts count for current user
+router.get('/saved/count', authenticateToken, async (req, res) => {
   const uid = req.user!.id
 
   try {
-    const count = await prisma.like.count({
+    const count = await prisma.save.count({
       where: { userId: uid }
     })
 
     res.json({ count })
   } catch (e) {
-    console.error('[GET /posts/liked/count] error:', e)
+    console.error('[GET /posts/saved/count] error:', e)
     res.status(500).json({ error: 'Server error' })
   }
 })
@@ -395,7 +395,7 @@ router.get('/explore', authenticateToken, async (req, res) => {
             platformPreference: true
           }
         },
-        likes: {
+        saves: {
           select: {
             userId: true
           }
@@ -406,18 +406,18 @@ router.get('/explore', authenticateToken, async (req, res) => {
       take: limit
     })
 
-    // Add like information
-    const postsWithLikes = posts.map((post) => ({
+    // Add save information
+    const postsWithSaves = posts.map((post) => ({
       ...post,
-      likeCount: post.likes.length,
-      isLikedByUser: post.likes.some((like) => like.userId === currentUserId),
-      likes: undefined // Remove the likes array from response
+      saveCount: post.saves.length,
+      isSavedByUser: post.saves.some((save) => save.userId === currentUserId),
+      saves: undefined // Remove the saves array from response
     }))
 
     const hasMore = skip + posts.length < totalPosts
 
     res.json({
-      posts: postsWithLikes,
+      posts: postsWithSaves,
       hasMore,
       total: totalPosts,
       page,
