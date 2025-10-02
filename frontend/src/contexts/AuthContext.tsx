@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react'
 import { authService, LoginCredentials, SignupCredentials } from '../lib/auth'
 import { User } from '../lib/storage'
+import { SearchHistoryService } from '../lib/searchHistory'
 
 interface AuthContextType {
   user: User | null
@@ -90,10 +91,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setIsLoading(true)
       await authService.logout()
       setUser(null)
+      // Clear search history on logout
+      SearchHistoryService.clearHistory()
     } catch (error) {
       console.error('Logout error:', error)
-      // Even if logout fails, clear local state
+      // Even if logout fails, clear local state and search history
       setUser(null)
+      SearchHistoryService.clearHistory()
     } finally {
       setIsLoading(false)
     }

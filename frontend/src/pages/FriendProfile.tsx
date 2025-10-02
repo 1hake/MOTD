@@ -18,8 +18,8 @@ type Post = {
   youtubeLink?: string
   coverUrl?: string
   date: string
-  likeCount: number
-  isLikedByUser: boolean
+  saveCount: number
+  isSavedByUser: boolean
 }
 
 type User = {
@@ -80,9 +80,9 @@ export default function FriendProfile() {
     })()
   }, [navigate, userId, isAuthenticated, currentUser])
 
-  const handleLikeChange = (postId: number, isLiked: boolean, newLikeCount: number) => {
+  const handleSaveChange = (postId: number, isSaved: boolean, newSaveCount: number) => {
     setPosts((prevPosts) =>
-      prevPosts.map((p) => (p.id === postId ? { ...p, isLikedByUser: isLiked, likeCount: newLikeCount } : p))
+      prevPosts.map((p) => (p.id === postId ? { ...p, isSavedByUser: isSaved, saveCount: newSaveCount } : p))
     )
   }
 
@@ -302,10 +302,10 @@ export default function FriendProfile() {
                         appleMusicLink={post.appleMusicLink}
                         youtubeLink={post.youtubeLink}
                         coverUrl={post.coverUrl}
-                        likeCount={post.likeCount}
-                        isLikedByUser={post.isLikedByUser}
-                        onLikeChange={handleLikeChange}
-                        showLikes={true}
+                        saveCount={post.saveCount}
+                        isSavedByUser={post.isSavedByUser}
+                        onSaveChange={handleSaveChange}
+                        showSaves={true}
                         isOwnPost={false}
                         horizontal={!dateDisplay.isToday && viewMode === 'list'}
                         userPlatformPreference={currentUser?.platformPreference}

@@ -6,12 +6,32 @@
 @layer base {
     html {
         font-family: 'Inter', system-ui, sans-serif;
+        /* Hide scrollbar for webkit browsers */
+        scrollbar-width: none;
+        /* Firefox */
+        -ms-overflow-style: none;
+        /* Internet Explorer 10+ */
+    }
+
+    html::-webkit-scrollbar {
+        display: none;
+        /* Safari and Chrome */
     }
 
     body {
         @apply text-primary-800 antialiased;
         background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
         min-height: 100vh;
+        /* Hide scrollbar for webkit browsers */
+        scrollbar-width: none;
+        /* Firefox */
+        -ms-overflow-style: none;
+        /* Internet Explorer 10+ */
+    }
+
+    body::-webkit-scrollbar {
+        display: none;
+        /* Safari and Chrome */
     }
 }
 
@@ -89,4 +109,33 @@
     .scroll-smooth {
         scroll-behavior: smooth;
     }
+
+    .scrollbar-none {
+        scrollbar-width: none;
+        /* Firefox */
+        -ms-overflow-style: none;
+        /* Internet Explorer 10+ */
+    }
+
+    .scrollbar-none::-webkit-scrollbar {
+        display: none;
+        /* Safari and Chrome */
+    }
+}
+
+/* Custom Animations */
+@keyframes slideUp {
+    0% {
+        transform: translateY(100px);
+        opacity: 0;
+    }
+
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.animate-slideUp {
+    animation: slideUp 0.6s ease-out forwards;
 }

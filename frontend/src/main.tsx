@@ -13,7 +13,7 @@ import Profile from './pages/Profile'
 import FriendProfile from './pages/FriendProfile'
 import EditProfile from './pages/EditProfile'
 import UserFriends from './pages/UserFriends'
-import LikedPosts from './pages/LikedPosts'
+import SavedPosts from './pages/LikedPosts'
 import ProtectedRoute from './components/ProtectedRoute'
 import Layout from './Layout'
 
@@ -101,13 +101,14 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
                 }
               />
               <Route
-                path="/liked"
+                path="/saved"
                 element={
                   <ProtectedRoute>
-                    <LikedPosts />
+                    <SavedPosts />
                   </ProtectedRoute>
                 }
               />
+              <Route path="/liked" element={<Navigate to="/saved" replace />} />
             </Route>
           </Routes>
         </BrowserRouter>

@@ -16,8 +16,8 @@ type Post = {
   link: string
   coverUrl?: string
   date: string
-  likeCount?: number
-  isLikedByUser?: boolean
+  saveCount?: number
+  isSavedByUser?: boolean
   user?: {
     id: number
     email: string
@@ -29,6 +29,7 @@ export default function Feed() {
   const [myPosts, setMyPosts] = useState<Post[]>([])
   const [friendsPosts, setFriendsPosts] = useState<Post[]>([])
   const [loading, setLoading] = useState(true)
+  const [isSearching, setIsSearching] = useState(false)
   const navigate = useNavigate()
   const { user, isAuthenticated } = useAuth()
 
@@ -43,15 +44,15 @@ export default function Feed() {
     }
   }, [])
 
-  const handleLikeChange = (postId: number, isLiked: boolean, newLikeCount: number) => {
+  const handleSaveChange = (postId: number, isSaved: boolean, newSaveCount: number) => {
     // Update the friends posts array
     setFriendsPosts((prev) =>
-      prev.map((post) => (post.id === postId ? { ...post, likeCount: newLikeCount, isLikedByUser: isLiked } : post))
+      prev.map((post) => (post.id === postId ? { ...post, saveCount: newSaveCount, isSavedByUser: isSaved } : post))
     )
 
     // Update the all posts array as well
     setAllPosts((prev) =>
-      prev.map((post) => (post.id === postId ? { ...post, likeCount: newLikeCount, isLikedByUser: isLiked } : post))
+      prev.map((post) => (post.id === postId ? { ...post, saveCount: newSaveCount, isSavedByUser: isSaved } : post))
     )
   }
 
@@ -101,11 +102,22 @@ export default function Feed() {
     <div className="min-h-screen">
       <div className="max-w-4xl mx-auto px-4 py-6 space-y-8 pb-24">
         {/* image logo */}
-        <div className="w-full flex justify-center ">
-          <img src={logo2} alt="DIGGER" className={myPosts.length === 0 ? 'w-64 mb-4 mt-8' : 'w-56'} />
+        <div
+          className={`w-full flex justify-center transition-all duration-1000 ease-in-out overflow-hidden ${isSearching ? 'h-0 opacity-0' : 'h-auto opacity-100'
+            }`}
+        >
+          <img
+            src={logo2}
+            alt="DIGGER"
+            className={`transition-all duration-500 ${myPosts.length === 0 ? 'w-64 mb-4' : 'w-56'
+              } ${isSearching ? 'transform scale-75' : ''}`}
+          />
         </div>
         {/* Empty feed CTA */}
-        <EmptyFeedCTA show={myPosts.length === 0} />
+        <EmptyFeedCTA
+          show={myPosts.length === 0}
+          onSearchStateChange={setIsSearching}
+        />
 
         {/* My posts today */}
         {myPosts.length > 0 && <PostsSection title="Ma chanson du jour" posts={myPosts} currentUserId={user?.id} />}
@@ -117,7 +129,7 @@ export default function Feed() {
             posts={friendsPosts}
             showCount={true}
             emptyMessage={<EmptyFriendsState />}
-            onLikeChange={handleLikeChange}
+            onSaveChange={handleSaveChange}
             currentUserId={user?.id}
           />
         )}

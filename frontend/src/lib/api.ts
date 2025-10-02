@@ -55,13 +55,13 @@ api.interceptors.response.use(
   }
 )
 
-// Like/Unlike functions (updated to not require userId in body)
-export const likePost = async (postId: number) => {
-  return api.post(`/posts/${postId}/like`)
+// Save/Unsave functions (updated to not require userId in body)
+export const savePost = async (postId: number) => {
+  return api.post(`/posts/${postId}/save`)
 }
 
-export const unlikePost = async (postId: number) => {
-  return api.delete(`/posts/${postId}/like`)
+export const unsavePost = async (postId: number) => {
+  return api.delete(`/posts/${postId}/save`)
 }
 
 // User profile functions

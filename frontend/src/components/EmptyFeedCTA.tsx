@@ -7,9 +7,10 @@ import { generateMusicServiceLinks } from '../lib/musicServices'
 
 interface EmptyFeedCTAProps {
   show: boolean
+  onSearchStateChange?: (isSearching: boolean) => void
 }
 
-const EmptyFeedCTA: React.FC<EmptyFeedCTAProps> = ({ show }) => {
+const EmptyFeedCTA: React.FC<EmptyFeedCTAProps> = ({ show, onSearchStateChange }) => {
   const navigate = useNavigate()
   const { user, isAuthenticated } = useAuth()
   const [selected, setSelected] = useState<{
@@ -25,45 +26,17 @@ const EmptyFeedCTA: React.FC<EmptyFeedCTAProps> = ({ show }) => {
   const [isSearching, setIsSearching] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
 
-  // Auto-scroll management - trigger on any non-empty search
-  useEffect(() => {
-    const trimmedQuery = searchQuery.trim()
-
-    // Scroll to top whenever user types a search query
-    if (trimmedQuery.length > 0) {
-      console.log('Scrolling to top for query:', trimmedQuery)
-
-      const scrollToTop = () => {
-        window.scrollTo({
-          top: 0,
-          behavior: 'smooth'
-        })
-      }
-
-      // Small delay to ensure search results are rendered
-      const timeoutId = setTimeout(scrollToTop, 300)
-      return () => clearTimeout(timeoutId)
-    }
-  }, [searchQuery])
-
   const handleSearchStart = (query: string) => {
     console.log('Search query changed:', query)
     setSearchQuery(query)
     const trimmedQuery = query.trim()
 
     // Set searching state based on whether there's a query
-    if (trimmedQuery) {
-      setIsSearching(true)
+    const newIsSearching = trimmedQuery.length > 0
+    setIsSearching(newIsSearching)
 
-      // Immediate scroll when user starts typing
-      console.log('Triggering scroll for query:', trimmedQuery)
-      window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-      })
-    } else {
-      setIsSearching(false)
-    }
+    // Notify parent component about search state change
+    onSearchStateChange?.(newIsSearching)
 
     // Clear any previous errors when starting a new search
     if (trimmedQuery && error) {
@@ -123,13 +96,16 @@ const EmptyFeedCTA: React.FC<EmptyFeedCTAProps> = ({ show }) => {
     setError(null)
     setIsSearching(false)
     setSearchQuery('')
+
+    // Notify parent that search state is reset
+    onSearchStateChange?.(false)
   }
 
   if (!show) return null
 
   return (
     <div
-      className={`text-white rounded-2xl p-6 transition-all duration-500 ease-out ${isSearching ? 'pb-24 transform' : ''
+      className={`text-white rounded-2xl px-6 transition-all duration-500 ease-out ${isSearching ? 'pb-24 transform' : ''
         }`}
     >
       {!selected ? (
@@ -159,13 +135,16 @@ const EmptyFeedCTA: React.FC<EmptyFeedCTAProps> = ({ show }) => {
                 setError(null)
                 setIsSearching(false)
                 setSearchQuery('')
+
+                // Notify parent that search state is reset
+                onSearchStateChange?.(false)
               }}
               onSearchChange={handleSearchStart}
             />
           </div>
         </div>
       ) : (
-        <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <div className="space-y-6 animate-slideUp">
           {/* Selected Track Card */}
           <div className="relative bg-white rounded-xl p-6 space-y-4 shadow-xl border border-gray-100 overflow-hidden">
             {/* Blurred Background Cover */}

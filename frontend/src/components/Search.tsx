@@ -253,7 +253,7 @@ export default function Search({ onSelect, onSearchChange }: SearchProps) {
             )}
 
             {!loading && !error && tracks.length > 0 && (
-                <div className="space-y-3 max-h-[500px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+                <div className="space-y-3 max-h-[500px] overflow-y-auto scrollbar-none">
                     {items.map((it, index) => (
                         <div
                             key={it.id}
@@ -269,7 +269,7 @@ export default function Search({ onSelect, onSearchChange }: SearchProps) {
                                 link="#" // We'll use the first available platform link
                                 coverUrl={it.cover || undefined}
                                 horizontal={true}
-                                showLikes={false}
+                                showSaves={false}
                                 isOwnPost={false}
                                 className="transform hover:scale-[1.02] transition-transform duration-200"
                             />

@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import SongCard from '../components/SongCard'
 import LoadingState from '../components/LoadingState'
 
-type LikedPost = {
+type SavedPost = {
     id: number
     title: string
     artist: string
@@ -17,9 +17,9 @@ type LikedPost = {
     youtubeLink?: string
     coverUrl?: string
     date: string
-    likeDate: string // Date when user liked this post
-    likeCount: number
-    isLikedByUser: boolean
+    saveDate: string // Date when user saved this post
+    saveCount: number
+    isSavedByUser: boolean
     user: {
         id: number
         name?: string
@@ -28,8 +28,8 @@ type LikedPost = {
     }
 }
 
-export default function LikedPosts() {
-    const [likedPosts, setLikedPosts] = useState<LikedPost[]>([])
+export default function SavedPosts() {
+    const [savedPosts, setSavedPosts] = useState<SavedPost[]>([])
     const [loading, setLoading] = useState(true)
     const navigate = useNavigate()
     const { user: currentUser, isAuthenticated } = useAuth()
@@ -43,66 +43,66 @@ export default function LikedPosts() {
 
             try {
                 setLoading(true)
-                const res = await api.get('/posts/liked')
-                setLikedPosts(res.data)
+                const res = await api.get('/posts/saved')
+                setSavedPosts(res.data)
             } catch (error) {
-                console.error('Error fetching liked posts:', error)
+                console.error('Error fetching saved posts:', error)
             } finally {
                 setLoading(false)
             }
         })()
     }, [navigate, isAuthenticated, currentUser])
 
-    const handleLikeChange = (postId: number, isLiked: boolean, newLikeCount: number) => {
-        if (!isLiked) {
-            // If the post is unliked, remove it from the list
-            setLikedPosts((prevPosts) => prevPosts.filter((p) => p.id !== postId))
+    const handleSaveChange = (postId: number, isSaved: boolean, newSaveCount: number) => {
+        if (!isSaved) {
+            // If the post is unsaved, remove it from the list
+            setSavedPosts((prevPosts) => prevPosts.filter((p) => p.id !== postId))
         } else {
-            // If somehow re-liked, update the like count
-            setLikedPosts((prevPosts) =>
-                prevPosts.map((p) => (p.id === postId ? { ...p, isLikedByUser: isLiked, likeCount: newLikeCount } : p))
+            // If somehow re-saved, update the save count
+            setSavedPosts((prevPosts) =>
+                prevPosts.map((p) => (p.id === postId ? { ...p, isSavedByUser: isSaved, saveCount: newSaveCount } : p))
             )
         }
     }
 
-    // Simple and clean date display for like dates
+    // Simple and clean date display for save dates
     const getDateDisplay = (dateString: string) => {
-        const likeDate = new Date(dateString)
+        const saveDate = new Date(dateString)
         const today = new Date()
         const yesterday = new Date(today)
         yesterday.setDate(today.getDate() - 1)
 
         // Reset time to compare only dates
-        const likeDateOnly = new Date(likeDate.getFullYear(), likeDate.getMonth(), likeDate.getDate())
+        const saveDateOnly = new Date(saveDate.getFullYear(), saveDate.getMonth(), saveDate.getDate())
         const todayOnly = new Date(today.getFullYear(), today.getMonth(), today.getDate())
         const yesterdayOnly = new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate())
 
-        if (likeDateOnly.getTime() === todayOnly.getTime()) {
+        if (saveDateOnly.getTime() === todayOnly.getTime()) {
             return {
                 displayText: "Aujourd'hui",
                 isToday: true
             }
-        } else if (likeDateOnly.getTime() === yesterdayOnly.getTime()) {
+        } else if (saveDateOnly.getTime() === yesterdayOnly.getTime()) {
             return {
                 displayText: 'Hier',
                 isToday: false
             }
         } else {
             return {
-                displayText: likeDate.toLocaleDateString('fr-FR', {
+                displayText: saveDate.toLocaleDateString('fr-FR', {
                     day: 'numeric',
                     month: 'long',
-                    year: likeDate.getFullYear() !== today.getFullYear() ? 'numeric' : undefined
+                    year: saveDate.getFullYear() !== today.getFullYear() ? 'numeric' : undefined
                 }),
                 isToday: false
             }
         }
     }
 
-    const groupPostsByLikeDate = (posts: LikedPost[]) => {
-        const grouped: { [key: string]: LikedPost[] } = {}
+    const groupPostsBySaveDate = (posts: SavedPost[]) => {
+        const grouped: { [key: string]: SavedPost[] } = {}
         posts.forEach((post) => {
-            const date = new Date(post.likeDate).toDateString()
+            const date = new Date(post.saveDate).toDateString()
             if (!grouped[date]) {
                 grouped[date] = []
             }
@@ -112,10 +112,10 @@ export default function LikedPosts() {
     }
 
     if (loading) {
-        return <LoadingState message="Chargement des chansons aimées..." />
+        return <LoadingState message="Chargement des chansons sauvegardées..." />
     }
 
-    if (likedPosts.length === 0) {
+    if (savedPosts.length === 0) {
         return (
             <div className="min-h-screen text-gray-100">
                 <div className="max-w-4xl mx-auto px-6 py-12">
@@ -130,15 +130,15 @@ export default function LikedPosts() {
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                                 </svg>
                             </button>
-                            <h1 className="text-3xl font-bold text-white">Chansons aimées</h1>
+                            <h1 className="text-3xl font-bold text-white">Chansons sauvegardées</h1>
                         </div>
                     </div>
 
                     {/* Empty State */}
                     <div className="text-center py-20">
                         <div className="text-8xl mb-6">💙</div>
-                        <h3 className="text-2xl font-semibold text-gray-200 mb-4">Aucune chanson aimée</h3>
-                        <p className="text-lg text-gray-500 mb-8">Explorez et aimez des chansons pour les retrouver ici !</p>
+                        <h3 className="text-2xl font-semibold text-gray-200 mb-4">Aucune chanson sauvegardée</h3>
+                        <p className="text-lg text-gray-500 mb-8">Explorez et sauvegardez des chansons pour les retrouver ici !</p>
                         <button
                             onClick={() => navigate('/explorer')}
                             className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors"
@@ -151,7 +151,7 @@ export default function LikedPosts() {
         )
     }
 
-    const groupedPosts = groupPostsByLikeDate(likedPosts)
+    const groupedPosts = groupPostsBySaveDate(savedPosts)
     const sortedDates = Object.keys(groupedPosts).sort((a, b) => new Date(b).getTime() - new Date(a).getTime())
 
     return (
@@ -172,7 +172,7 @@ export default function LikedPosts() {
                     </div>
                     <div className="bg-gray-800/50 backdrop-blur-sm rounded-2xl border border-gray-800/30 p-6">
                         <p className="text-gray-300">
-                            {likedPosts.length} chanson{likedPosts.length > 1 ? 's' : ''} que vous avez aimée{likedPosts.length > 1 ? 's' : ''}
+                            {savedPosts.length} chanson{savedPosts.length > 1 ? 's' : ''} que vous avez sauvegardée{savedPosts.length > 1 ? 's' : ''}
                         </p>
                     </div>
                 </div>
@@ -209,10 +209,10 @@ export default function LikedPosts() {
                                             appleMusicLink={post.appleMusicLink}
                                             youtubeLink={post.youtubeLink}
                                             coverUrl={post.coverUrl}
-                                            likeCount={post.likeCount}
-                                            isLikedByUser={post.isLikedByUser}
-                                            onLikeChange={handleLikeChange}
-                                            showLikes={true}
+                                            saveCount={post.saveCount}
+                                            isSavedByUser={post.isSavedByUser}
+                                            onSaveChange={handleSaveChange}
+                                            showSaves={true}
                                             isOwnPost={post.user.id === currentUser?.id}
                                             horizontal={true} // Always horizontal in liked posts view
                                             userPlatformPreference={currentUser?.platformPreference}

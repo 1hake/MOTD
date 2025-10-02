@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { likePost, unlikePost } from '../lib/api'
+import { savePost, unsavePost } from '../lib/api'
 import { useAuth } from '../hooks/useAuth'
 
 type SongCardProps = {
@@ -14,14 +14,14 @@ type SongCardProps = {
   youtubeLink?: string
   coverUrl?: string
   sharedBy?: string
-  likeCount?: number
-  isLikedByUser?: boolean
-  showLikes?: boolean
+  saveCount?: number
+  isSavedByUser?: boolean
+  showSaves?: boolean
   isOwnPost?: boolean
   className?: string
   horizontal?: boolean
   userPlatformPreference?: string
-  onLikeChange?: (postId: number, isLiked: boolean, newLikeCount: number) => void
+  onSaveChange?: (postId: number, isSaved: boolean, newSaveCount: number) => void
   // Enhanced user display props
   userInfo?: {
     id: number
@@ -46,51 +46,51 @@ export default function SongCard({
   youtubeLink,
   coverUrl,
   sharedBy,
-  likeCount = 0,
-  isLikedByUser = false,
-  showLikes = true,
+  saveCount = 0,
+  isSavedByUser = false,
+  showSaves = true,
   isOwnPost = false,
   className = '',
   horizontal = false,
   userPlatformPreference,
-  onLikeChange,
+  onSaveChange,
   userInfo,
   date,
   onUserClick,
   showUserHeader = false
 }: SongCardProps) {
-  const [liked, setLiked] = useState(isLikedByUser)
-  const [likes, setLikes] = useState(likeCount)
-  const [isLiking, setIsLiking] = useState(false)
+  const [saved, setSaved] = useState(isSavedByUser)
+  const [saves, setSaves] = useState(saveCount)
+  const [isSaving, setIsSaving] = useState(false)
   const { isAuthenticated } = useAuth()
-  const handleLikeToggle = async (e: React.MouseEvent) => {
+  const handleSaveToggle = async (e: React.MouseEvent) => {
     e.stopPropagation()
 
-    if (isLiking || !isAuthenticated) return
+    if (isSaving || !isAuthenticated) return
 
     try {
-      setIsLiking(true)
+      setIsSaving(true)
 
-      const newLikedState = !liked
-      const newLikesCount = newLikedState ? likes + 1 : likes - 1
+      const newSavedState = !saved
+      const newSavesCount = newSavedState ? saves + 1 : saves - 1
 
-      setLiked(newLikedState)
-      setLikes(newLikesCount)
-      onLikeChange?.(id, newLikedState, newLikesCount)
+      setSaved(newSavedState)
+      setSaves(newSavesCount)
+      onSaveChange?.(id, newSavedState, newSavesCount)
 
-      if (newLikedState) {
-        await likePost(id)
+      if (newSavedState) {
+        await savePost(id)
       } else {
-        await unlikePost(id)
+        await unsavePost(id)
       }
     } catch (error) {
-      console.error('Error toggling like:', error)
+      console.error('Error toggling save:', error)
       // Revert optimistic update on error
-      setLiked(liked)
-      setLikes(likes)
-      onLikeChange?.(id, liked, likes)
+      setSaved(saved)
+      setSaves(saves)
+      onSaveChange?.(id, saved, saves)
     } finally {
-      setIsLiking(false)
+      setIsSaving(false)
     }
   }
 
@@ -211,24 +211,24 @@ export default function SongCard({
             )}
           </div>
 
-          {/* Like button at bottom */}
-          {showLikes && (
+          {/* Save button at bottom */}
+          {showSaves && (
             <div className="flex justify-end mt-2">
               {!isOwnPost ? (
                 <button
-                  onClick={handleLikeToggle}
-                  disabled={isLiking}
-                  className={`flex items-center gap-1.5 px-3 py-2 rounded-full backdrop-blur-sm transition-all duration-200 ${liked ? 'bg-red-500/90 text-white hover:bg-red-600/90' : 'bg-gray-700/50 text-gray-400 hover:bg-gray-700/70 hover:text-white'
-                    } ${isLiking ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'}`}
+                  onClick={handleSaveToggle}
+                  disabled={isSaving}
+                  className={`flex items-center gap-1.5 px-3 py-2 rounded-full backdrop-blur-sm transition-all duration-200 ${saved ? 'bg-blue-500/90 text-white hover:bg-blue-600/90' : 'bg-gray-700/50 text-gray-400 hover:bg-gray-700/70 hover:text-white'
+                    } ${isSaving ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'}`}
                 >
                   <svg
-                    className={`w-4 h-4 ${liked ? 'fill-current' : 'stroke-current fill-none'}`}
+                    className={`w-4 h-4 ${saved ? 'fill-current' : 'stroke-current fill-none'}`}
                     viewBox="0 0 24 24"
                     strokeWidth="2"
                   >
-                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                    <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z" />
                   </svg>
-                  <span className="text-sm font-medium">{likes}</span>
+                  <span className="text-sm font-medium">{saves}</span>
                 </button>
               ) : (
                 <div className="flex items-center gap-1.5 px-3 py-2 bg-gray-700/50 rounded-full text-gray-400">
@@ -237,9 +237,9 @@ export default function SongCard({
                     viewBox="0 0 24 24"
                     strokeWidth="2"
                   >
-                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                    <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z" />
                   </svg>
-                  <span className="text-sm font-medium">{likes}</span>
+                  <span className="text-sm font-medium">{saves}</span>
                 </div>
               )}
             </div>
@@ -370,24 +370,24 @@ export default function SongCard({
           </div>
         )}
 
-        {/* Like button/count at bottom right */}
-        {showLikes && (
+        {/* Save button/count at bottom right */}
+        {showSaves && (
           <div className="absolute bottom-4 right-4 z-20">
             {!isOwnPost ? (
               <button
-                onClick={handleLikeToggle}
-                disabled={isLiking}
-                className={`flex items-center gap-1.5 px-3 py-2 rounded-full backdrop-blur-sm transition-all duration-200 ${liked ? 'bg-red-500/90 text-white hover:bg-red-600/90' : 'bg-black/50 text-white hover:bg-black/70'
-                  } ${isLiking ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'}`}
+                onClick={handleSaveToggle}
+                disabled={isSaving}
+                className={`flex items-center gap-1.5 px-3 py-2 rounded-full backdrop-blur-sm transition-all duration-200 ${saved ? 'bg-blue-500/90 text-white hover:bg-blue-600/90' : 'bg-black/50 text-white hover:bg-black/70'
+                  } ${isSaving ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'}`}
               >
                 <svg
-                  className={`w-4 h-4 ${liked ? 'fill-current' : 'stroke-current fill-none'}`}
+                  className={`w-4 h-4 ${saved ? 'fill-current' : 'stroke-current fill-none'}`}
                   viewBox="0 0 24 24"
                   strokeWidth="2"
                 >
-                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                  <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z" />
                 </svg>
-                <span className="text-sm font-medium">{likes}</span>
+                <span className="text-sm font-medium">{saves}</span>
               </button>
             ) : (
               <div className="flex items-center gap-1.5 px-3 py-2 bg-black/50 backdrop-blur-sm rounded-full text-white">
@@ -396,9 +396,9 @@ export default function SongCard({
                   viewBox="0 0 24 24"
                   strokeWidth="2"
                 >
-                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                  <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z" />
                 </svg>
-                <span className="text-sm font-medium">{likes}</span>
+                <span className="text-sm font-medium">{saves}</span>
               </div>
             )}
           </div>

@@ -19,8 +19,8 @@ type Post = {
   youtubeLink?: string
   coverUrl?: string
   date: string
-  likeCount: number
-  isLikedByUser: boolean
+  saveCount: number
+  isSavedByUser: boolean
 }
 
 type User = {
@@ -36,7 +36,7 @@ export default function Profile() {
   const [loading, setLoading] = useState(true)
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('list')
   const [friendsCount, setFriendsCount] = useState(0)
-  const [likedCount, setLikedCount] = useState(0)
+  const [savedCount, setSavedCount] = useState(0)
   const navigate = useNavigate()
   const { user: currentUser, isAuthenticated } = useAuth()
 
@@ -61,9 +61,9 @@ export default function Profile() {
         const friendsRes = await api.get(`/friends/${currentUser.id}/count`)
         setFriendsCount(friendsRes.data.count)
 
-        // Fetch liked posts count
-        const likedRes = await api.get('/posts/liked/count')
-        setLikedCount(likedRes.data.count)
+        // Fetch saved posts count
+        const savedRes = await api.get('/posts/saved/count')
+        setSavedCount(savedRes.data.count)
       } catch (error) {
         console.error('Error fetching profile data:', error)
       } finally {
@@ -72,9 +72,9 @@ export default function Profile() {
     })()
   }, [navigate, isAuthenticated, currentUser, currentUser?.name, currentUser?.platformPreference])
 
-  const handleLikeChange = (postId: number, isLiked: boolean, newLikeCount: number) => {
+  const handleSaveChange = (postId: number, isSaved: boolean, newSaveCount: number) => {
     setPosts((prevPosts) =>
-      prevPosts.map((p) => (p.id === postId ? { ...p, isLikedByUser: isLiked, likeCount: newLikeCount } : p))
+      prevPosts.map((p) => (p.id === postId ? { ...p, isSavedByUser: isSaved, saveCount: newSaveCount } : p))
     )
   }
 
@@ -182,12 +182,12 @@ export default function Profile() {
                     </span>
                   </button>
                   <button
-                    onClick={() => navigate('/liked')}
+                    onClick={() => navigate('/saved')}
                     className="text-center hover:text-indigo-300 transition-colors"
                   >
-                    <span className="text-lg font-semibold text-white">{likedCount}</span>
+                    <span className="text-lg font-semibold text-white">{savedCount}</span>
                     <span className="text-sm text-gray-400 ml-1">
-                      j'aime
+                      sauvées
                     </span>
                   </button>
                 </div>
@@ -303,10 +303,10 @@ export default function Profile() {
                         appleMusicLink={post.appleMusicLink}
                         youtubeLink={post.youtubeLink}
                         coverUrl={post.coverUrl}
-                        likeCount={post.likeCount}
-                        isLikedByUser={post.isLikedByUser}
-                        onLikeChange={handleLikeChange}
-                        showLikes={true}
+                        saveCount={post.saveCount}
+                        isSavedByUser={post.isSavedByUser}
+                        onSaveChange={handleSaveChange}
+                        showSaves={true}
                         isOwnPost={true}
                         horizontal={!dateDisplay.isToday && viewMode === 'list'}
                         userPlatformPreference={user?.platformPreference}

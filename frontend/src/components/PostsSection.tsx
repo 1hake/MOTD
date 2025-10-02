@@ -13,8 +13,8 @@ type Post = {
   youtubeLink?: string
   coverUrl?: string
   date: string
-  likeCount?: number
-  isLikedByUser?: boolean
+  saveCount?: number
+  isSavedByUser?: boolean
   user?: {
     id: number
     email: string
@@ -26,11 +26,11 @@ interface PostsSectionProps {
   posts: Post[]
   showCount?: boolean
   emptyMessage?: React.ReactNode
-  onLikeChange?: (postId: number, isLiked: boolean, newLikeCount: number) => void
+  onSaveChange?: (postId: number, isSaved: boolean, newSaveCount: number) => void
   currentUserId?: number
 }
 
-const PostsSection: React.FC<PostsSectionProps> = ({ title, posts, showCount = false, emptyMessage, onLikeChange, currentUserId }) => {
+const PostsSection: React.FC<PostsSectionProps> = ({ title, posts, showCount = false, emptyMessage, onSaveChange, currentUserId }) => {
   return (
     <div className="space-y-6 animate-in">
       <div className="flex items-start gap-3">
@@ -62,11 +62,11 @@ const PostsSection: React.FC<PostsSectionProps> = ({ title, posts, showCount = f
               appleMusicLink={post.appleMusicLink}
               coverUrl={post.coverUrl}
               sharedBy={post.user?.email}
-              likeCount={post.likeCount}
-              isLikedByUser={post.isLikedByUser}
-              showLikes={!!post.user?.email} // Only show likes for shared posts
+              saveCount={post.saveCount}
+              isSavedByUser={post.isSavedByUser}
+              showSaves={!!post.user?.email} // Only show saves for shared posts
               isOwnPost={post.user?.id === currentUserId}
-              onLikeChange={onLikeChange}
+              onSaveChange={onSaveChange}
               className="animate-up"
             />
           ))}
