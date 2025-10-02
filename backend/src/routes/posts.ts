@@ -18,9 +18,17 @@ router.post('/', authenticateToken, async (req, res) => {
 
   // Calculate today's start based on user's timezone
   const now = new Date()
-  const userLocalTime = new Date(now.getTime() - (timezoneOffset * 60 * 1000))
-  const todayStartInUserTz = new Date(userLocalTime.getFullYear(), userLocalTime.getMonth(), userLocalTime.getDate(), 0, 0, 0, 0)
-  const today = new Date(todayStartInUserTz.getTime() + (timezoneOffset * 60 * 1000))
+  const userLocalTime = new Date(now.getTime() - timezoneOffset * 60 * 1000)
+  const todayStartInUserTz = new Date(
+    userLocalTime.getFullYear(),
+    userLocalTime.getMonth(),
+    userLocalTime.getDate(),
+    0,
+    0,
+    0,
+    0
+  )
+  const today = new Date(todayStartInUserTz.getTime() + timezoneOffset * 60 * 1000)
 
   try {
     // Check if user exists
@@ -49,7 +57,7 @@ router.post('/', authenticateToken, async (req, res) => {
       console.error('Error fetching platform links:', error)
       // Continue with empty links if fetching fails
     }
-
+    const deezerTrackId = finalDeezerLink?.split('/').pop() || undefined
     const post = await prisma.songPost.create({
       data: {
         title,
@@ -61,7 +69,8 @@ router.post('/', authenticateToken, async (req, res) => {
         appleMusicLink: finalAppleMusicLink,
         youtubeLink: finalYoutubeLink,
         userId: uid,
-        coverUrl
+        coverUrl,
+        deezerTrackId
       }
     })
     res.json(post)
@@ -129,9 +138,17 @@ router.get('/me', authenticateToken, async (req, res) => {
 
       // Calculate today's start based on user's timezone
       const now = new Date()
-      const userLocalTime = new Date(now.getTime() - (timezoneOffset * 60 * 1000))
-      const todayStartInUserTz = new Date(userLocalTime.getFullYear(), userLocalTime.getMonth(), userLocalTime.getDate(), 0, 0, 0, 0)
-      const todayStartUTC = new Date(todayStartInUserTz.getTime() + (timezoneOffset * 60 * 1000))
+      const userLocalTime = new Date(now.getTime() - timezoneOffset * 60 * 1000)
+      const todayStartInUserTz = new Date(
+        userLocalTime.getFullYear(),
+        userLocalTime.getMonth(),
+        userLocalTime.getDate(),
+        0,
+        0,
+        0,
+        0
+      )
+      const todayStartUTC = new Date(todayStartInUserTz.getTime() + timezoneOffset * 60 * 1000)
 
       whereClause.date = { gte: todayStartUTC }
     }
@@ -370,9 +387,17 @@ router.get('/explore', authenticateToken, async (req, res) => {
 
     // Calculate today's start based on user's timezone
     const now = new Date()
-    const userLocalTime = new Date(now.getTime() - (timezoneOffset * 60 * 1000))
-    const todayStartInUserTz = new Date(userLocalTime.getFullYear(), userLocalTime.getMonth(), userLocalTime.getDate(), 0, 0, 0, 0)
-    const today = new Date(todayStartInUserTz.getTime() + (timezoneOffset * 60 * 1000))
+    const userLocalTime = new Date(now.getTime() - timezoneOffset * 60 * 1000)
+    const todayStartInUserTz = new Date(
+      userLocalTime.getFullYear(),
+      userLocalTime.getMonth(),
+      userLocalTime.getDate(),
+      0,
+      0,
+      0,
+      0
+    )
+    const today = new Date(todayStartInUserTz.getTime() + timezoneOffset * 60 * 1000)
 
     // Get total count for pagination
     const totalPosts = await prisma.songPost.count({
