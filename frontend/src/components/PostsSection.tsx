@@ -31,6 +31,7 @@ interface PostsSectionProps {
 }
 
 const PostsSection: React.FC<PostsSectionProps> = ({ title, posts, showCount = false, emptyMessage, onSaveChange, currentUserId }) => {
+  console.log({ posts })
   return (
     <div className="space-y-6 animate-in">
       <div className="flex items-start gap-3">
@@ -68,6 +69,7 @@ const PostsSection: React.FC<PostsSectionProps> = ({ title, posts, showCount = f
               isOwnPost={post.user?.id === currentUserId}
               onSaveChange={onSaveChange}
               className="animate-up"
+              deezerTrackId={post.deezerTrackId}
             />
           ))}
         </div>

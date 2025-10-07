@@ -38,6 +38,7 @@ export async function getAllPlatformLinks(artist: string, track: string): Promis
     const deezerUrl = await searchDeezer(artist, track)
     // Use song.link API to get all platform links
     const response = await axios.get(`https://api.song.link/v1-alpha.1/links?url=${deezerUrl}&userCountry=FR`)
+    console.log("🚀 ~ getAllPlatformLinks ~ response:", response.data.linksByPlatform)
     const spotifyLink = response.data.linksByPlatform?.spotify?.nativeAppUriDesktop || undefined
     const youtubeLink = response.data.linksByPlatform.youtubeMusic.url || undefined
     const appleMusicLink = response.data.linksByPlatform.appleMusic.nativeAppUriMobile || undefined

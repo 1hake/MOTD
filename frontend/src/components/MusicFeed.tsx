@@ -108,6 +108,7 @@ export default function MusicFeed({
                                 isOwnPost={post.user.id === currentUserId}
                                 userPlatformPreference={currentUserPlatformPreference}
                                 sharedBy={post.user.name || post.user.email.split('@')[0]}
+                                deezerTrackId={post.deezerTrackId}
                             />
                         </div>
                     ))}

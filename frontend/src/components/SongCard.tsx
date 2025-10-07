@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { savePost, unsavePost } from '../lib/api'
+import React, { useState, useRef, useEffect } from 'react'
+import { savePost, unsavePost, getDeezerTrackPreview } from '../lib/api'
 import { useAuth } from '../hooks/useAuth'
 
 type SongCardProps = {
@@ -12,6 +12,7 @@ type SongCardProps = {
   spotifyLink?: string
   appleMusicLink?: string
   youtubeLink?: string
+  deezerTrackId?: string
   coverUrl?: string
   sharedBy?: string
   saveCount?: number
@@ -32,6 +33,7 @@ type SongCardProps = {
   date?: string
   onUserClick?: () => void
   showUserHeader?: boolean
+
 }
 
 export default function SongCard({
@@ -44,6 +46,7 @@ export default function SongCard({
   spotifyLink,
   appleMusicLink,
   youtubeLink,
+  deezerTrackId,
   coverUrl,
   sharedBy,
   saveCount = 0,
@@ -62,7 +65,63 @@ export default function SongCard({
   const [saved, setSaved] = useState(isSavedByUser)
   const [saves, setSaves] = useState(saveCount)
   const [isSaving, setIsSaving] = useState(false)
+  const [isPlaying, setIsPlaying] = useState(false)
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+  console.log({ deezerTrackId, previewUrl })
+  const audioRef = useRef<HTMLAudioElement | null>(null)
   const { isAuthenticated } = useAuth()
+
+  // Fetch preview URL when component mounts if deezerTrackId is available
+  useEffect(() => {
+    if (deezerTrackId) {
+      getDeezerTrackPreview(deezerTrackId)
+        .then(response => {
+          if (response.data.preview) {
+            setPreviewUrl(response.data.preview)
+          }
+        })
+        .catch(error => console.error('Error fetching preview:', error))
+    }
+  }, [deezerTrackId])
+
+  // Cleanup audio when component unmounts
+  useEffect(() => {
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause()
+        audioRef.current = null
+      }
+    }
+  }, [])
+
+  const handleCardClick = () => {
+    if (!previewUrl) return
+
+    if (audioRef.current) {
+      if (isPlaying) {
+        audioRef.current.pause()
+        setIsPlaying(false)
+      } else {
+        audioRef.current.play()
+        setIsPlaying(true)
+      }
+    } else {
+      const audio = new Audio(previewUrl)
+      audioRef.current = audio
+
+      audio.addEventListener('ended', () => {
+        setIsPlaying(false)
+      })
+
+      audio.addEventListener('error', () => {
+        console.error('Error playing audio')
+        setIsPlaying(false)
+      })
+
+      audio.play()
+      setIsPlaying(true)
+    }
+  }
   const handleSaveToggle = async (e: React.MouseEvent) => {
     e.stopPropagation()
 
@@ -123,10 +182,12 @@ export default function SongCard({
   if (horizontal) {
     return (
       <div
-        className={`relative flex items-stretch gap-0 bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700/50 cursor-pointer overflow-hidden ${className}`}
+        onClick={handleCardClick}
+        className={`relative flex items-stretch gap-0 bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700/50 ${previewUrl ? 'cursor-pointer hover:bg-gray-800/70' : 'cursor-default'} overflow-hidden transition-colors touch-manipulation ${className}`}
+        style={{ WebkitTapHighlightColor: 'transparent' }}
       >
         {/* Cover Image - full height with no padding */}
-        <div className="flex-shrink-0 w-20">
+        <div className="flex-shrink-0 w-20 relative">
           {coverUrl ? (
             <img
               src={coverUrl}
@@ -138,6 +199,22 @@ export default function SongCard({
               <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M18 3a1 1 0 00-1.447-.894L8.763 6H5a3 3 0 000 6h.28l1.771 5.316A1 1 0 008 18h1a1 1 0 001-1v-4.382l6.553 3.276A1 1 0 0018 15V3z" clipRule="evenodd" />
               </svg>
+            </div>
+          )}
+          {/* Play/Pause overlay indicator */}
+          {previewUrl && (
+            <div className="absolute inset-0 flex items-center justify-center bg-black/40">
+              <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center shadow-lg">
+                {isPlaying ? (
+                  <svg className="w-5 h-5 text-gray-900" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+                  </svg>
+                ) : (
+                  <svg className="w-5 h-5 text-gray-900 ml-0.5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
+                  </svg>
+                )}
+              </div>
             </div>
           )}
         </div>
@@ -202,7 +279,7 @@ export default function SongCard({
                 href={preferredPlatform.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`flex items-center gap-1.5 px-3 py-2 ${preferredPlatform.color}/90 hover:${preferredPlatform.color} text-white rounded-full transition-all duration-200 hover:scale-105`}
+                className={`flex items-center gap-1.5 px-3 py-2 ${preferredPlatform.color}/90 hover:${preferredPlatform.color} text-white rounded-full transition-all duration-200`}
                 onClick={(e) => e.stopPropagation()}
               >
                 <span className="text-sm">{preferredPlatform.icon}</span>
@@ -219,7 +296,7 @@ export default function SongCard({
                   onClick={handleSaveToggle}
                   disabled={isSaving}
                   className={`flex items-center gap-1.5 px-3 py-2 rounded-full backdrop-blur-sm transition-all duration-200 ${saved ? 'bg-blue-500/90 text-white hover:bg-blue-600/90' : 'bg-gray-700/50 text-gray-400 hover:bg-gray-700/70 hover:text-white'
-                    } ${isSaving ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'}`}
+                    } ${isSaving ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
                   <svg
                     className={`w-4 h-4 ${saved ? 'fill-current' : 'stroke-current fill-none'}`}
@@ -256,7 +333,7 @@ export default function SongCard({
         <div className="flex items-center gap-3 p-4 border-b border-gray-800/30">
           <button
             onClick={onUserClick}
-            className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-fuchsia-600 rounded-lg flex items-center justify-center text-white text-sm font-bold hover:scale-105 transition-transform"
+            className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-fuchsia-600 rounded-lg flex items-center justify-center text-white text-sm font-bold transition-transform"
           >
             {userInfo.name ? userInfo.name.charAt(0).toUpperCase() : userInfo.email.charAt(0).toUpperCase()}
           </button>
@@ -283,9 +360,10 @@ export default function SongCard({
       {/* Song card content */}
       <div
         key={id}
-        className={`card relative overflow-hidden h-80 w-full group animate-in cursor-pointer`}
-        style={
-          coverUrl
+        onClick={handleCardClick}
+        className={`card relative overflow-hidden h-80 w-full group animate-in touch-manipulation ${previewUrl ? 'cursor-pointer' : 'cursor-default'}`}
+        style={{
+          ...(coverUrl
             ? {
               backgroundImage: `url(${coverUrl})`,
               backgroundSize: 'cover',
@@ -293,11 +371,29 @@ export default function SongCard({
             }
             : {
               backgroundColor: '#f3f4f6'
-            }
-        }
+            }),
+          WebkitTapHighlightColor: 'transparent'
+        }}
       >
         {/* Gradient overlay for better text readability */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-black/20" />
+
+        {/* Play/Pause indicator overlay */}
+        {previewUrl && (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="w-20 h-20 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-xl">
+              {isPlaying ? (
+                <svg className="w-10 h-10 text-gray-900" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+                </svg>
+              ) : (
+                <svg className="w-10 h-10 text-gray-900 ml-1" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
+                </svg>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Shared by indicator at the top left (only show if not using user header) */}
         {sharedBy && !showUserHeader && (
@@ -361,7 +457,7 @@ export default function SongCard({
               href={preferredPlatform.url}
               target="_blank"
               rel="noopener noreferrer"
-              className={`flex items-center gap-1.5 px-3 py-2 ${preferredPlatform.color}/90 hover:${preferredPlatform.color} text-white rounded-full backdrop-blur-sm transition-all duration-200 hover:scale-105`}
+              className={`flex items-center gap-1.5 px-3 py-2 ${preferredPlatform.color}/90 hover:${preferredPlatform.color} text-white rounded-full backdrop-blur-sm transition-all duration-200`}
               onClick={(e) => e.stopPropagation()}
             >
               <span className="text-sm">{preferredPlatform.icon}</span>
@@ -378,7 +474,7 @@ export default function SongCard({
                 onClick={handleSaveToggle}
                 disabled={isSaving}
                 className={`flex items-center gap-1.5 px-3 py-2 rounded-full backdrop-blur-sm transition-all duration-200 ${saved ? 'bg-blue-500/90 text-white hover:bg-blue-600/90' : 'bg-black/50 text-white hover:bg-black/70'
-                  } ${isSaving ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'}`}
+                  } ${isSaving ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
                 <svg
                   className={`w-4 h-4 ${saved ? 'fill-current' : 'stroke-current fill-none'}`}

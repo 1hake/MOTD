@@ -11,6 +11,7 @@
         /* Firefox */
         -ms-overflow-style: none;
         /* Internet Explorer 10+ */
+        background-color: #181616;
     }
 
     html::-webkit-scrollbar {

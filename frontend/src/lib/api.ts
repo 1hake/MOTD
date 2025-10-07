@@ -80,3 +80,8 @@ export const updateUserProfile = async (
 export const updatePlatformPreference = async (userId: number, platformPreference: string) => {
   return api.put(`/users/${userId}`, { platformPreference })
 }
+
+// Deezer preview functions
+export const getDeezerTrackPreview = async (trackId: string) => {
+  return api.get(`/posts/deezer-preview/${trackId}`)
+}

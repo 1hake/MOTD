@@ -57,7 +57,13 @@ router.post('/', authenticateToken, async (req, res) => {
       console.error('Error fetching platform links:', error)
       // Continue with empty links if fetching fails
     }
-    const deezerTrackId = finalDeezerLink?.split('/').pop() || undefined
+    const deezerTrackId = finalDeezerLink
+      ? (() => {
+        const parts = finalDeezerLink.split('/').filter(Boolean)
+        return parts.length > 0 ? parts[parts.length - 1] : undefined
+      })()
+      : undefined
+    console.log("🚀 ~ deezerTrackId:", deezerTrackId)
     const post = await prisma.songPost.create({
       data: {
         title,
@@ -450,6 +456,33 @@ router.get('/explore', authenticateToken, async (req, res) => {
     })
   } catch (error) {
     console.error('[GET /posts/explore] error:', error)
+    res.status(500).json({ error: 'Server error' })
+  }
+})
+
+// Get Deezer track preview URL
+router.get('/deezer-preview/:trackId', async (req, res) => {
+  const { trackId } = req.params
+
+  if (!trackId) {
+    return res.status(400).json({ error: 'Track ID is required' })
+  }
+
+  try {
+    const response = await fetch(`https://api.deezer.com/track/${trackId}`)
+    const data = await response.json()
+
+    if (!response.ok) {
+      return res.status(response.status).json({ error: 'Failed to fetch track data from Deezer' })
+    }
+
+    res.json({
+      preview: data.preview || null,
+      title: data.title || null,
+      artist: data.artist?.name || null
+    })
+  } catch (error) {
+    console.error('[GET /posts/deezer-preview] error:', error)
     res.status(500).json({ error: 'Server error' })
   }
 })
