@@ -67,6 +67,7 @@ const EmptyFeedCTA: React.FC<EmptyFeedCTAProps> = ({ show, onSearchStateChange }
         : {}
 
       await api.post('/posts', {
+        id: selected.id,
         title: selected.title,
         artist: selected.artist,
         link: selected.link,
@@ -125,6 +126,7 @@ const EmptyFeedCTA: React.FC<EmptyFeedCTAProps> = ({ show, onSearchStateChange }
           <div className={`transition-all duration-300 ${isSearching ? 'pb-20 transform scale-102' : ''}`}>
             <Search
               onSelect={(track) => {
+                console.log("🚀 ~ track:", track)
                 setSelected({
                   title: track.title,
                   artist: track.artist,

@@ -6,7 +6,7 @@ import { getAllPlatformLinks } from '../services/musicService'
 const router = Router()
 
 router.post('/', authenticateToken, async (req, res) => {
-  const { title, artist, link, coverUrl, description } = req.body
+  const { id, title, artist, link, coverUrl, description } = req.body
   if (!title || !artist) {
     return res.status(400).json({ error: 'Missing fields' })
   }
@@ -57,12 +57,7 @@ router.post('/', authenticateToken, async (req, res) => {
       console.error('Error fetching platform links:', error)
       // Continue with empty links if fetching fails
     }
-    const deezerTrackId = finalDeezerLink
-      ? (() => {
-        const parts = finalDeezerLink.split('/').filter(Boolean)
-        return parts.length > 0 ? parts[parts.length - 1] : undefined
-      })()
-      : undefined
+    const deezerTrackId = id.toString();
     console.log("🚀 ~ deezerTrackId:", deezerTrackId)
     const post = await prisma.songPost.create({
       data: {

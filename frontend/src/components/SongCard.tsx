@@ -67,7 +67,6 @@ export default function SongCard({
   const [isSaving, setIsSaving] = useState(false)
   const [isPlaying, setIsPlaying] = useState(false)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
-  console.log({ deezerTrackId, previewUrl })
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const { isAuthenticated } = useAuth()
 
