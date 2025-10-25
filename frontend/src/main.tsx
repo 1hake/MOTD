@@ -1,9 +1,11 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { Capacitor } from '@capacitor/core'
 import './index.css'
 import { ToastProvider } from './components/Toast'
 import { AuthProvider } from './contexts/AuthContext'
+import { initMobileApp } from './mobile'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
 import Feed from './pages/Feed'
@@ -16,6 +18,11 @@ import UserFriends from './pages/UserFriends'
 import SavedPosts from './pages/LikedPosts'
 import ProtectedRoute from './components/ProtectedRoute'
 import Layout from './Layout'
+
+// Initialize Capacitor and mobile features when app starts
+if (Capacitor.isNativePlatform()) {
+  initMobileApp()
+}
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

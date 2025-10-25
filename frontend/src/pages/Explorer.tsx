@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { api } from '../lib/api'
 import { useAuth } from '../hooks/useAuth'
+import { useAudio } from '../contexts/AudioContext'
 import { useNavigate } from 'react-router-dom'
 import LoadingState from '../components/LoadingState'
 import SearchBar from '../components/SearchBar'
 import SearchResults from '../components/SearchResults'
 import MusicFeed from '../components/MusicFeed'
+import FullScreenMusicPlayer from '../components/FullScreenMusicPlayer'
 import { SearchHistoryService } from '../lib/searchHistory'
 
 type Post = {
@@ -18,6 +20,7 @@ type Post = {
   spotifyLink?: string
   appleMusicLink?: string
   youtubeLink?: string
+  deezerTrackId?: string
   coverUrl?: string
   date: string
   saveCount: number
@@ -46,8 +49,11 @@ export default function Explorer() {
   const [hasMore, setHasMore] = useState(true)
   const [page, setPage] = useState(1)
   const [isSearching, setIsSearching] = useState(false)
+  const [isFullScreen, setIsFullScreen] = useState(false)
+  const [fullScreenIndex, setFullScreenIndex] = useState(0)
   const navigate = useNavigate()
   const { user: currentUser, isAuthenticated } = useAuth()
+  const audio = useAudio()
 
   useEffect(() => {
     if (!isAuthenticated || !currentUser) {
@@ -137,8 +143,34 @@ export default function Explorer() {
     navigate(`/profile/${user.id}`)
   }
 
+  const handlePostClick = (index: number) => {
+    // Stop all audio before entering full-screen using the centralized audio context
+    audio.stopAll()
+
+    setFullScreenIndex(index)
+    setIsFullScreen(true)
+  }
+
+  const handleCloseFullScreen = () => {
+    setIsFullScreen(false)
+  }
+
   if (loading) {
     return <LoadingState message="Chargement de l'explorateur..." />
+  }
+
+  // Full-screen mode
+  if (isFullScreen) {
+    return (
+      <FullScreenMusicPlayer
+        posts={posts}
+        initialIndex={fullScreenIndex}
+        currentUserId={currentUser?.id}
+        currentUserPlatformPreference={currentUser?.platformPreference}
+        onClose={handleCloseFullScreen}
+        onSaveChange={handleSaveChange}
+      />
+    )
   }
 
   return (
@@ -174,6 +206,7 @@ export default function Explorer() {
           currentUserPlatformPreference={currentUser?.platformPreference}
           onLoadMore={loadMorePosts}
           onSaveChange={handleSaveChange}
+          onPostClick={handlePostClick}
         />
       </div>
     </div>

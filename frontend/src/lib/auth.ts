@@ -1,7 +1,22 @@
 import axios, { AxiosResponse } from 'axios'
+import { Capacitor } from '@capacitor/core'
 import { setTokens, getAccessToken, getRefreshToken, clearAuth, setUser, getUser, AuthTokens, User } from './storage'
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000'
+// Use different API URLs for different platforms
+const getApiBaseUrl = () => {
+  if (import.meta.env.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL
+  }
+
+  if (Capacitor.isNativePlatform()) {
+    // Use your computer's IP address for mobile simulators/devices
+    return 'http://192.168.1.139:4000' // Your Mac's IP address on correct port
+  }
+
+  return 'http://localhost:4000' // Correct backend port
+}
+
+const API_BASE_URL = getApiBaseUrl()
 
 // Create axios instance for auth requests
 const authApi = axios.create({

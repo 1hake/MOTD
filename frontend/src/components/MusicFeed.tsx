@@ -11,6 +11,7 @@ type Post = {
     spotifyLink?: string
     appleMusicLink?: string
     youtubeLink?: string
+    deezerTrackId?: string
     coverUrl?: string
     date: string
     saveCount: number
@@ -32,6 +33,7 @@ interface MusicFeedProps {
     currentUserPlatformPreference?: string
     onLoadMore: () => void
     onSaveChange: (postId: number, isSaved: boolean, newSaveCount: number) => void
+    onPostClick?: (index: number) => void
 }
 
 export default function MusicFeed({
@@ -42,7 +44,8 @@ export default function MusicFeed({
     currentUserId,
     currentUserPlatformPreference,
     onLoadMore,
-    onSaveChange
+    onSaveChange,
+    onPostClick
 }: MusicFeedProps) {
     const observer = useRef<IntersectionObserver | null>(null)
 
@@ -88,7 +91,8 @@ export default function MusicFeed({
                         <div
                             key={post.id}
                             ref={index === posts.length - 1 ? lastPostElementRef : null}
-                            className="snap-start"
+                            className="snap-start cursor-pointer"
+                            onClick={() => onPostClick?.(index)}
                         >
                             <SongCard
                                 id={post.id}
@@ -109,6 +113,7 @@ export default function MusicFeed({
                                 userPlatformPreference={currentUserPlatformPreference}
                                 sharedBy={post.user.name || post.user.email.split('@')[0]}
                                 deezerTrackId={post.deezerTrackId}
+                                disableAudioClick={true}
                             />
                         </div>
                     ))}

@@ -13,7 +13,15 @@ const app = express()
 
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+    origin: [
+      process.env.FRONTEND_URL || 'http://localhost:5173',
+      'http://localhost:4000',
+      'http://192.168.1.139:4000',
+      'capacitor://localhost',
+      'ionic://localhost',
+      'http://localhost',
+      'https://localhost'
+    ],
     credentials: true
   })
 )
