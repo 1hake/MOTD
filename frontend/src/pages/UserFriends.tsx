@@ -79,95 +79,83 @@ export default function UserFriends() {
     const canViewFriends = isOwnProfile
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-gray-100">
+        <div className="min-h-screen pb-20">
             <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
                 {/* Back button */}
                 <div className="mb-8">
                     <button
                         onClick={() => navigate(isOwnProfile ? '/profile' : `/profile/${user.id}`)}
-                        className="group flex items-center gap-3 text-gray-400 hover:text-white transition-all duration-300 hover:translate-x-1"
+                        className="btn-ghost flex items-center gap-2 group"
                     >
-                        <div className="p-2 rounded-full bg-gray-800/50 group-hover:bg-gray-700/50 transition-colors">
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                            </svg>
-                        </div>
-                        <span className="font-medium">Retour au profil</span>
+                        <svg className="w-5 h-5 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M15 19l-7-7 7-7" />
+                        </svg>
+                        <span className="font-bold">Retour</span>
                     </button>
                 </div>
 
                 {/* Header */}
                 <div className="mb-8">
-                    <h1 className="text-3xl font-bold text-white mb-2">
+                    <h1 className="text-4xl sm:text-5xl font-black text-black mb-2 italic tracking-tight">
                         {isOwnProfile ? 'Mes amis' : `Amis de ${user.name || user.email.split('@')[0]}`}
                     </h1>
                     {canViewFriends && (
-                        <p className="text-gray-400">
-                            {friends.length} ami{friends.length > 1 ? 's' : ''}
-                        </p>
+                        <div className="inline-block px-3 py-1 bg-pop-pink border-2 border-black rounded-full text-sm font-bold shadow-neo-sm">
+                            {friends.length} {friends.length > 1 ? 'amis' : 'ami'}
+                        </div>
                     )}
                 </div>
 
                 {/* Friends List */}
                 {!canViewFriends ? (
-                    <div className="text-center py-24">
-                        <div className="relative">
-                            <div className="w-32 h-32 mx-auto bg-gradient-to-br from-gray-700/50 to-gray-800/50 rounded-full flex items-center justify-center text-6xl mb-8 shadow-2xl border border-gray-600/30">
-                                🔒
-                            </div>
-                            <div className="max-w-md mx-auto">
-                                <h3 className="text-3xl font-bold text-white mb-4">
-                                    Liste d'amis privée
-                                </h3>
-                                <p className="text-lg text-gray-400 leading-relaxed">
-                                    Cette personne a choisi de garder sa liste d'amis privée.
-                                </p>
-                            </div>
+                    <div className="card bg-white p-12 text-center mt-12">
+                        <div className="w-24 h-24 mx-auto bg-pop-yellow border-3 border-black rounded-2xl flex items-center justify-center text-5xl mb-6 shadow-neo transform -rotate-3">
+                            🔒
                         </div>
+                        <h3 className="text-3xl font-black text-black mb-4 italic">
+                            Liste d'amis privée
+                        </h3>
+                        <p className="text-lg font-medium text-black/70 max-w-sm mx-auto">
+                            Cette personne a choisi de garder sa liste d'amis privée.
+                        </p>
                     </div>
                 ) : friends.length === 0 ? (
-                    <div className="text-center py-24">
-                        <div className="relative">
-                            <div className="w-32 h-32 mx-auto bg-gradient-to-br from-indigo-500/20 via-purple-500/20 to-pink-500/20 rounded-full flex items-center justify-center text-6xl mb-8 shadow-2xl border border-indigo-500/30">
-                                👥
-                            </div>
-                            <div className="max-w-md mx-auto">
-                                <h3 className="text-3xl font-bold text-white mb-4">
-                                    {isOwnProfile ? 'Aucun ami pour le moment' : 'Aucun ami à afficher'}
-                                </h3>
-                                <p className="text-lg text-gray-400 mb-8 leading-relaxed">
-                                    {isOwnProfile ? 'Commencez à suivre des personnes pour agrandir votre réseau !' : 'Cette personne n\'a pas encore d\'amis.'}
-                                </p>
-                                {isOwnProfile && (
-                                    <button
-                                        onClick={() => navigate('/explorer')}
-                                        className="group px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-2xl font-semibold transition-all duration-300 transform hover:scale-105 hover:shadow-2xl shadow-lg"
-                                    >
-                                        <span className="flex items-center gap-2">
-                                            🔍 Découvrir des amis
-                                        </span>
-                                    </button>
-                                )}
-                            </div>
+                    <div className="card bg-white p-12 text-center mt-12">
+                        <div className="w-24 h-24 mx-auto bg-pop-mint border-3 border-black rounded-2xl flex items-center justify-center text-5xl mb-6 shadow-neo transform rotate-3">
+                            👥
                         </div>
+                        <h3 className="text-3xl font-black text-black mb-4 italic">
+                            {isOwnProfile ? 'Aucun ami pour le moment' : 'Aucun ami à afficher'}
+                        </h3>
+                        <p className="text-lg font-medium text-black/70 mb-8 max-w-sm mx-auto">
+                            {isOwnProfile ? 'Commencez à suivre des personnes pour agrandir votre réseau !' : 'Cette personne n\'a pas encore d\'amis.'}
+                        </p>
+                        {isOwnProfile && (
+                            <button
+                                onClick={() => navigate('/explorer')}
+                                className="btn-primary"
+                            >
+                                🔍 Découvrir des amis
+                            </button>
+                        )}
                     </div>
                 ) : (
-                    <div className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {friends.map((friend) => (
                             <div
                                 key={friend.id}
                                 onClick={() => navigate(`/profile/${friend.id}`)}
-                                className="bg-gray-800/50 hover:bg-gray-800/70 rounded-xl border border-gray-700/50 hover:border-gray-600/50 transition-all duration-200 p-4 cursor-pointer group"
+                                className="card bg-white p-5 cursor-pointer group"
                             >
-                                <div className="flex items-center gap-4">
-                                    <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center text-white text-lg font-bold group-hover:scale-105 transition-transform duration-200">
+                                <div className="flex items-center gap-5">
+                                    <div className="w-16 h-16 bg-pop-purple border-3 border-black rounded-2xl flex items-center justify-center text-black text-2xl font-black shadow-neo-sm group-hover:rotate-3 transition-transform">
                                         {friend.name ? friend.name.charAt(0).toUpperCase() : friend.email.charAt(0).toUpperCase()}
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                        <h3 className="font-semibold text-white text-base group-hover:text-gray-100 transition-colors">
+                                        <h3 className="font-black text-xl text-black truncate italic">
                                             {friend.name || friend.email.split('@')[0]}
                                         </h3>
-                                        <p className="text-gray-400 text-sm group-hover:text-gray-300 transition-colors">@{friend.email.split('@')[0]}</p>
+                                        <p className="font-bold text-black/60 truncate">@{friend.email.split('@')[0]}</p>
                                     </div>
                                     {currentUser && friend.id !== currentUser.id && (
                                         <div

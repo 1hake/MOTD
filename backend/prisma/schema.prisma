@@ -38,6 +38,7 @@ model SongPost {
   user           User     @relation(fields: [userId], references: [id])
   userId         Int
   saves          Save[]
+  isPublic       Boolean  @default(true)
 }
 
 model Friendship {

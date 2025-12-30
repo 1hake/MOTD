@@ -6,7 +6,7 @@ import { getAllPlatformLinks } from '../services/musicService'
 const router = Router()
 
 router.post('/', authenticateToken, async (req, res) => {
-  const { id, title, artist, link, coverUrl, description } = req.body
+  const { id, title, artist, link, coverUrl, description, isPublic } = req.body
   if (!title || !artist) {
     return res.status(400).json({ error: 'Missing fields' })
   }
@@ -71,7 +71,8 @@ router.post('/', authenticateToken, async (req, res) => {
         youtubeLink: finalYoutubeLink,
         userId: uid,
         coverUrl,
-        deezerTrackId
+        deezerTrackId,
+        isPublic: isPublic !== undefined ? isPublic : true
       }
     })
     res.json(post)
@@ -192,8 +193,21 @@ router.get('/friends/:userId', authenticateToken, async (req, res) => {
   }
 
   try {
+    // Check if the current user is a friend of the target user
+    const friendship = await prisma.friendship.findFirst({
+      where: {
+        userId: currentUserId,
+        friendId: targetUserId
+      }
+    })
+
+    const isFriend = !!friendship || currentUserId === targetUserId
+
     const posts = await prisma.songPost.findMany({
-      where: { userId: targetUserId },
+      where: {
+        userId: targetUserId,
+        OR: isFriend ? undefined : [{ isPublic: true }]
+      },
       include: {
         saves: {
           select: {
@@ -403,14 +417,16 @@ router.get('/explore', authenticateToken, async (req, res) => {
     // Get total count for pagination
     const totalPosts = await prisma.songPost.count({
       where: {
-        date: { gte: today }
+        date: { gte: today },
+        isPublic: true
       }
     })
 
     // Get posts with user information and likes
     const posts = await prisma.songPost.findMany({
       where: {
-        date: { gte: today }
+        date: { gte: today },
+        isPublic: true
       },
       include: {
         user: {

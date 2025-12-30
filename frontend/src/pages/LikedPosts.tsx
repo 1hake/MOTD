@@ -218,6 +218,8 @@ export default function SavedPosts() {
                                             isOwnPost={post.user.id === currentUser?.id}
                                             horizontal={true} // Always horizontal in liked posts view
                                             userPlatformPreference={currentUser?.platformPreference}
+                                            sharedBy={post.user.name || post.user.email.split('@')[0]}
+                                            onUserClick={() => navigate(`/profile/${post.user.id}`)}
                                         />
                                     ))}
                                 </div>

@@ -18,6 +18,7 @@ type SongCardProps = {
   sharedBy?: string
   saveCount?: number
   isSavedByUser?: boolean
+  isPublic?: boolean
   showSaves?: boolean
   isOwnPost?: boolean
   className?: string
@@ -82,6 +83,7 @@ export default function SongCard({
   sharedBy,
   saveCount = 0,
   isSavedByUser = false,
+  isPublic = true,
   showSaves = true,
   isOwnPost = false,
   className = '',
@@ -312,11 +314,28 @@ export default function SongCard({
         {/* Song Info */}
         <div className="flex-grow min-w-0 p-4 flex flex-col justify-center bg-white">
           {sharedBy && (
-            <div className="flex items-center gap-2 mb-1">
+            <div
+              className={`flex items-center gap-2 mb-1 ${onUserClick ? 'cursor-pointer hover:opacity-80 transition-opacity' : ''}`}
+              onClick={(e) => {
+                if (onUserClick) {
+                  e.stopPropagation()
+                  onUserClick()
+                }
+              }}
+            >
               <div className="w-4 h-4 bg-pop-pink border border-black rounded-full flex items-center justify-center text-black text-[10px] font-bold">
                 {sharedBy.charAt(0).toUpperCase()}
               </div>
-              <span className="text-[10px] font-bold uppercase text-black/60 tracking-wider">Partagé par {sharedBy}</span>
+              <span className="text-[10px] font-bold uppercase text-black/60 tracking-wider flex items-center gap-1">
+                Partagé par {sharedBy}
+                {!isPublic && (
+                  <span className="text-pop-yellow ml-1" title="Visible par vos amis uniquement">
+                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>
+                  </span>
+                )}
+              </span>
             </div>
           )}
 
@@ -376,11 +395,18 @@ export default function SongCard({
             <p className="text-black/60 text-xs font-bold">@{userInfo.username || userInfo.email.split('@')[0]}</p>
           </div>
           {date && (
-            <div className="text-[10px] font-black uppercase bg-black text-white px-2 py-1 rounded">
-              {new Date(date).toLocaleDateString('fr-FR', {
-                day: 'numeric',
-                month: 'short'
-              })}
+            <div className="flex flex-col items-end gap-1.5">
+              {!isPublic && (
+                <div className="text-[8px] font-black uppercase bg-pop-yellow text-black px-2 py-0.5 rounded border-2 border-black shadow-neo-sm">
+                  Amis
+                </div>
+              )}
+              <div className="text-[10px] font-black uppercase bg-black text-white px-2 py-1 rounded">
+                {new Date(date).toLocaleDateString('fr-FR', {
+                  day: 'numeric',
+                  month: 'short'
+                })}
+              </div>
             </div>
           )}
         </div>
@@ -414,14 +440,32 @@ export default function SongCard({
         )}
 
         {/* Shared by indicator at the top left (only show if not using user header) */}
-        {sharedBy && !showUserHeader && (
-          <div className="absolute top-4 left-4 z-20">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-white border-2 border-black rounded-xl text-xs font-black shadow-neo-sm">
-              <div className="w-6 h-6 bg-pop-pink border border-black rounded-full flex items-center justify-center text-black text-[10px] font-black">
-                {sharedBy.charAt(0).toUpperCase()}
+        {(sharedBy || !isPublic) && !showUserHeader && (
+          <div className="absolute top-4 left-4 z-20 flex flex-col gap-2">
+            {sharedBy && (
+              <div
+                className={`inline-flex items-center gap-2 px-3 py-1.5 bg-white border-2 border-black rounded-xl text-xs font-black shadow-neo-sm ${onUserClick ? 'cursor-pointer hover:bg-gray-50 transition-colors' : ''}`}
+                onClick={(e) => {
+                  if (onUserClick) {
+                    e.stopPropagation()
+                    onUserClick()
+                  }
+                }}
+              >
+                <div className="w-6 h-6 bg-pop-pink border border-black rounded-full flex items-center justify-center text-black text-[10px] font-black">
+                  {sharedBy.charAt(0).toUpperCase()}
+                </div>
+                <span className="uppercase italic text-black text-[8px]">Partagé par {sharedBy}</span>
               </div>
-              <span className="uppercase italic text-[8px]">Partagé par {sharedBy}</span>
-            </div>
+            )}
+            {!isPublic && (
+              <div className="inline-flex items-center gap-2 px-3 py-1 bg-pop-yellow border-2 border-black rounded-xl text-[8px] font-black shadow-neo-sm uppercase italic text-black">
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+                Amis seulement
+              </div>
+            )}
           </div>
         )}
 

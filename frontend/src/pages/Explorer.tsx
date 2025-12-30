@@ -25,6 +25,7 @@ type Post = {
   date: string
   saveCount: number
   isSavedByUser: boolean
+  isPublic: boolean
   user: {
     id: number
     name?: string

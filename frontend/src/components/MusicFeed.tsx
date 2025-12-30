@@ -1,5 +1,6 @@
 import React, { useCallback, useRef } from 'react'
 import SongCard from './SongCard'
+import { useNavigate } from 'react-router-dom'
 
 type Post = {
     id: number
@@ -16,6 +17,7 @@ type Post = {
     date: string
     saveCount: number
     isSavedByUser: boolean
+    isPublic: boolean
     user: {
         id: number
         name?: string
@@ -47,6 +49,7 @@ export default function MusicFeed({
     onSaveChange,
     onPostClick
 }: MusicFeedProps) {
+    const navigate = useNavigate()
     const observer = useRef<IntersectionObserver | null>(null)
 
     // Ref for the last post element to trigger infinite scroll
@@ -77,7 +80,7 @@ export default function MusicFeed({
 
     return (
         <div className="mb-8">
-            <h2 className="text-lg font-semibold text-white mb-6">Musiques du jour</h2>
+            <h2 className="text-2xl italic font-semibold text-black mb-6">Musiques du jour</h2>
 
             {posts.length === 0 ? (
                 <div className="text-center py-20">
@@ -110,8 +113,10 @@ export default function MusicFeed({
                                 onSaveChange={onSaveChange}
                                 showSaves={true}
                                 isOwnPost={post.user.id === currentUserId}
+                                isPublic={post.isPublic}
                                 userPlatformPreference={currentUserPlatformPreference}
                                 sharedBy={post.user.name || post.user.email.split('@')[0]}
+                                onUserClick={() => navigate(`/profile/${post.user.id}`)}
                                 deezerTrackId={post.deezerTrackId}
                                 disableAudioClick={true}
                             />

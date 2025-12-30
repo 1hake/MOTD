@@ -25,6 +25,7 @@ const EmptyFeedCTA: React.FC<EmptyFeedCTAProps> = ({ show, onSearchStateChange }
   const [error, setError] = useState<string | null>(null)
   const [isSearching, setIsSearching] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
+  const [isPublic, setIsPublic] = useState(true)
 
   const handleSearchStart = (query: string) => {
     console.log('Search query changed:', query)
@@ -74,6 +75,7 @@ const EmptyFeedCTA: React.FC<EmptyFeedCTAProps> = ({ show, onSearchStateChange }
         coverUrl: selected.cover,
         description: description.trim() || undefined,
         timezoneOffset: new Date().getTimezoneOffset(),
+        isPublic,
         ...musicLinks
       })
 
@@ -97,6 +99,7 @@ const EmptyFeedCTA: React.FC<EmptyFeedCTAProps> = ({ show, onSearchStateChange }
     setError(null)
     setIsSearching(false)
     setSearchQuery('')
+    setIsPublic(true)
 
     // Notify parent that search state is reset
     onSearchStateChange?.(false)
@@ -207,6 +210,26 @@ const EmptyFeedCTA: React.FC<EmptyFeedCTAProps> = ({ show, onSearchStateChange }
                     </button>
                   )}
                 </div>
+              </div>
+
+              {/* Visibility Switch */}
+              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl border-3 border-black">
+                <div className="flex flex-col items-start text-left">
+                  <span className="text-sm font-black text-black uppercase italic">Visibilité Explorer</span>
+                  <span className="text-[10px] font-bold text-black/60 uppercase">
+                    {isPublic ? 'Tout le monde peut voir' : 'Seulement vos amis'}
+                  </span>
+                </div>
+                <button
+                  onClick={() => setIsPublic(!isPublic)}
+                  className={`relative inline-flex h-7 w-12 items-center rounded-full transition-all duration-300 focus:outline-none border-2 border-black ${isPublic ? 'bg-pop-mint shadow-neo-sm' : 'bg-gray-200'
+                    }`}
+                >
+                  <span
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white border-2 border-black transition-transform duration-300 ${isPublic ? 'translate-x-6' : 'translate-x-1'
+                      }`}
+                  />
+                </button>
               </div>
 
               {/* Actions */}

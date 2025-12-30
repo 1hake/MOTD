@@ -13,14 +13,22 @@ type Post = {
   id: number
   title: string
   artist: string
+  description?: string
   link: string
+  deezerLink?: string
+  spotifyLink?: string
+  appleMusicLink?: string
+  youtubeLink?: string
+  deezerTrackId?: string
   coverUrl?: string
   date: string
   saveCount?: number
   isSavedByUser?: boolean
+  isPublic: boolean
   user?: {
     id: number
     email: string
+    name?: string
   }
 }
 
@@ -120,7 +128,7 @@ export default function Feed() {
         />
 
         {/* My posts today */}
-        {myPosts.length > 0 && <PostsSection title="Ma chanson du jour" posts={myPosts} currentUserId={user?.id} />}
+        {myPosts.length > 0 && <PostsSection title="Ma chanson du jour" posts={myPosts} currentUserId={user?.id} userPlatformPreference={user?.platformPreference} />}
 
         {/* Friends' posts */}
         {myPosts.length > 0 && (
@@ -131,6 +139,7 @@ export default function Feed() {
             emptyMessage={<EmptyFriendsState />}
             onSaveChange={handleSaveChange}
             currentUserId={user?.id}
+            userPlatformPreference={user?.platformPreference}
           />
         )}
       </div>

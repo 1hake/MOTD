@@ -147,66 +147,68 @@ export default function Profile() {
     <div className="min-h-screen">
       <div className="max-w-4xl mx-auto px-6 py-12">
         {/* Profile Header */}
-        <div className="mb-8">
-          <div className="card p-5">
-            <div className="flex flex-col sm:flex-row items-center gap-6">
-              {/* Avatar */}
-              <div className="w-20 h-20 bg-pop-pink border-3 border-black rounded-2xl flex items-center justify-center text-black text-2xl font-black shadow-neo-sm shrink-0">
-                {user.name ? user.name.charAt(0).toUpperCase() : user.email.charAt(0).toUpperCase()}
+        <div className="mb-12 pb-12 border-b-4 border-black">
+          <div className="flex flex-col md:flex-row items-center md:items-start gap-8">
+            {/* Avatar */}
+            <div className="w-24 h-24 md:w-32 md:h-32 bg-pop-pink border-4 border-black rounded-3xl flex items-center justify-center text-black text-3xl md:text-5xl font-black shadow-neo shrink-0 -rotate-2">
+              {user.name ? user.name.charAt(0).toUpperCase() : user.email.charAt(0).toUpperCase()}
+            </div>
+
+            {/* User Info & Actions */}
+            <div className="flex-1 flex flex-col gap-6 w-full text-center md:text-left pt-2">
+              <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
+                <div>
+                  <h1 className="text-3xl md:text-5xl font-black text-black uppercase italic leading-none mb-2">
+                    {user.name || user.email.split('@')[0]}
+                  </h1>
+                  <p className="text-lg md:text-xl font-bold text-black opacity-60">@{user.email.split('@')[0]}</p>
+                </div>
+
+                {/* Action buttons */}
+                <div className="flex justify-center md:justify-end gap-3 h-fit">
+                  <button
+                    onClick={() => navigate('/profile/edit')}
+                    className="px-5 py-2 bg-pop-blue text-black font-black uppercase italic border-3 border-black rounded-xl shadow-neo-sm hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-neo active:translate-x-[0px] active:translate-y-[0px] active:shadow-none transition-all duration-200 flex items-center gap-2 text-sm"
+                  >
+                    <svg className="w-4 h-4 stroke-[3px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    </svg>
+                    Modifier
+                  </button>
+                  <LogoutButton className="text-sm px-5 py-2" />
+                </div>
               </div>
 
-              {/* User Info & Actions */}
-              <div className="flex-1 flex flex-col gap-4 w-full">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                  <div className="text-center sm:text-left">
-                    <h1 className="text-2xl font-black text-black uppercase italic leading-none mb-1">
-                      {user.name || user.email.split('@')[0]}
-                    </h1>
-                    <p className="text-black font-bold opacity-70 text-sm">@{user.email.split('@')[0]}</p>
-                  </div>
-
-                  {/* Action buttons */}
-                  <div className="flex justify-center sm:justify-end gap-3">
-                    <button
-                      onClick={() => navigate('/profile/edit')}
-                      className="px-4 py-1.5 bg-pop-blue text-black font-black uppercase italic border-2 border-black rounded-lg shadow-neo-sm hover:translate-x-[-1px] hover:translate-y-[-1px] hover:shadow-neo active:translate-x-[1px] active:translate-y-[1px] active:shadow-none transition-all duration-200 flex items-center gap-2 text-xs"
-                    >
-                      <svg className="w-3 h-3 stroke-[3px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                      </svg>
-                      Modifier
-                    </button>
-                    <LogoutButton className="text-xs px-4 py-1.5" />
-                  </div>
+              {/* Stats */}
+              <div className="flex justify-center md:justify-start gap-10">
+                <div className="flex flex-col items-center md:items-start">
+                  <span className="text-2xl md:text-3xl font-black text-black">{posts.length}</span>
+                  <span className="text-[10px] md:text-xs font-black text-black opacity-40 uppercase tracking-widest">
+                    chansons
+                  </span>
                 </div>
-
-                {/* Stats */}
-                <div className="flex justify-center sm:justify-start gap-6 border-t-2 border-black/5 pt-3">
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-lg font-black text-black">{posts.length}</span>
-                    <span className="text-[10px] font-black text-black opacity-50 uppercase tracking-tighter">
-                      chansons
-                    </span>
-                  </div>
-                  <button
-                    onClick={() => navigate('/friends/me')}
-                    className="flex items-center gap-1.5 hover:translate-y-[-1px] transition-transform"
-                  >
-                    <span className="text-lg font-black text-black">{friendsCount}</span>
-                    <span className="text-[10px] font-black text-black opacity-50 uppercase tracking-tighter">
-                      amis
-                    </span>
-                  </button>
-                  <button
-                    onClick={() => navigate('/saved')}
-                    className="flex items-center gap-1.5 hover:translate-y-[-1px] transition-transform"
-                  >
-                    <span className="text-lg font-black text-black">{savedCount}</span>
-                    <span className="text-[10px] font-black text-black opacity-50 uppercase tracking-tighter">
-                      sauvées
-                    </span>
-                  </button>
-                </div>
+                <button
+                  onClick={() => navigate('/friends/me')}
+                  className="flex flex-col items-center md:items-start group"
+                >
+                  <span className="text-2xl md:text-3xl font-black text-black group-hover:text-pop-blue transition-colors">
+                    {friendsCount}
+                  </span>
+                  <span className="text-[10px] md:text-xs font-black text-black opacity-40 uppercase tracking-widest">
+                    amis
+                  </span>
+                </button>
+                <button
+                  onClick={() => navigate('/saved')}
+                  className="flex flex-col items-center md:items-start group"
+                >
+                  <span className="text-2xl md:text-3xl font-black text-black group-hover:text-pop-pink transition-colors">
+                    {savedCount}
+                  </span>
+                  <span className="text-[10px] md:text-xs font-black text-black opacity-40 uppercase tracking-widest">
+                    sauvées
+                  </span>
+                </button>
               </div>
             </div>
           </div>

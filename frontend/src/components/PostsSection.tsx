@@ -1,5 +1,6 @@
 import React from 'react'
 import SongCard from './SongCard'
+import { useNavigate } from 'react-router-dom'
 
 type Post = {
   id: number
@@ -11,13 +12,16 @@ type Post = {
   spotifyLink?: string
   appleMusicLink?: string
   youtubeLink?: string
+  deezerTrackId?: string
   coverUrl?: string
   date: string
   saveCount?: number
   isSavedByUser?: boolean
+  isPublic: boolean
   user?: {
     id: number
     email: string
+    name?: string
   }
 }
 
@@ -28,9 +32,11 @@ interface PostsSectionProps {
   emptyMessage?: React.ReactNode
   onSaveChange?: (postId: number, isSaved: boolean, newSaveCount: number) => void
   currentUserId?: number
+  userPlatformPreference?: string
 }
 
-const PostsSection: React.FC<PostsSectionProps> = ({ title, posts, showCount = false, emptyMessage, onSaveChange, currentUserId }) => {
+const PostsSection: React.FC<PostsSectionProps> = ({ title, posts, showCount = false, emptyMessage, onSaveChange, currentUserId, userPlatformPreference }) => {
+  const navigate = useNavigate()
   console.log({ posts })
   return (
     <div className="space-y-6 animate-in">
@@ -61,14 +67,17 @@ const PostsSection: React.FC<PostsSectionProps> = ({ title, posts, showCount = f
               spotifyLink={post.spotifyLink}
               appleMusicLink={post.appleMusicLink}
               coverUrl={post.coverUrl}
-              sharedBy={post.user?.email}
+              sharedBy={post.user?.name || post.user?.email.split('@')[0]}
               saveCount={post.saveCount}
               isSavedByUser={post.isSavedByUser}
+              isPublic={post.isPublic}
               showSaves={!!post.user?.email} // Only show saves for shared posts
               isOwnPost={post.user?.id === currentUserId}
               onSaveChange={onSaveChange}
+              onUserClick={post.user?.id ? () => navigate(`/profile/${post.user?.id}`) : undefined}
               className="animate-up"
               deezerTrackId={post.deezerTrackId}
+              userPlatformPreference={userPlatformPreference}
             />
           ))}
         </div>

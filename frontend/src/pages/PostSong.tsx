@@ -16,6 +16,7 @@ export default function PostSong() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [isSearching, setIsSearching] = useState(false)
+  const [isPublic, setIsPublic] = useState(true)
   const navigate = useNavigate()
   const { user, isAuthenticated } = useAuth()
 
@@ -39,16 +40,17 @@ export default function PostSong() {
             artist: selected.artist
           })
         : {}
-      console.log(selected.id)
-      // await api.post('/posts', {
-      //   title: selected.title,
-      //   artist: selected.artist,
-      //   link: selected.link,
-      //   coverUrl: selected.cover,
-      //   trackId: selected.id,
-      //   ...musicLinks,
-      //   userId: user.id
-      // })
+
+      await api.post('/posts', {
+        title: selected.title,
+        artist: selected.artist,
+        link: selected.link,
+        coverUrl: selected.cover,
+        id: selected.id,
+        isPublic,
+        ...musicLinks,
+        userId: user.id
+      })
 
       navigate('/feed')
     } catch (err: any) {
@@ -66,6 +68,7 @@ export default function PostSong() {
   const handleCancel = () => {
     setSelected(null)
     setError(null)
+    setIsPublic(true)
   }
 
   return (
@@ -124,8 +127,30 @@ export default function PostSong() {
                 {selected.artist}
               </p>
 
+              {/* Visibility Switch */}
+              <div className="mt-8 flex items-center justify-between p-4 bg-gray-50/50 rounded-2xl border border-gray-100">
+                <div className="flex flex-col items-start text-left">
+                  <span className="font-semibold text-gray-700">Visibilité Explorer</span>
+                  <span className="text-sm text-gray-500">
+                    {isPublic ? 'Tout le monde peut voir' : 'Seulement vos amis'}
+                  </span>
+                </div>
+                <button
+                  onClick={() => setIsPublic(!isPublic)}
+                  className={`relative inline-flex h-7 w-12 items-center rounded-full transition-all duration-300 focus:outline-none ${
+                    isPublic ? 'bg-emerald-500 shadow-sm' : 'bg-gray-300'
+                  }`}
+                >
+                  <span
+                    className={`inline-block h-5 w-5 transform rounded-full bg-white shadow-md transition-transform duration-300 ${
+                      isPublic ? 'translate-x-6' : 'translate-x-1'
+                    }`}
+                  />
+                </button>
+              </div>
+
               {/* Actions */}
-              <div className="mt-8 flex flex-col gap-4">
+              <div className="mt-6 flex flex-col gap-4">
                 <button
                   onClick={submit}
                   disabled={isSubmitting || !!error}

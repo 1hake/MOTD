@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react'
 import { savePost, unsavePost, getDeezerTrackPreview } from '../lib/api'
 import { useAuth } from '../hooks/useAuth'
 import { useAudio } from '../contexts/AudioContext'
+import { useNavigate } from 'react-router-dom'
 import AudioLevelIndicator from './AudioLevelIndicator'
 
 type Post = {
@@ -83,6 +84,7 @@ export default function FullScreenMusicPlayer({
     const hasAutoPlayedRef = useRef<boolean>(false)
     const { isAuthenticated } = useAuth()
     const audio = useAudio()
+    const navigate = useNavigate()
 
     // Initialize preview URLs for all posts
     useEffect(() => {
@@ -296,7 +298,14 @@ export default function FullScreenMusicPlayer({
                                     </div>
 
                                     {/* User info on right */}
-                                    <div className="flex flex-col items-center gap-1 flex-shrink-0">
+                                    <div
+                                        className="flex flex-col items-center gap-1 flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity"
+                                        onClick={(e) => {
+                                            e.stopPropagation()
+                                            audio.stopAll()
+                                            navigate(`/profile/${post.user.id}`)
+                                        }}
+                                    >
                                         <div className="w-12 h-12 bg-white border-3 border-black rounded-full flex items-center justify-center text-black text-lg font-black shadow-neo">
                                             {post.user.name ? post.user.name.charAt(0).toUpperCase() : post.user.email.charAt(0).toUpperCase()}
                                         </div>
