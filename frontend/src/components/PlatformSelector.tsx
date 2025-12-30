@@ -111,15 +111,15 @@ export default function PlatformSelector({
     }
   }
   return (
-    <div className="space-y-6 bg-gray-900/30 backdrop-blur-sm rounded-xl border border-gray-800/30 p-6">
-      <div className="border-b border-gray-700/50 pb-3">
-        <h3 className="text-lg font-semibold text-white">Plateforme musicale préférée</h3>
-        <p className="text-sm text-gray-400 mt-1">Sélectionnez votre plateforme préférée pour les liens musicaux</p>
+    <div className="space-y-6 bg-white border-3 border-black shadow-neo rounded-2xl p-6">
+      <div className="border-b-3 border-black pb-3">
+        <h3 className="text-xl font-black text-black uppercase italic">Plateforme préférée</h3>
+        <p className="text-sm text-black/60 font-bold mt-1 uppercase tracking-tight">Pour vos liens musicaux</p>
       </div>
 
       {/* Platform options grid - responsive */}
       <div className="grid grid-cols-4 gap-3 sm:flex sm:overflow-x-auto sm:pb-2 sm:-mx-2 sm:px-2">
-        <div className="contents sm:flex sm:gap-3 sm:min-w-max">
+        <div className="contents sm:flex sm:gap-4 sm:min-w-max">
           {platformOptions.map((platform) => (
             <button
               key={platform.id}
@@ -127,32 +127,27 @@ export default function PlatformSelector({
               onClick={() => handlePlatformChange(platform.id)}
               disabled={disabled}
               className={`
-                                aspect-square w-full sm:w-20 sm:aspect-auto sm:flex-shrink-0 
-                                p-3 sm:p-3 rounded-xl sm:rounded-2xl border-2 transition-all duration-300 group relative overflow-hidden
+                                aspect-square w-full sm:w-24 sm:aspect-auto sm:flex-shrink-0 
+                                p-3 sm:p-4 rounded-xl border-3 transition-all duration-200 group relative overflow-hidden
                                 ${currentSelectedPlatform === platform.id
-                  ? `border-transparent bg-gradient-to-br ${platform.color} text-white shadow-lg transform scale-105`
-                  : 'border-gray-700/50 bg-gray-800/40 text-gray-300 hover:border-gray-600/50 hover:bg-gray-800/60 hover:scale-105 hover:shadow-lg'
+                  ? `border-black bg-pop-pink text-black shadow-neo transform translate-x-[-2px] translate-y-[-2px]`
+                  : 'border-black bg-white text-black hover:bg-pop-mint/20 hover:translate-x-[-1px] hover:translate-y-[-1px] hover:shadow-neo-sm'
                 }
                                 ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
                             `}
             >
-              {/* Background glow effect when selected */}
-              {currentSelectedPlatform === platform.id && (
-                <div className={`absolute inset-0 bg-gradient-to-br ${platform.color} opacity-20 blur-xl`}></div>
-              )}
-
               <div className="relative flex flex-col items-center justify-center h-full gap-1 sm:gap-2">
                 {/* Platform Icon */}
                 <div
                   className={`
-                                    transition-all duration-300 group-hover:scale-110
+                                    transition-all duration-200 group-hover:scale-110
                                     ${currentSelectedPlatform === platform.id
-                      ? 'text-white drop-shadow-lg'
-                      : 'text-gray-400 group-hover:text-gray-200'
+                      ? 'text-black'
+                      : 'text-black/40 group-hover:text-black'
                     }
                                 `}
                 >
-                  <div className="w-6 h-6 sm:w-7 sm:h-7">
+                  <div className="w-6 h-6 sm:w-8 sm:h-8">
                     {React.cloneElement(platform.iconSvg as React.ReactElement, {
                       className: 'w-full h-full'
                     })}
@@ -160,11 +155,8 @@ export default function PlatformSelector({
                 </div>
 
                 {/* Platform Name - responsive text */}
-                <span className="font-medium text-[10px] sm:text-xs text-center leading-tight max-w-full truncate">
-                  {platform.name.split(' ')[0]} {/* Show only first word on mobile */}
-                  <span className="hidden sm:inline">
-                    {platform.name.includes(' ') ? ` ${platform.name.split(' ').slice(1).join(' ')}` : ''}
-                  </span>
+                <span className="font-black text-[10px] sm:text-xs text-center leading-tight max-w-full truncate uppercase italic">
+                  {platform.name.split(' ')[0]}
                 </span>
               </div>
             </button>
@@ -174,12 +166,12 @@ export default function PlatformSelector({
 
       {/* Clear selection option */}
       {showClearOption && currentSelectedPlatform && (
-        <div className="pt-4 border-t border-gray-700/30">
+        <div className="pt-4 border-t-2 border-black/10">
           <button
             type="button"
             onClick={() => handlePlatformChange('')}
             disabled={disabled}
-            className="text-sm text-gray-400 hover:text-gray-300 underline transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="text-xs font-black text-black/40 hover:text-black uppercase underline transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Effacer la sélection
           </button>

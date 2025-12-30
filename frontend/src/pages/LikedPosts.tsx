@@ -117,34 +117,36 @@ export default function SavedPosts() {
 
     if (savedPosts.length === 0) {
         return (
-            <div className="min-h-screen text-gray-100">
+            <div className="min-h-screen">
                 <div className="max-w-4xl mx-auto px-6 py-12">
                     {/* Header */}
-                    <div className="mb-12">
-                        <div className="flex items-center gap-4 mb-6">
+                    <div className="mb-10">
+                        <div className="flex items-center gap-6 mb-8">
                             <button
                                 onClick={() => navigate('/profile')}
-                                className="p-2 hover:bg-gray-800/50 rounded-lg transition-colors"
+                                className="p-3 rounded-xl bg-white border-3 border-black shadow-neo-sm hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-neo active:translate-x-[0px] active:translate-y-[0px] active:shadow-none transition-all"
                             >
-                                <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                                <svg className="w-6 h-6 text-black stroke-[3px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
                                 </svg>
                             </button>
-                            <h1 className="text-3xl font-bold text-white">Chansons sauvegardées</h1>
+                            <h1 className="text-4xl font-black text-black uppercase italic tracking-tight">Sauvegardes</h1>
                         </div>
                     </div>
 
                     {/* Empty State */}
-                    <div className="text-center py-20">
+                    <div className="card text-center py-20 px-8">
                         <div className="text-8xl mb-6">💙</div>
-                        <h3 className="text-2xl font-semibold text-gray-200 mb-4">Aucune chanson sauvegardée</h3>
-                        <p className="text-lg text-gray-500 mb-8">Explorez et sauvegardez des chansons pour les retrouver ici !</p>
-                        <button
-                            onClick={() => navigate('/explorer')}
-                            className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors"
-                        >
-                            Explorer les chansons
-                        </button>
+                        <h3 className="text-2xl font-black text-black mb-4 uppercase italic">Aucune chanson sauvegardée</h3>
+                        <p className="text-lg font-bold text-black opacity-60 mb-8">Explorez et sauvegardez des chansons pour les retrouver ici !</p>
+                        <div className="flex justify-center">
+                            <button
+                                onClick={() => navigate('/explorer')}
+                                className="btn-primary"
+                            >
+                                Explorer les chansons
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -155,47 +157,47 @@ export default function SavedPosts() {
     const sortedDates = Object.keys(groupedPosts).sort((a, b) => new Date(b).getTime() - new Date(a).getTime())
 
     return (
-        <div className="min-h-screen text-gray-100">
+        <div className="min-h-screen">
             <div className="max-w-4xl mx-auto px-6 py-12">
                 {/* Header */}
                 <div className="mb-12">
-                    <div className="flex items-center gap-4 mb-6">
+                    <div className="flex items-center gap-6 mb-8">
                         <button
                             onClick={() => navigate('/profile')}
-                            className="p-2 hover:bg-gray-800/50 rounded-lg transition-colors"
+                            className="p-3 rounded-xl bg-white border-3 border-black shadow-neo-sm hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-neo active:translate-x-[0px] active:translate-y-[0px] active:shadow-none transition-all"
                         >
-                            <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                            <svg className="w-6 h-6 text-black stroke-[3px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
                             </svg>
                         </button>
-                        <h1 className="text-3xl font-bold text-white">Chansons aimées</h1>
+                        <h1 className="text-4xl font-black text-black uppercase italic tracking-tight">Chansons aimées</h1>
                     </div>
-                    <div className="bg-gray-800/50 backdrop-blur-sm rounded-2xl border border-gray-800/30 p-6">
-                        <p className="text-gray-300">
-                            {savedPosts.length} chanson{savedPosts.length > 1 ? 's' : ''} que vous avez sauvegardée{savedPosts.length > 1 ? 's' : ''}
+                    <div className="card p-6">
+                        <p className="text-black font-bold uppercase italic">
+                            {savedPosts.length} chanson{savedPosts.length > 1 ? 's' : ''} sauvegardée{savedPosts.length > 1 ? 's' : ''} au total
                         </p>
                     </div>
                 </div>
 
                 {/* Liked Posts History - Always in list view */}
-                <div className="space-y-8 mb-24">
+                <div className="space-y-10 mb-24">
                     {sortedDates.map((date) => {
                         const dateDisplay = getDateDisplay(date)
                         return (
-                            <div key={date} className="space-y-4">
-                                {/* Date header */}
-                                <div className="flex items-center gap-3 mb-2">
-                                    <h2 className={`text-sm font-medium px-3 py-1 rounded-md ${dateDisplay.isToday
-                                        ? 'bg-indigo-600/20 text-indigo-300 border border-indigo-500/30'
-                                        : 'text-gray-400 bg-gray-800/30'
+                            <div key={date} className="space-y-6">
+                                {/* Neo Brutalist date header */}
+                                <div className="flex items-center gap-4">
+                                    <h2 className={`text-sm font-black uppercase italic px-4 py-1.5 border-2 border-black rounded-lg shadow-neo-sm ${dateDisplay.isToday
+                                        ? 'bg-pop-pink text-black'
+                                        : 'bg-pop-mint text-black'
                                         }`}>
                                         {dateDisplay.displayText}
                                     </h2>
-                                    <div className="h-px bg-gray-700/50 flex-1"></div>
+                                    <div className="h-1 bg-black flex-1 rounded-full opacity-10"></div>
                                 </div>
 
                                 {/* Songs for this date - Always in list view */}
-                                <div className="space-y-4">
+                                <div className="space-y-6">
                                     {groupedPosts[date].map((post) => (
                                         <SongCard
                                             key={post.id}

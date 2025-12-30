@@ -38,10 +38,29 @@ export default {
                     700: '#1d4ed8',
                     800: '#1e40af',
                     900: '#1e3a8a',
+                },
+                pop: {
+                    pink: '#FFD1DC',
+                    mint: '#B4F8C8',
+                    blue: '#A0E7E5',
+                    yellow: '#FBE7C6',
+                    purple: '#E0BBE4',
+                    red: '#FF9B9B',
+                    orange: '#FFCC99',
                 }
+            },
+            boxShadow: {
+                'neo': '4px 4px 0px 0px rgba(0, 0, 0, 1)',
+                'neo-lg': '8px 8px 0px 0px rgba(0, 0, 0, 1)',
+                'neo-sm': '2px 2px 0px 0px rgba(0, 0, 0, 1)',
+                'neo-hover': '2px 2px 0px 0px rgba(0, 0, 0, 1)',
+            },
+            borderWidth: {
+                '3': '3px',
             },
             fontFamily: {
                 'sans': ['Inter', 'system-ui', 'sans-serif'],
+                'display': ['Inter', 'system-ui', 'sans-serif'],
             },
             borderRadius: {
                 'xl': '0.75rem',

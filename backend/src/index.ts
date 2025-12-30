@@ -27,6 +27,12 @@ app.use(
 )
 app.use(express.json())
 
+// Simple request logger
+app.use((req, res, next) => {
+  console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`)
+  next()
+})
+
 // Disable ETag generation for API routes to prevent 304 responses
 app.use((req, res, next) => {
   if (

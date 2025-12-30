@@ -106,7 +106,7 @@ const EmptyFeedCTA: React.FC<EmptyFeedCTAProps> = ({ show, onSearchStateChange }
 
   return (
     <div
-      className={`text-white rounded-2xl px-6 transition-all duration-500 ease-out ${isSearching ? 'pb-24 transform' : ''
+      className={`text-black rounded-2xl px-6 transition-all duration-500 ease-out ${isSearching ? 'pb-24 transform' : ''
         }`}
     >
       {!selected ? (
@@ -117,13 +117,13 @@ const EmptyFeedCTA: React.FC<EmptyFeedCTAProps> = ({ show, onSearchStateChange }
               }`}
           >
             <div>
-              <h3 className="text-xl font-bold mb-2">Partagez votre chanson du jour</h3>
-              <p className="text-gray-300 text-sm">Recherchez et partagez votre musique préférée avec vos amis.</p>
+              <h3 className="text-2xl font-black mb-2 uppercase italic">Partagez votre chanson du jour</h3>
+              <p className="text-black/60 font-bold uppercase text-xs tracking-wider">Recherchez et partagez votre musique préférée avec vos amis.</p>
             </div>
           </div>
 
           {/* Integrated Search */}
-          <div className={`transition-all duration-300 ${isSearching ? 'pb-20 transform scale-102' : ''}`}>
+          <div className={`transition-all duration-300 ${isSearching ? 'pb-20 transform' : ''}`}>
             <Search
               onSelect={(track) => {
                 console.log("🚀 ~ track:", track)
@@ -148,69 +148,60 @@ const EmptyFeedCTA: React.FC<EmptyFeedCTAProps> = ({ show, onSearchStateChange }
       ) : (
         <div className="space-y-6 animate-slideUp">
           {/* Selected Track Card */}
-          <div className="relative bg-white rounded-xl p-6 space-y-4 shadow-xl border border-gray-100 overflow-hidden">
-            {/* Blurred Background Cover */}
-            {selected.cover && (
-              <div
-                className="absolute inset-0 bg-cover bg-center opacity-60 blur-sm"
-                style={{ backgroundImage: `url(${selected.cover})` }}
-              />
-            )}
+          <div className="relative bg-white rounded-2xl p-6 space-y-6 shadow-neo border-3 border-black overflow-hidden">
             {/* Close button on top-right of card */}
             <button
               onClick={handleCancel}
-              className="absolute top-0 right-4 z-20 text-black hover:text-gray-600 transition-all duration-200 p-2 hover:bg-gray-100 rounded-lg hover:scale-110 active:scale-95"
+              className="absolute top-2 right-2 z-20 text-black hover:bg-pop-pink transition-all duration-200 p-2 border-2 border-transparent hover:border-black rounded-lg"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
 
             {/* Content Overlay */}
-            <div className="relative z-10">
-              {/* Header inside card */}
-
-
+            <div className="relative z-10 space-y-6">
               {/* Cover and Track Info */}
-              <div className="flex items-center space-x-4">
-                <div className="w-20 h-20 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0 shadow-lg transition-transform hover:scale-105">
+              <div className="flex items-center space-x-6">
+                <div className="w-24 h-24 rounded-xl overflow-hidden border-3 border-black flex-shrink-0 shadow-neo-sm transition-transform hover:rotate-2">
                   {selected.cover ? (
                     <img src={selected.cover} alt={`${selected.title} cover`} className="w-full h-full object-cover" />
                   ) : (
-                    <div className="w-full h-full bg-gray-100 flex items-center justify-center">
-                      <span className="text-2xl text-gray-400">🎵</span>
+                    <div className="w-full h-full bg-pop-pink flex items-center justify-center">
+                      <span className="text-3xl">🎵</span>
                     </div>
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h4 className="text-lg font-bold text-black truncate" title={selected.title}>
+                  <h4 className="text-xl font-black text-black truncate uppercase italic" title={selected.title}>
                     {selected.title}
                   </h4>
-                  <p className="text-gray-600 truncate" title={selected.artist}>
+                  <p className="text-black/70 font-bold uppercase text-sm" title={selected.artist}>
                     {selected.artist}
                   </p>
                 </div>
               </div>
 
               {/* Description Input */}
-              <div className="pt-2">
+              <div className="space-y-2">
+                <label className="text-xs font-black uppercase tracking-wider text-black/40 px-1">Description (optionnel)</label>
                 <textarea
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Ajouter une description (optionnel)..."
+                  placeholder="Pourquoi cette chanson ?"
                   maxLength={280}
                   rows={3}
-                  className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-black focus:ring-2 focus:ring-black/10 transition-all duration-200 resize-none text-black placeholder-gray-500"
-                  style={{ minHeight: '80px' }}
+                  className="w-full px-4 py-3 rounded-xl border-3 border-black focus:outline-none focus:bg-pop-blue/10 transition-all duration-200 resize-none text-black font-bold placeholder-black/30"
+                  style={{ minHeight: '100px' }}
                 />
-                <div className="flex justify-between items-center mt-2">
-                  <span className="text-xs text-gray-500">
-                    {description.length}/280 caractères
+                <div className="flex justify-between items-center px-1">
+                  <span className="text-[10px] font-black uppercase text-black/40">
+                    {description.length}/280
                   </span>
                   {description.length > 0 && (
                     <button
                       onClick={() => setDescription('')}
-                      className="text-xs text-gray-500 hover:text-gray-700 transition-colors"
+                      className="text-[10px] font-black uppercase text-black/40 hover:text-black underline transition-colors"
                     >
                       Effacer
                     </button>
@@ -219,44 +210,33 @@ const EmptyFeedCTA: React.FC<EmptyFeedCTAProps> = ({ show, onSearchStateChange }
               </div>
 
               {/* Actions */}
-              <div className="flex flex-col gap-3 pt-2">
+              <div className="pt-2">
                 <button
                   onClick={handlePostSong}
                   disabled={isSubmitting || !!error}
-                  className={`w-full px-6 py-3 rounded-lg font-bold transition-all duration-300 flex items-center justify-center gap-2 ${error
-                    ? 'bg-red-50 text-red-600 border border-red-200 cursor-not-allowed'
+                  className={`w-full px-6 py-4 rounded-xl font-black uppercase italic transition-all duration-200 flex items-center justify-center gap-2 border-3 border-black ${error
+                    ? 'bg-red-200 text-black'
                     : isSubmitting
-                      ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                      : 'bg-black text-white hover:bg-gray-800 active:bg-gray-900 shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98]'
+                      ? 'bg-gray-100 text-black/30 cursor-not-allowed'
+                      : 'bg-pop-mint text-black shadow-neo hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-neo-lg active:translate-x-[2px] active:translate-y-[2px] active:shadow-none'
                     }`}
                 >
                   {error ? (
-                    <>
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                        />
-                      </svg>
-                      {error}
-                    </>
+                    error
                   ) : isSubmitting ? (
                     <>
-                      <div className="w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
+                      <div className="w-5 h-5 border-3 border-black border-t-transparent rounded-full animate-spin"></div>
                       Publication...
                     </>
                   ) : (
                     <>
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                       </svg>
                       Publier ma chanson
                     </>
                   )}
                 </button>
-
               </div>
             </div>
           </div>

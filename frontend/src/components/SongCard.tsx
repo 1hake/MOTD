@@ -208,13 +208,13 @@ export default function SongCard({
       : 'w-10 h-10'
 
     return (
-      <div className={`${sizeClasses} rounded-full bg-white/95 backdrop-blur-sm flex items-center justify-center shadow-xl transition-transform duration-200 ${isPlaying ? 'scale-95' : 'hover:scale-110'}`}>
+      <div className={`${sizeClasses} rounded-full bg-pop-yellow flex items-center justify-center border-3 border-black shadow-neo-sm transition-transform duration-200 ${isPlaying ? 'translate-x-[2px] translate-y-[2px] shadow-none' : 'hover:scale-110 active:scale-95'}`}>
         {isPlaying ? (
-          <svg className={`${iconSizeClasses} text-gray-900`} fill="currentColor" viewBox="0 0 20 20">
+          <svg className={`${iconSizeClasses} text-black`} fill="currentColor" viewBox="0 0 20 20">
             <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
           </svg>
         ) : (
-          <svg className={`${iconSizeClasses} text-gray-900 ${size === 'small' ? 'ml-0.5' : 'ml-1'}`} fill="currentColor" viewBox="0 0 20 20">
+          <svg className={`${iconSizeClasses} text-black ${size === 'small' ? 'ml-0.5' : 'ml-1'}`} fill="currentColor" viewBox="0 0 20 20">
             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
           </svg>
         )}
@@ -230,7 +230,7 @@ export default function SongCard({
         href={preferredPlatform.url}
         target="_blank"
         rel="noopener noreferrer"
-        className={`flex items-center gap-2 px-4 py-2.5 ${preferredPlatform.color} text-white rounded-full backdrop-blur-sm transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95`}
+        className={`flex items-center gap-2 px-4 py-2.5 ${preferredPlatform.color} text-white rounded-xl border-2 border-black transition-all duration-200 shadow-neo-sm hover:translate-x-[-1px] hover:translate-y-[-1px] hover:shadow-neo active:translate-x-[1px] active:translate-y-[1px] active:shadow-none`}
         onClick={(e) => e.stopPropagation()}
         title={`Listen on ${preferredPlatform.name}`}
       >
@@ -244,15 +244,15 @@ export default function SongCard({
 
     if (isOwnPost) {
       return (
-        <div className="flex items-center gap-1.5 px-3 py-2 bg-gray-700/50 rounded-full text-gray-400">
+        <div className="flex items-center gap-1.5 px-3 py-2 bg-pop-blue border-2 border-black rounded-xl text-black">
           <svg
             className="w-4 h-4 stroke-current fill-none"
             viewBox="0 0 24 24"
-            strokeWidth="2"
+            strokeWidth="3"
           >
             <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z" />
           </svg>
-          <span className="text-sm font-medium">{saves}</span>
+          <span className="text-sm font-bold">{saves}</span>
         </div>
       )
     }
@@ -261,31 +261,31 @@ export default function SongCard({
       <button
         onClick={handleSaveToggle}
         disabled={isSaving}
-        className={`flex items-center gap-1.5 px-3 py-2 rounded-full backdrop-blur-sm transition-all duration-200 transform hover:scale-105 active:scale-95 ${saved
-          ? 'bg-blue-500/90 text-white hover:bg-blue-600/90 shadow-lg'
-          : 'bg-gray-700/50 text-gray-400 hover:bg-gray-700/70 hover:text-white'
+        className={`flex items-center gap-1.5 px-3 py-2 rounded-xl border-2 border-black transition-all duration-200 transform ${saved
+          ? 'bg-pop-pink text-black shadow-neo-sm hover:translate-x-[-1px] hover:translate-y-[-1px]'
+          : 'bg-white text-black hover:bg-pop-pink/20'
           } ${isSaving ? 'opacity-50 cursor-not-allowed' : ''}`}
       >
         <svg
           className={`w-4 h-4 ${saved ? 'fill-current' : 'stroke-current fill-none'}`}
           viewBox="0 0 24 24"
-          strokeWidth="2"
+          strokeWidth="3"
         >
           <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z" />
         </svg>
-        <span className="text-sm font-medium">{saves}</span>
+        <span className="text-sm font-bold">{saves}</span>
       </button>
     )
   }
   if (horizontal) {
     return (
       <div
-        className={`relative flex items-stretch gap-0 bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700/50 overflow-hidden transition-colors touch-manipulation ${className}`}
+        className={`relative flex items-stretch gap-0 bg-white rounded-xl border-3 border-black shadow-neo overflow-hidden transition-all touch-manipulation ${className}`}
         style={{ WebkitTapHighlightColor: 'transparent' }}
       >
         {/* Cover Image with preview button */}
         <div
-          className={`flex-shrink-0 w-20 relative group ${disableAudioClick ? '' : 'cursor-pointer'}`}
+          className={`flex-shrink-0 w-24 relative group border-r-3 border-black ${disableAudioClick ? '' : 'cursor-pointer'}`}
           onClick={disableAudioClick ? undefined : handleAudioToggle}
         >
           {coverUrl ? (
@@ -295,33 +295,33 @@ export default function SongCard({
               className="w-full h-full object-cover"
             />
           ) : (
-            <div className="w-full h-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
-              <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+            <div className="w-full h-full bg-pop-pink flex items-center justify-center">
+              <svg className="w-8 h-8 text-black" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M18 3a1 1 0 00-1.447-.894L8.763 6H5a3 3 0 000 6h.28l1.771 5.316A1 1 0 008 18h1a1 1 0 001-1v-4.382l6.553 3.276A1 1 0 0018 15V3z" clipRule="evenodd" />
               </svg>
             </div>
           )}
           {/* Play/Pause overlay indicator */}
           {previewUrl && (
-            <div className={`absolute inset-0 flex items-center justify-center transition-all duration-200 ${isPlaying ? 'bg-black/60' : 'bg-black/40 group-hover:bg-black/60'}`}>
+            <div className={`absolute inset-0 flex items-center justify-center transition-all duration-200 ${isPlaying ? 'bg-black/20' : 'bg-black/0 group-hover:bg-black/10'}`}>
               {renderPlayPauseButton('small')}
             </div>
           )}
         </div>
 
         {/* Song Info */}
-        <div className="flex-grow min-w-0 p-4 flex flex-col justify-center">
+        <div className="flex-grow min-w-0 p-4 flex flex-col justify-center bg-white">
           {sharedBy && (
             <div className="flex items-center gap-2 mb-1">
-              <div className="w-4 h-4 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white text-xs font-bold">
+              <div className="w-4 h-4 bg-pop-pink border border-black rounded-full flex items-center justify-center text-black text-[10px] font-bold">
                 {sharedBy.charAt(0).toUpperCase()}
               </div>
-              <span className="text-xs text-gray-400">Partagé par {sharedBy}</span>
+              <span className="text-[10px] font-bold uppercase text-black/60 tracking-wider">Partagé par {sharedBy}</span>
             </div>
           )}
 
           <h3
-            className="font-semibold text-white text-base leading-tight mb-1"
+            className="font-black text-black text-base leading-tight mb-0.5 uppercase italic"
             style={{
               display: '-webkit-box',
               WebkitLineClamp: 1,
@@ -333,7 +333,7 @@ export default function SongCard({
             {title}
           </h3>
           <p
-            className="text-gray-300 text-sm"
+            className="text-black/70 text-sm font-bold"
             style={{
               display: '-webkit-box',
               WebkitLineClamp: 1,
@@ -344,24 +344,10 @@ export default function SongCard({
           >
             {artist}
           </p>
-          {description && (
-            <p
-              className="text-gray-400 text-xs mt-1 italic"
-              style={{
-                display: '-webkit-box',
-                WebkitLineClamp: 2,
-                WebkitBoxOrient: 'vertical',
-                overflow: 'hidden'
-              }}
-              title={description}
-            >
-              "{description}"
-            </p>
-          )}
         </div>
 
         {/* Right side with platform button and save button */}
-        <div className="flex-shrink-0 flex flex-col justify-between p-4 gap-2">
+        <div className="flex-shrink-0 flex flex-col justify-center p-3 gap-2 bg-pop-yellow/30 border-l-2 border-black/10">
           {renderPlatformButton(true)}
           {renderSaveButton()}
         </div>
@@ -370,27 +356,27 @@ export default function SongCard({
   }
 
   return (
-    <div className={`bg-gray-900/30 backdrop-blur-sm rounded-xl border border-gray-800/30 overflow-hidden ${className}`}>
+    <div className={`bg-white rounded-2xl border-3 border-black shadow-neo overflow-hidden transition-all duration-200 ${className}`}>
       {/* User header */}
       {showUserHeader && userInfo && (
-        <div className="flex items-center gap-3 p-4 border-b border-gray-800/30">
+        <div className="flex items-center gap-3 p-4 border-b-3 border-black bg-pop-mint/30">
           <button
             onClick={onUserClick}
-            className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-fuchsia-600 rounded-lg flex items-center justify-center text-white text-sm font-bold transition-transform"
+            className="w-10 h-10 bg-pop-pink border-2 border-black rounded-lg flex items-center justify-center text-black text-sm font-black shadow-neo-sm transition-transform active:translate-x-[2px] active:translate-y-[2px] active:shadow-none"
           >
             {userInfo.name ? userInfo.name.charAt(0).toUpperCase() : userInfo.email.charAt(0).toUpperCase()}
           </button>
           <div className="flex-1 min-w-0">
             <button
               onClick={onUserClick}
-              className="font-medium text-white hover:text-indigo-300 transition-colors text-left"
+              className="font-black text-black hover:text-pop-pink transition-colors text-left uppercase italic text-sm"
             >
               {userInfo.name || userInfo.email.split('@')[0]}
             </button>
-            <p className="text-gray-400 text-sm">@{userInfo.username || userInfo.email.split('@')[0]}</p>
+            <p className="text-black/60 text-xs font-bold">@{userInfo.username || userInfo.email.split('@')[0]}</p>
           </div>
           {date && (
-            <div className="text-xs text-gray-500">
+            <div className="text-[10px] font-black uppercase bg-black text-white px-2 py-1 rounded">
               {new Date(date).toLocaleDateString('fr-FR', {
                 day: 'numeric',
                 month: 'short'
@@ -403,7 +389,7 @@ export default function SongCard({
       {/* Song card content */}
       <div
         onClick={disableAudioClick ? undefined : handleAudioToggle}
-        className={`card relative overflow-hidden h-80 w-full group ${previewUrl && !disableAudioClick ? 'cursor-pointer' : 'cursor-default'}`}
+        className={`relative overflow-hidden h-80 w-full group ${previewUrl && !disableAudioClick ? 'cursor-pointer' : 'cursor-default'}`}
         style={{
           ...(coverUrl
             ? {
@@ -412,13 +398,13 @@ export default function SongCard({
               backgroundPosition: 'center'
             }
             : {
-              backgroundColor: '#f3f4f6'
+              backgroundColor: '#FFD1DC'
             }),
           WebkitTapHighlightColor: 'transparent'
         }}
       >
         {/* Gradient overlay for better text readability */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-black/20" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/10" />
 
         {/* Play/Pause indicator overlay */}
         {previewUrl && (
@@ -430,11 +416,11 @@ export default function SongCard({
         {/* Shared by indicator at the top left (only show if not using user header) */}
         {sharedBy && !showUserHeader && (
           <div className="absolute top-4 left-4 z-20">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-white/90 backdrop-blur-sm rounded-full text-xs font-medium text-gray-800">
-              <div className="w-6 h-6 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white text-xs font-bold">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-white border-2 border-black rounded-xl text-xs font-black shadow-neo-sm">
+              <div className="w-6 h-6 bg-pop-pink border border-black rounded-full flex items-center justify-center text-black text-[10px] font-black">
                 {sharedBy.charAt(0).toUpperCase()}
               </div>
-              <span>Partagé par {sharedBy}</span>
+              <span className="uppercase italic text-[8px]">Partagé par {sharedBy}</span>
             </div>
           </div>
         )}
@@ -442,7 +428,7 @@ export default function SongCard({
         {/* Song info at the bottom */}
         <div className="absolute bottom-0 left-0 right-0 p-6 z-10">
           <h3
-            className="font-bold text-xl mb-2 leading-tight text-white drop-shadow-lg"
+            className="font-black text-xl mb-1 leading-tight text-white drop-shadow-[2px_2px_0px_rgba(0,0,0,1)] uppercase italic"
             style={{
               display: '-webkit-box',
               WebkitLineClamp: 2,
@@ -454,7 +440,7 @@ export default function SongCard({
             {title}
           </h3>
           <p
-            className="text-white/90 text-base font-medium drop-shadow-md mb-3"
+            className="text-pop-mint text-base font-black drop-shadow-[1px_1px_0px_rgba(0,0,0,1)] uppercase"
             style={{
               display: '-webkit-box',
               WebkitLineClamp: 1,
@@ -467,13 +453,7 @@ export default function SongCard({
           </p>
           {description && (
             <p
-              className="text-white/80 text-sm italic drop-shadow-md mb-4 leading-relaxed"
-              style={{
-                display: '-webkit-box',
-                WebkitLineClamp: 3,
-                WebkitBoxOrient: 'vertical',
-                overflow: 'hidden'
-              }}
+              className="text-white font-bold text-sm italic mt-2 line-clamp-2 drop-shadow-md"
               title={description}
             >
               "{description}"

@@ -7,7 +7,7 @@ import EmptyFeedCTA from '../components/EmptyFeedCTA'
 import PostsSection from '../components/PostsSection'
 import EmptyFriendsState from '../components/EmptyFriendsState'
 import LoadingState from '../components/LoadingState'
-import logo2 from '../assets/img/logo2.png'
+import logo2 from '../assets/img/logoblack.png'
 
 type Post = {
   id: number

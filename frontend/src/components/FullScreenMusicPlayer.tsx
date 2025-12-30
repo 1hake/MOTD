@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react'
 import { savePost, unsavePost, getDeezerTrackPreview } from '../lib/api'
 import { useAuth } from '../hooks/useAuth'
 import { useAudio } from '../contexts/AudioContext'
+import AudioLevelIndicator from './AudioLevelIndicator'
 
 type Post = {
     id: number
@@ -207,36 +208,36 @@ export default function FullScreenMusicPlayer({
 
         switch (preference) {
             case 'spotify':
-                return post.spotifyLink ? { url: post.spotifyLink, name: 'Spotify', icon: PlatformIcons.Spotify, color: 'bg-green-500 hover:bg-green-600' } : null
+                return post.spotifyLink ? { url: post.spotifyLink, name: 'Spotify', icon: PlatformIcons.Spotify, color: 'bg-green-300' } : null
             case 'deezer':
-                return post.deezerLink ? { url: post.deezerLink, name: 'Deezer', icon: PlatformIcons.Deezer, color: 'bg-orange-500 hover:bg-orange-600' } : null
+                return post.deezerLink ? { url: post.deezerLink, name: 'Deezer', icon: PlatformIcons.Deezer, color: 'bg-orange-300' } : null
             case 'apple':
             case 'apple music':
             case 'applemusic':
-                return post.appleMusicLink ? { url: post.appleMusicLink, name: 'Apple Music', icon: PlatformIcons.AppleMusic, color: 'bg-pink-500 hover:bg-pink-600' } : null
+                return post.appleMusicLink ? { url: post.appleMusicLink, name: 'Apple Music', icon: PlatformIcons.AppleMusic, color: 'bg-pink-300' } : null
             case 'youtube':
-                return post.youtubeLink ? { url: post.youtubeLink, name: 'YouTube', icon: PlatformIcons.YouTube, color: 'bg-red-500 hover:bg-red-600' } : null
+                return post.youtubeLink ? { url: post.youtubeLink, name: 'YouTube', icon: PlatformIcons.YouTube, color: 'bg-red-300' } : null
             default:
-                if (post.spotifyLink) return { url: post.spotifyLink, name: 'Spotify', icon: PlatformIcons.Spotify, color: 'bg-green-500 hover:bg-green-600' }
-                if (post.deezerLink) return { url: post.deezerLink, name: 'Deezer', icon: PlatformIcons.Deezer, color: 'bg-orange-500 hover:bg-orange-600' }
-                if (post.appleMusicLink) return { url: post.appleMusicLink, name: 'Apple Music', icon: PlatformIcons.AppleMusic, color: 'bg-pink-500 hover:bg-pink-600' }
-                if (post.youtubeLink) return { url: post.youtubeLink, name: 'YouTube', icon: PlatformIcons.YouTube, color: 'bg-red-500 hover:bg-red-600' }
+                if (post.spotifyLink) return { url: post.spotifyLink, name: 'Spotify', icon: PlatformIcons.Spotify, color: 'bg-green-300' }
+                if (post.deezerLink) return { url: post.deezerLink, name: 'Deezer', icon: PlatformIcons.Deezer, color: 'bg-orange-300' }
+                if (post.appleMusicLink) return { url: post.appleMusicLink, name: 'Apple Music', icon: PlatformIcons.AppleMusic, color: 'bg-pink-300' }
+                if (post.youtubeLink) return { url: post.youtubeLink, name: 'YouTube', icon: PlatformIcons.YouTube, color: 'bg-red-300' }
                 return null
         }
     }
 
     return (
-        <div className="fixed inset-0 z-50 bg-black">
+        <div className="fixed inset-0 z-50 bg-gradient-to-br from-pink-100 via-purple-100 to-blue-100">
             {/* Close button */}
             <button
                 onClick={() => {
                     audio.stopAll()
                     onClose()
                 }}
-                className="fixed top-6 left-6 z-50 w-12 h-12 rounded-full bg-gray-900/80 backdrop-blur-sm flex items-center justify-center text-white hover:bg-gray-800/80 transition-colors"
+                className="fixed top-8 left-6 z-50 w-12 h-12 rounded-full bg-white border-3 border-black flex items-center justify-center text-black hover:bg-pop-pink transition-all duration-200 shadow-neo active:translate-x-1 active:translate-y-1 active:shadow-none"
             >
                 <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" />
                 </svg>
             </button>
 
@@ -260,72 +261,64 @@ export default function FullScreenMusicPlayer({
                     const preferredPlatform = getPreferredPlatform(post)
                     const isOwnPost = currentUserId === post.user.id
 
+                    // Use solid colors from design system
+                    const bgColors = [
+                        'bg-pop-pink',
+                        'bg-pop-blue',
+                        'bg-pop-mint',
+                        'bg-pop-yellow',
+                        'bg-pop-purple',
+                        'bg-pop-orange'
+                    ]
+                    const bgColor = bgColors[index % bgColors.length]
+
                     return (
                         <div
                             key={post.id}
                             data-post-id={post.id}
-                            className="h-screen w-screen snap-start snap-always relative flex items-center justify-center overflow-hidden"
+                            className={`h-screen w-screen snap-start snap-always relative flex items-center justify-center overflow-hidden ${bgColor}`}
                         >
-                            {/* Blurred background using the cover image */}
-                            {post.coverUrl && (
-                                <div
-                                    className="absolute inset-0"
-                                    style={{
-                                        backgroundImage: `url(${post.coverUrl})`,
-                                        backgroundSize: 'cover',
-                                        backgroundPosition: 'center',
-                                        filter: 'blur(2px)',
-                                        transform: 'scale(1.1)'
-                                    }}
-                                />
-                            )}
-
-                            {/* Dark overlay and gradient blurs */}
-                            <div className="absolute inset-0 bg-black/50" />
-                            <div className="absolute top-0 left-0 right-0 h-40 bg-gradient-to-b from-black/80 via-black/40 to-transparent" />
-                            <div className="absolute bottom-0 left-0 right-0 h-64 bg-gradient-to-t from-black/90 via-black/50 to-transparent" />
+                            {/* Dot background pattern */}
+                            <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(#000 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
 
                             {/* Content container - Single column layout */}
-                            <div className="relative z-10 h-full w-full flex flex-col">
+                            <div className="relative z-10 h-full w-full flex flex-col max-w-lg mx-auto">
                                 {/* Top bar: Song title on left, User info on right */}
-                                <div className="flex items-start justify-between gap-3 px-5 pt-14 pb-2 mt-6">
+                                <div className="flex items-center justify-between gap-4 px-6 pt-24 pb-4">
                                     {/* Song title on left */}
                                     <div className="flex-1 min-w-0">
-                                        <h2 className="text-xl font-bold text-white drop-shadow-2xl leading-tight line-clamp-2">
+                                        <h2 className="text-2xl font-black text-black leading-tight line-clamp-2 uppercase tracking-tight italic">
                                             {post.title}
                                         </h2>
-                                        <p className="text-base text-white/95 drop-shadow-xl font-medium mt-0.5">
+                                        <p className="text-lg text-black font-bold opacity-80">
                                             {post.artist}
                                         </p>
                                     </div>
 
                                     {/* User info on right */}
-                                    <div className="flex items-center gap-2 flex-shrink-0">
-                                        <div className="text-right">
-                                            <div className="font-semibold text-white drop-shadow-2xl text-sm">
-                                                {post.user.name || post.user.email.split('@')[0]}
-                                            </div>
-                                            <div className="text-white/90 text-xs drop-shadow-xl">
-                                                {new Date(post.date).toLocaleDateString('fr-FR', {
-                                                    day: 'numeric',
-                                                    month: 'short'
-                                                })}
-                                            </div>
-                                        </div>
-                                        <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-fuchsia-600 rounded-full flex items-center justify-center text-white text-sm font-bold shadow-xl border-2 border-white/20">
+                                    <div className="flex flex-col items-center gap-1 flex-shrink-0">
+                                        <div className="w-12 h-12 bg-white border-3 border-black rounded-full flex items-center justify-center text-black text-lg font-black shadow-neo">
                                             {post.user.name ? post.user.name.charAt(0).toUpperCase() : post.user.email.charAt(0).toUpperCase()}
+                                        </div>
+                                        <div className="font-black text-black text-[10px] uppercase tracking-wider">
+                                            {post.user.name || post.user.email.split('@')[0]}
                                         </div>
                                     </div>
                                 </div>
 
-                                {/* Full width Album cover */}
-                                <div className="flex-1 flex justify-center items-center">
+                                {/* Album cover - Centered and large */}
+                                <div className="flex-1 flex justify-center items-center px-6">
                                     <div
                                         className="relative cursor-pointer group w-full"
                                         onClick={() => toggleAudio(post.id)}
                                     >
+                                        {/* Audio Level Indicator - Positioned absolutely above cover */}
+                                        <div className="absolute -top-12 left-1/2 -translate-x-1/2 z-10">
+                                            <AudioLevelIndicator isPlaying={isPlaying} barCount={7} />
+                                        </div>
+
                                         {post.coverUrl ? (
-                                            <div className="w-full aspect-square overflow-hidden shadow-2xl transition-transform duration-300 ease-out group-active:scale-98">
+                                            <div className="w-full aspect-square overflow-hidden border-[6px] border-black rounded-[2.5rem] transition-all duration-300 ease-out group-hover:scale-[1.02] group-active:scale-[0.98]">
                                                 <img
                                                     src={post.coverUrl}
                                                     alt={`${post.title} cover`}
@@ -333,76 +326,84 @@ export default function FullScreenMusicPlayer({
                                                 />
                                             </div>
                                         ) : (
-                                            <div className="w-full aspect-square bg-gradient-to-br from-indigo-500 to-fuchsia-600 shadow-2xl" />
+                                            <div className="w-full aspect-square bg-white border-[6px] border-black rounded-[2.5rem]" />
                                         )}
 
-                                        {/* Play/Pause overlay */}
+                                        {/* Play/Pause overlay - refined */}
                                         {previewUrl && (
-                                            <div className="absolute inset-0 flex items-center justify-center">
-                                                <div className="w-20 h-20 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center transition-all duration-300 ease-out group-hover:scale-110 group-hover:bg-black/50">
+                                            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                                                <div className="w-20 h-20 rounded-full bg-white border-3 border-black flex items-center justify-center shadow-neo">
                                                     {isPlaying ? (
-                                                        <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                                        <svg className="w-10 h-10 text-black" fill="currentColor" viewBox="0 0 20 20">
                                                             <path d="M6 4h2v12H6V4zm6 0h2v12h-2V4z" />
                                                         </svg>
                                                     ) : (
-                                                        <svg className="w-10 h-10 text-white ml-1" fill="currentColor" viewBox="0 0 20 20">
+                                                        <svg className="w-10 h-10 text-black ml-1" fill="currentColor" viewBox="0 0 20 20">
                                                             <path d="M6.3 4.1c0-.7.8-1.2 1.4-.8l8.9 5.2c.6.4.6 1.3 0 1.7l-8.9 5.2c-.6.4-1.4-.1-1.4-.8V4.1z" />
                                                         </svg>
                                                     )}
                                                 </div>
                                             </div>
                                         )}
+
+                                        {/* Action buttons overlay - Platform button on bottom-left, Save on bottom-right */}
+                                        <div className="absolute -bottom-8 left-4 right-4 flex items-end justify-between gap-3 pointer-events-none">
+                                            {/* Platform button */}
+                                            {preferredPlatform && (
+                                                <a
+                                                    href={preferredPlatform.url}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className={`pointer-events-auto flex items-center justify-center gap-2 px-4 py-3 ${preferredPlatform.color} text-black border-3 border-black rounded-xl transition-all duration-200 shadow-neo hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-neo-lg active:translate-x-1 active:translate-y-1 active:shadow-none font-black text-sm`}
+                                                    onClick={(e) => e.stopPropagation()}
+                                                >
+                                                    {preferredPlatform.icon}
+                                                    <span className="uppercase tracking-tight">{preferredPlatform.name}</span>
+                                                </a>
+                                            )}
+
+                                            {/* Spacer if no platform button */}
+                                            {!preferredPlatform && <div />}
+
+                                            {/* Save button */}
+                                            <button
+                                                onClick={(e) => {
+                                                    e.stopPropagation()
+                                                    handleSaveToggle(post)
+                                                }}
+                                                disabled={isOwnPost}
+                                                className={`pointer-events-auto flex items-center gap-2 px-4 py-3 border-3 border-black rounded-xl transition-all duration-200 shadow-neo ${post.isSavedByUser
+                                                    ? 'bg-pop-pink text-black'
+                                                    : 'bg-white text-black'
+                                                    } ${isOwnPost ? 'opacity-40 cursor-not-allowed' : 'hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-neo-lg active:translate-x-1 active:translate-y-1 active:shadow-none'}`}
+                                            >
+                                                <svg
+                                                    className={`w-6 h-6 ${post.isSavedByUser ? 'fill-current' : 'stroke-current fill-none'}`}
+                                                    viewBox="0 0 24 24"
+                                                    strokeWidth="3"
+                                                >
+                                                    <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z" />
+                                                </svg>
+                                                <span className="font-black text-lg">{post.saveCount}</span>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
 
-                                {/* Song info and action buttons at bottom */}
-                                {/* Bottom section - Description and action buttons */}
-                                <div className="px-5 pt-2 pb-28 space-y-4">
+                                {/* Bottom section - Description only */}
+                                <div className="px-6 pt-4 pb-32">
                                     {/* Description if available */}
                                     {post.description && (
-                                        <p className="text-sm text-white/90 italic drop-shadow-lg leading-relaxed">
-                                            "{post.description}"
-                                        </p>
+                                        <div className="bg-white border-3 border-black rounded-2xl px-5 py-4 shadow-neo relative">
+                                            {/* Little quote decoration */}
+                                            <div className="absolute -top-3 -left-2 bg-pop-yellow border-2 border-black rounded-lg px-2 py-0.5 text-[10px] font-black uppercase tracking-widest">
+                                                Vibe
+                                            </div>
+                                            <p className="text-sm text-black font-bold italic leading-relaxed">
+                                                "{post.description}"
+                                            </p>
+                                        </div>
                                     )}
-
-                                    {/* Action buttons row: Platform button on left, Save on right */}
-                                    <div className="w-full justify-between flex items-center gap-3">
-                                        {/* Platform button */}
-                                        {preferredPlatform && (
-                                            <a
-                                                href={preferredPlatform.url}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className={`flex items-center gap-2 px-4 py-2.5 ${preferredPlatform.color} text-white rounded-full backdrop-blur-sm transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95`}
-                                                onClick={(e) => e.stopPropagation()}
-                                                title={`Listen on ${preferredPlatform.name}`}
-                                            >
-                                                {preferredPlatform.icon}
-                                            </a>
-                                        )}
-
-                                        {/* Save button */}
-                                        <button
-                                            onClick={(e) => {
-                                                e.stopPropagation()
-                                                handleSaveToggle(post)
-                                            }}
-                                            disabled={isOwnPost}
-                                            className={`flex items-center gap-2 px-5 py-3.5 rounded-full transition-all duration-300 ease-out shadow-2xl ${post.isSavedByUser
-                                                ? 'bg-white text-indigo-600'
-                                                : 'bg-white/20 backdrop-blur-md text-white hover:bg-white/30'
-                                                } ${isOwnPost ? 'opacity-40 cursor-not-allowed' : 'hover:scale-105 active:scale-95'}`}
-                                        >
-                                            <svg
-                                                className={`w-6 h-6 ${post.isSavedByUser ? 'fill-current' : 'stroke-current fill-none'}`}
-                                                viewBox="0 0 24 24"
-                                                strokeWidth="2.5"
-                                            >
-                                                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z" />
-                                            </svg>
-                                            <span className="font-semibold">{post.saveCount}</span>
-                                        </button>
-                                    </div>
                                 </div>
                             </div>
                         </div>

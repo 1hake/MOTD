@@ -34,20 +34,19 @@ const PostsSection: React.FC<PostsSectionProps> = ({ title, posts, showCount = f
   console.log({ posts })
   return (
     <div className="space-y-6 animate-in">
-      <div className="flex items-start gap-3">
-        <div className="h-8 w-1 bg-white from-music-500 to-accent-500 rounded-full"></div>
-        <h2 className="text-xl font-bold text-white">
+      <div className="flex items-center gap-4">
+        <h2 className="text-2xl font-black text-black uppercase italic tracking-tight">
           {title}
-          {showCount && posts.length > 0 && (
-            <span className="ml-2 bg-music-100/70 text-music-700 text-sm font-medium px-3 py-1 rounded-2xl backdrop-blur-sm">
-              {posts.length}
-            </span>
-          )}
         </h2>
+        {showCount && posts.length > 0 && (
+          <span className="bg-pop-pink border-2 border-black text-black text-sm font-black px-3 py-1 rounded-lg shadow-neo-sm transform rotate-3">
+            {posts.length}
+          </span>
+        )}
       </div>
 
       {posts.length === 0 ? (
-        emptyMessage || <p className="text-primary-500 text-center py-8 italic">Aucune chanson pour le moment.</p>
+        emptyMessage || <p className="text-black/50 text-center py-8 italic font-bold">Aucune chanson pour le moment.</p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {posts.map((post) => (
