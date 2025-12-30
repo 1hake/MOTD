@@ -1,19 +1,44 @@
-import { Router } from 'express';
-import prisma from '../prismaClient';
+import { Router } from 'express'
+import prisma from '../prismaClient'
+import { authenticateToken } from '../middleware/auth'
 
-const router = Router();
+const router = Router()
 
-router.post('/register-device', async (req, res) => {
-  const { userId, fcmToken, platform } = req.body;
-  if (!userId || !fcmToken) return res.status(400).json({ error: 'Missing fields' });
+router.post('/register-device', authenticateToken, async (req, res) => {
+  const { fcmToken, platform } = req.body
+  const userId = req.user?.id
 
-  await prisma.deviceToken.upsert({
-    where: { token: fcmToken },
-    update: { userId, platform },
-    create: { userId, token: fcmToken, platform: platform || 'unknown' }
-  });
+  if (!userId || !fcmToken) return res.status(400).json({ error: 'Missing fields' })
 
-  res.json({ success: true });
-});
+  try {
+    await prisma.deviceToken.upsert({
+      where: { token: fcmToken },
+      update: { userId, platform: platform || 'unknown' },
+      create: { userId, token: fcmToken, platform: platform || 'unknown' }
+    })
 
-export default router;
+    res.json({ success: true })
+  } catch (error) {
+    console.error('Error registering device:', error)
+    res.status(500).json({ error: 'Failed to register device' })
+  }
+})
+
+router.post('/unregister-device', authenticateToken, async (req, res) => {
+  const { fcmToken } = req.body
+
+  if (!fcmToken) return res.status(400).json({ error: 'Missing token' })
+
+  try {
+    await prisma.deviceToken.deleteMany({
+      where: { token: fcmToken }
+    })
+
+    res.json({ success: true })
+  } catch (error) {
+    console.error('Error unregistering device:', error)
+    res.status(500).json({ error: 'Failed to unregister device' })
+  }
+})
+
+export default router

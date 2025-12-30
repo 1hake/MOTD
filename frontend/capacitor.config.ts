@@ -4,10 +4,12 @@ const config: CapacitorConfig = {
   appId: 'com.example.musicbereal',
   appName: 'Music BeReal',
   webDir: 'dist',
+  /*
   server: {
     url: 'http://192.168.1.139:5173',
     cleartext: true
   },
+  */
   plugins: {
     PushNotifications: {
       presentationOptions: ['badge', 'sound', 'alert']

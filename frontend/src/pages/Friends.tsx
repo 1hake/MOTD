@@ -42,7 +42,7 @@ export default function Friends() {
 
   return (
     <div className="h-screen text-gray-100">
-      <div className="max-w-2xl mx-auto px-4 py-10">
+      <div className="max-w-2xl mx-auto px-4 pt-[max(2.5rem,env(safe-area-inset-top))] pb-32">
         {/* Header */}
         <div className="mb-10">
           <h1 className="text-3xl font-bold tracking-tight text-white mb-6">Mes amis</h1>

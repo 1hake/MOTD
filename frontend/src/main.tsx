@@ -16,6 +16,7 @@ import FriendProfile from './pages/FriendProfile'
 import EditProfile from './pages/EditProfile'
 import UserFriends from './pages/UserFriends'
 import SavedPosts from './pages/LikedPosts'
+import AdminPost from './pages/AdminPost'
 import ProtectedRoute from './components/ProtectedRoute'
 import Layout from './Layout'
 
@@ -112,6 +113,14 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
                 element={
                   <ProtectedRoute>
                     <SavedPosts />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin"
+                element={
+                  <ProtectedRoute>
+                    <AdminPost />
                   </ProtectedRoute>
                 }
               />

@@ -4,18 +4,52 @@ import { authenticateToken } from '../middleware/auth'
 
 const router = Router()
 
-// Get user by ID
-router.get('/:id', async (req, res) => {
-  const { id } = req.params
-  const userId = parseInt(id, 10)
+// Get all users (for admin/dev use)
+router.get('/all', async (req, res) => {
+  try {
+    const now = new Date()
+    const today = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0, 0))
 
-  if (isNaN(userId)) {
-    return res.status(400).json({ error: 'Invalid user ID' })
+    const users = await prisma.user.findMany({
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        profileImage: true,
+        posts: {
+          where: {
+            date: {
+              gte: today
+            }
+          },
+          select: {
+            id: true
+          },
+          take: 1
+        }
+      }
+    })
+
+    const usersWithFlag = users.map((user) => ({
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      profileImage: user.profileImage,
+      hasPostToday: user.posts.length > 0
+    }))
+
+    res.json(usersWithFlag)
+  } catch (error) {
+    console.error('[GET /users/all] error:', error)
+    res.status(500).json({ error: 'Server error' })
   }
+})
 
+// Get current user profile
+router.get('/me', authenticateToken, async (req, res) => {
   try {
     const user = await prisma.user.findUnique({
-      where: { id: userId },
+      where: { id: req.user!.id },
       select: {
         id: true,
         email: true,
@@ -32,77 +66,7 @@ router.get('/:id', async (req, res) => {
 
     res.json(user)
   } catch (error) {
-    console.error('[GET /users/:id] error:', error)
-    res.status(500).json({ error: 'Server error' })
-  }
-})
-
-// Update user profile
-router.put('/:id', authenticateToken, async (req, res) => {
-  const { id } = req.params
-  const { name, email, platformPreference, profileImage } = req.body
-  const userId = parseInt(id, 10)
-  const currentUserId = req.user!.id
-
-  if (isNaN(userId)) {
-    return res.status(400).json({ error: 'Invalid user ID' })
-  }
-
-  // Check if user is trying to update their own profile
-  if (userId !== currentUserId) {
-    return res.status(403).json({ error: 'You can only update your own profile' })
-  }
-
-  // Validate platform preference if provided (allow empty string or null to clear selection)
-  const validPlatforms = ['spotify', 'apple', 'deezer', 'youtube']
-  if (platformPreference !== undefined && platformPreference !== null && platformPreference !== '' && !validPlatforms.includes(platformPreference)) {
-    return res.status(400).json({
-      error: 'Invalid platform preference. Must be one of: spotify, apple, deezer, youtube'
-    })
-  }
-
-  try {
-    // Check if user exists
-    const existingUser = await prisma.user.findUnique({
-      where: { id: userId }
-    })
-
-    if (!existingUser) {
-      return res.status(404).json({ error: 'User not found' })
-    }
-
-    // Check if email is already taken by another user
-    if (email && email !== existingUser.email) {
-      const emailExists = await prisma.user.findUnique({
-        where: { email }
-      })
-      if (emailExists) {
-        return res.status(400).json({ error: 'Email already taken' })
-      }
-    }
-
-    // Update user
-    const updatedUser = await prisma.user.update({
-      where: { id: userId },
-      data: {
-        ...(name !== undefined && { name }),
-        ...(email !== undefined && { email }),
-        ...(platformPreference !== undefined && { platformPreference: platformPreference || null }),
-        ...(profileImage !== undefined && { profileImage })
-      },
-      select: {
-        id: true,
-        email: true,
-        name: true,
-        profileImage: true,
-        platformPreference: true,
-        createdAt: true
-      }
-    })
-
-    res.json(updatedUser)
-  } catch (error) {
-    console.error('[PUT /users/:id] error:', error)
+    console.error('[GET /users/me] error:', error)
     res.status(500).json({ error: 'Server error' })
   }
 })
@@ -162,11 +126,18 @@ router.get('/search/:query', async (req, res) => {
   }
 })
 
-// Get current user profile
-router.get('/me', authenticateToken, async (req, res) => {
+// Get user by ID
+router.get('/:id', async (req, res) => {
+  const { id } = req.params
+  const userId = parseInt(id, 10)
+
+  if (isNaN(userId)) {
+    return res.status(400).json({ error: 'Invalid user ID' })
+  }
+
   try {
     const user = await prisma.user.findUnique({
-      where: { id: req.user!.id },
+      where: { id: userId },
       select: {
         id: true,
         email: true,
@@ -183,7 +154,82 @@ router.get('/me', authenticateToken, async (req, res) => {
 
     res.json(user)
   } catch (error) {
-    console.error('[GET /users/me] error:', error)
+    console.error('[GET /users/:id] error:', error)
+    res.status(500).json({ error: 'Server error' })
+  }
+})
+
+// Update user profile
+router.put('/:id', authenticateToken, async (req, res) => {
+  const { id } = req.params
+  const { name, email, platformPreference, profileImage } = req.body
+  const userId = parseInt(id, 10)
+  const currentUserId = req.user!.id
+
+  if (isNaN(userId)) {
+    return res.status(400).json({ error: 'Invalid user ID' })
+  }
+
+  // Check if user is trying to update their own profile
+  if (userId !== currentUserId) {
+    return res.status(403).json({ error: 'You can only update your own profile' })
+  }
+
+  // Validate platform preference if provided (allow empty string or null to clear selection)
+  const validPlatforms = ['spotify', 'apple', 'deezer', 'youtube']
+  if (
+    platformPreference !== undefined &&
+    platformPreference !== null &&
+    platformPreference !== '' &&
+    !validPlatforms.includes(platformPreference)
+  ) {
+    return res.status(400).json({
+      error: 'Invalid platform preference. Must be one of: spotify, apple, deezer, youtube'
+    })
+  }
+
+  try {
+    // Check if user exists
+    const existingUser = await prisma.user.findUnique({
+      where: { id: userId }
+    })
+
+    if (!existingUser) {
+      return res.status(404).json({ error: 'User not found' })
+    }
+
+    // Check if email is already taken by another user
+    if (email && email !== existingUser.email) {
+      const emailExists = await prisma.user.findUnique({
+        where: { email }
+      })
+      if (emailExists) {
+        return res.status(400).json({ error: 'Email already taken' })
+      }
+    }
+
+    // Update user
+    const updatedUser = await prisma.user.update({
+      where: { id: userId },
+      data: {
+        ...(name !== undefined && { name }),
+        ...(email !== undefined && { email }),
+        ...(platformPreference !== undefined && { platformPreference: platformPreference || null }),
+        ...(profileImage !== undefined && { profileImage })
+      },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        profileImage: true,
+        platformPreference: true,
+        createdAt: true
+      }
+    })
+
+    res.json(updatedUser)
+  } catch (error) {
+    console.error('[PUT /users/:id] error:', error)
     res.status(500).json({ error: 'Server error' })
   }
 })

@@ -81,29 +81,26 @@ export default function UserFriends() {
     return (
         <div className="min-h-screen pb-20">
             <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
-                {/* Back button */}
-                <div className="mb-8">
+                {/* Header with Back button */}
+                <div className="flex items-center gap-6 mb-12">
                     <button
                         onClick={() => navigate(isOwnProfile ? '/profile' : `/profile/${user.id}`)}
-                        className="btn-ghost flex items-center gap-2 group"
+                        className="shrink-0 p-3 rounded-xl bg-white border-3 border-black shadow-neo-sm hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-neo active:translate-x-[0px] active:translate-y-[0px] active:shadow-none transition-all"
                     >
-                        <svg className="w-5 h-5 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M15 19l-7-7 7-7" />
+                        <svg className="w-6 h-6 text-black stroke-[3px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
                         </svg>
-                        <span className="font-bold">Retour</span>
                     </button>
-                </div>
-
-                {/* Header */}
-                <div className="mb-8">
-                    <h1 className="text-4xl sm:text-5xl font-black text-black mb-2 italic tracking-tight">
-                        {isOwnProfile ? 'Mes amis' : `Amis de ${user.name || user.email.split('@')[0]}`}
-                    </h1>
-                    {canViewFriends && (
-                        <div className="inline-block px-3 py-1 bg-pop-pink border-2 border-black rounded-full text-sm font-bold shadow-neo-sm">
-                            {friends.length} {friends.length > 1 ? 'amis' : 'ami'}
-                        </div>
-                    )}
+                    <div>
+                        <h1 className="text-4xl sm:text-5xl font-black text-black italic tracking-tight">
+                            {isOwnProfile ? 'Mes amis' : `Amis de ${user.name || user.email.split('@')[0]}`}
+                        </h1>
+                        {canViewFriends && (
+                            <div className="inline-block px-3 py-1 mt-2 bg-pop-pink border-2 border-black rounded-full text-sm font-bold shadow-neo-sm">
+                                {friends.length} {friends.length > 1 ? 'amis' : 'ami'}
+                            </div>
+                        )}
+                    </div>
                 </div>
 
                 {/* Friends List */}

@@ -170,13 +170,9 @@ export default function SavedPosts() {
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
                             </svg>
                         </button>
-                        <h1 className="text-4xl font-black text-black uppercase italic tracking-tight">Chansons aimées</h1>
+                        <h1 className="text-xl font-black text-black uppercase italic tracking-tight">Chansons aimées</h1>
                     </div>
-                    <div className="card p-6">
-                        <p className="text-black font-bold uppercase italic">
-                            {savedPosts.length} chanson{savedPosts.length > 1 ? 's' : ''} sauvegardée{savedPosts.length > 1 ? 's' : ''} au total
-                        </p>
-                    </div>
+
                 </div>
 
                 {/* Liked Posts History - Always in list view */}

@@ -1,7 +1,6 @@
 import React, { ReactNode } from 'react'
 import { Navigate } from 'react-router-dom'
 import { useRequireAuth } from '../hooks/useAuth'
-import LoadingState from './LoadingState'
 
 interface ProtectedRouteProps {
   children: ReactNode
@@ -12,7 +11,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, redirectTo = 
   const { isAuthenticated, isLoading, shouldRedirect } = useRequireAuth()
 
   if (isLoading) {
-    return <LoadingState />
+    return null
   }
 
   if (shouldRedirect) {

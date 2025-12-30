@@ -5,11 +5,13 @@ A Node.js/Express backend with Prisma ORM, PostgreSQL database, and automated se
 ## 🚀 Quick Start
 
 ### Option 1: Automated Setup (Recommended)
+
 ```bash
 ./setup.sh
 ```
 
 ### Option 2: Manual Setup
+
 ```bash
 docker-compose up -d
 ```
@@ -96,9 +98,27 @@ backend/
 
 ## 🔧 Environment Variables
 
-The following environment variables are configured in `docker-compose.yaml`:
+The following environment variables are configured in `docker-compose.yaml` or `.env`:
 
 - `DATABASE_URL`: PostgreSQL connection string
+- `FIREBASE_SERVICE_ACCOUNT`: (Optional) JSON string of your Firebase Service Account key to enable push notifications.
+
+## 🔔 Push Notifications (Firebase)
+
+To enable push notifications:
+
+1. Go to Firebase Console > Project Settings > Service Accounts.
+2. Click "Generate new private key".
+3. Convert the downloaded JSON into a single string and set it as `FIREBASE_SERVICE_ACCOUNT` in your `.env` or `docker-compose.yaml`.
+   - On Linux/Mac, you can use: `cat service-account.json | jq -c . | sed 's/"/\\"/g'` or just use a tool like [JSON to Single Line](https://www.freeformatter.com/json-escape.html).
+
+### Sending Daily Notifications
+
+Run the following command to notify all users:
+
+```bash
+npm run notify:daily
+```
 
 ## 🎯 Features
 
@@ -112,6 +132,7 @@ The following environment variables are configured in `docker-compose.yaml`:
 ## 🚨 Troubleshooting
 
 ### "Cannot find module 'object-assign'" error:
+
 ```bash
 # This is usually fixed by rebuilding the container
 docker-compose down -v

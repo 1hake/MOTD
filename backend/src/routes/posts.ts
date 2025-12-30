@@ -2,6 +2,7 @@ import { Router } from 'express'
 import prisma from '../prismaClient'
 import { authenticateToken } from '../middleware/auth'
 import { getAllPlatformLinks } from '../services/musicService'
+import { sendPushNotification } from '../services/notificationService'
 
 const router = Router()
 
@@ -33,7 +34,27 @@ router.post('/', authenticateToken, async (req, res) => {
   try {
     // Check if user exists
     const user = await prisma.user.findUnique({
-      where: { id: uid }
+      where: { id: uid },
+      include: {
+        friends: {
+          include: {
+            friend: {
+              include: {
+                devices: true
+              }
+            }
+          }
+        },
+        friendOf: {
+          include: {
+            user: {
+              include: {
+                devices: true
+              }
+            }
+          }
+        }
+      }
     })
     if (!user) return res.status(400).json({ error: 'User not found' })
 
@@ -57,8 +78,8 @@ router.post('/', authenticateToken, async (req, res) => {
       console.error('Error fetching platform links:', error)
       // Continue with empty links if fetching fails
     }
-    const deezerTrackId = id.toString();
-    console.log("🚀 ~ deezerTrackId:", deezerTrackId)
+    const deezerTrackId = id.toString()
+    console.log('🚀 ~ deezerTrackId:', deezerTrackId)
     const post = await prisma.songPost.create({
       data: {
         title,
@@ -75,9 +96,95 @@ router.post('/', authenticateToken, async (req, res) => {
         isPublic: isPublic !== undefined ? isPublic : true
       }
     })
+
+    // Send notifications to friends
+    const friendDevices = [
+      ...user.friends.flatMap((f) => f.friend.devices),
+      ...user.friendOf.flatMap((f) => f.user.devices)
+    ]
+
+    const uniqueTokens = Array.from(new Set(friendDevices.map((d) => d.token)))
+
+    if (uniqueTokens.length > 0) {
+      const userName = user.name || user.email.split('@')[0]
+      sendPushNotification(uniqueTokens, `${userName} a posté sa pépite !`, `Viens écouter "${title}" de ${artist}.`, {
+        url: '/feed',
+        postId: post.id.toString()
+      }).catch((err) => console.error('Error sending friend post notification:', err))
+    }
+
     res.json(post)
   } catch (e) {
     console.error('[POST /posts] error:', e)
+    res.status(500).json({ error: 'Server error' })
+  }
+})
+
+// Admin route to post a song for any user at any date (for dev purposes)
+router.post('/admin', async (req, res) => {
+  const { id, title, artist, link, coverUrl, description, isPublic, userId, date } = req.body
+  if (!title || !artist || !userId) {
+    return res.status(400).json({ error: 'Missing title, artist, or userId' })
+  }
+
+  try {
+    let finalDeezerLink = undefined
+    let finalSpotifyLink = undefined
+    let finalAppleMusicLink = undefined
+    let finalYoutubeLink = undefined
+
+    try {
+      const platformLinks = await getAllPlatformLinks(artist, title)
+      finalDeezerLink = platformLinks.deezerLink
+      finalSpotifyLink = platformLinks.spotifyLink
+      finalAppleMusicLink = platformLinks.appleMusicLink
+      finalYoutubeLink = platformLinks.youtubeLink
+    } catch (error) {
+      console.error('Error fetching platform links:', error)
+    }
+
+    const postDate = date ? new Date(date) : new Date()
+
+    // Check if user already has a post on this specific calendar date (UTC)
+    const startOfDay = new Date(postDate)
+    startOfDay.setUTCHours(0, 0, 0, 0)
+    const endOfDay = new Date(postDate)
+    endOfDay.setUTCHours(23, 59, 59, 999)
+
+    const existingPost = await prisma.songPost.findFirst({
+      where: {
+        userId: parseInt(userId, 10),
+        date: {
+          gte: startOfDay,
+          lte: endOfDay
+        }
+      }
+    })
+
+    if (existingPost) {
+      return res.status(400).json({ error: `User already has a post on ${postDate.toDateString()}` })
+    }
+
+    const post = await prisma.songPost.create({
+      data: {
+        title,
+        artist,
+        description,
+        link: link || finalDeezerLink || finalSpotifyLink || finalAppleMusicLink || finalYoutubeLink || '',
+        deezerLink: finalDeezerLink,
+        spotifyLink: finalSpotifyLink,
+        appleMusicLink: finalAppleMusicLink,
+        youtubeLink: finalYoutubeLink,
+        userId: parseInt(userId, 10),
+        coverUrl,
+        deezerTrackId: id ? id.toString() : null,
+        isPublic: isPublic !== undefined ? isPublic : true,
+        date: postDate
+      }
+    })
+    res.json(post)
+  } catch (e) {
+    console.error('[POST /posts/admin] error:', e)
     res.status(500).json({ error: 'Server error' })
   }
 })

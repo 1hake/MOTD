@@ -185,7 +185,7 @@ export default function EditProfile() {
               </svg>
             </button>
             <div className="flex-1">
-              <h1 className="text-4xl font-black text-black uppercase italic tracking-tight">Modifier le profil</h1>
+              <h1 className="text-xl font-black text-black uppercase italic tracking-tight">Modifier le profil</h1>
               <p className="text-black font-bold opacity-60 uppercase text-sm">Personnalisez vos informations</p>
             </div>
             {/* Auto-save status indicator - compact version */}

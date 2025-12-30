@@ -153,22 +153,19 @@ export default function FriendProfile() {
 
   return (
     <div className="min-h-screen">
-      <div className="max-w-4xl mx-auto px-6 py-12">
-        {/* Back button */}
-        <div className="mb-8">
-          <button
-            onClick={() => navigate('/explorer')}
-            className="group flex items-center gap-2 text-black/40 hover:text-black transition-colors font-black uppercase italic text-xs tracking-widest"
-          >
-            <svg className="w-4 h-4 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M15 19l-7-7 7-7" />
-            </svg>
-            Retour à l'explorateur
-          </button>
-        </div>
+      <div className="max-w-4xl mx-auto px-6 pt-[max(3rem,env(safe-area-inset-top))] pb-12">
+        {/* Floating Back button */}
+        <button
+          onClick={() => navigate('/explorer')}
+          className="fixed top-[max(1rem,env(safe-area-inset-top))] left-4 z-50 p-3 rounded-xl bg-white border-3 border-black shadow-neo-sm hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-neo active:translate-x-[0px] active:translate-y-[0px] active:shadow-none transition-all"
+        >
+          <svg className="w-6 h-6 text-black stroke-[3px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
 
         {/* Profile Header */}
-        <div className="mb-12 pb-12 border-b-4 border-black">
+        <div className="mb-8 pb-12 border-b-4 border-black">
           <div className="flex flex-col md:flex-row items-center md:items-start gap-8">
             {/* Avatar */}
             <div className="w-24 h-24 md:w-32 md:h-32 bg-pop-pink border-4 border-black rounded-3xl flex items-center justify-center text-black text-3xl md:text-5xl font-black shadow-neo shrink-0 -rotate-2">
@@ -219,32 +216,34 @@ export default function FriendProfile() {
 
         {/* View Switcher */}
         {sortedDates.length > 0 && (
-          <div className="flex justify-center mb-10">
-            <div className="flex items-center gap-2 p-1.5 bg-white border-3 border-black rounded-xl shadow-neo-sm">
-              <button
-                onClick={() => setViewMode('grid')}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-black uppercase transition-all duration-200 ${viewMode === 'grid'
-                  ? 'bg-pop-pink border-2 border-black text-black shadow-none'
-                  : 'text-black opacity-60 hover:opacity-100'
-                  }`}
-              >
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-                </svg>
-                Grille
-              </button>
-              <button
-                onClick={() => setViewMode('list')}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-black uppercase transition-all duration-200 ${viewMode === 'list'
-                  ? 'bg-pop-pink border-2 border-black text-black shadow-none'
-                  : 'text-black opacity-60 hover:opacity-100'
-                  }`}
-              >
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
-                </svg>
-                Liste
-              </button>
+          <div className="sticky top-0 z-40 pt-[max(1rem,env(safe-area-inset-top))] pb-4 -mx-6 px-6 mb-6">
+            <div className="flex justify-center">
+              <div className="flex items-center gap-2 p-1.5 bg-white border-3 border-black rounded-xl shadow-neo-sm">
+                <button
+                  onClick={() => setViewMode('grid')}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-black uppercase transition-all duration-200 ${viewMode === 'grid'
+                    ? 'bg-pop-pink border-2 border-black text-black shadow-none'
+                    : 'text-black opacity-60 hover:opacity-100'
+                    }`}
+                >
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                  </svg>
+                  Grille
+                </button>
+                <button
+                  onClick={() => setViewMode('list')}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-black uppercase transition-all duration-200 ${viewMode === 'list'
+                    ? 'bg-pop-pink border-2 border-black text-black shadow-none'
+                    : 'text-black opacity-60 hover:opacity-100'
+                    }`}
+                >
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
+                  </svg>
+                  Liste
+                </button>
+              </div>
             </div>
           </div>
         )}

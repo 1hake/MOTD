@@ -55,7 +55,7 @@ const Navigation: React.FC = () => {
   }
 
   return (
-    <nav className="fixed bottom-6 left-8 right-8 flex justify-center z-50">
+    <nav className="fixed bottom-[max(1.5rem,env(safe-area-inset-bottom))] left-8 right-8 flex justify-center z-50">
       <div className="bg-white border-3 border-black shadow-neo rounded-full px-3 py-2 max-w-sm w-full">
         <ul className="flex justify-between items-center gap-2">
           {navItems.map(({ path, label, icon }) => {

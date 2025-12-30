@@ -32,10 +32,10 @@ export default function SearchHistory({ onSelectQuery, onClose, className = '' }
 
     if (history.length === 0) {
         return (
-            <div className={`bg-white/95 backdrop-blur-md border border-white/40 shadow-lg rounded-2xl ${className}`}>
+            <div className={`bg-white border-3 border-black shadow-neo rounded-2xl ${className}`}>
                 <div className="p-4">
-                    <div className="text-center py-8">
-                        <p className="text-primary-500 text-sm">Aucun historique de recherche</p>
+                    <div className="text-center py-4">
+                        <p className="text-black font-bold italic">Aucune recherche récente</p>
                     </div>
                 </div>
             </div>
@@ -43,39 +43,39 @@ export default function SearchHistory({ onSelectQuery, onClose, className = '' }
     }
 
     return (
-        <div className={`bg-white/95 backdrop-blur-md border border-white/40 shadow-lg rounded-2xl ${className}`}>
+        <div className={`bg-white border-3 border-black shadow-neo rounded-2xl ${className}`}>
             <div className="p-4">
-                <div className="flex items-center justify-between mb-3">
-                    <h2 className="text-sm font-medium text-primary-600">Recherches récentes</h2>
+                <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-sm font-black uppercase tracking-tighter text-black">Récents</h2>
                     <button
                         onClick={handleClearAll}
-                        className="text-xs text-primary-500 hover:text-primary-700 transition-colors"
+                        className="text-xs font-bold text-black hover:underline"
                     >
-                        Tout effacer
+                        Effacer tout
                     </button>
                 </div>
-                <div className="space-y-2 max-h-64 overflow-y-auto">
+                <div className="space-y-2 max-h-64 overflow-y-auto pr-2 custom-scrollbar">
                     {history.map((item) => (
                         <div
                             key={item.id}
-                            className="flex items-center gap-3 p-2 hover:bg-primary-50 rounded-lg transition-all duration-200 cursor-pointer group"
+                            className="flex items-center gap-3 p-3 border-2 border-transparent hover:border-black hover:bg-pop-pink rounded-xl transition-all duration-100 cursor-pointer group shadow-none hover:shadow-neo-sm hover:-translate-x-0.5 hover:-translate-y-0.5"
                             onClick={() => handleSelectQuery(item.query)}
                         >
-                            <div className="flex items-center justify-center w-6 h-6 text-primary-400">
+                            <div className="flex items-center justify-center w-6 h-6 text-black">
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
                             </div>
                             <div className="flex-1 min-w-0">
-                                <p className="text-primary-700 text-sm truncate">{item.query}</p>
+                                <p className="text-black font-bold truncate">{item.query}</p>
                             </div>
                             <button
                                 onClick={(e) => handleDeleteItem(e, item.id)}
-                                className="opacity-0 group-hover:opacity-100 p-1 hover:bg-red-100 rounded-md transition-all duration-200"
+                                className="opacity-0 group-hover:opacity-100 p-1 bg-white border-2 border-black hover:bg-pop-red rounded-md transition-all duration-100"
                                 title="Supprimer"
                             >
-                                <svg className="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                <svg className="w-4 h-4 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" />
                                 </svg>
                             </button>
                         </div>

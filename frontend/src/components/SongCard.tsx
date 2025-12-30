@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react'
 import { savePost, unsavePost, getDeezerTrackPreview } from '../lib/api'
 import { useAuth } from '../hooks/useAuth'
 import { useAudio } from '../contexts/AudioContext'
+import PlatformSelectionModal from './PlatformSelectionModal'
 
 type SongCardProps = {
   id: number
@@ -100,6 +101,7 @@ export default function SongCard({
   const [saves, setSaves] = useState(saveCount)
   const [isSaving, setIsSaving] = useState(false)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+  const [isPlatformModalOpen, setIsPlatformModalOpen] = useState(false)
   const { isAuthenticated } = useAuth()
   const audio = useAudio()
 
@@ -225,6 +227,24 @@ export default function SongCard({
   }
 
   const renderPlatformButton = (compact: boolean = false) => {
+    // If no preference is set, show a generic platform button that opens the modal
+    if (!userPlatformPreference) {
+      return (
+        <button
+          onClick={(e) => {
+            e.stopPropagation()
+            setIsPlatformModalOpen(true)
+          }}
+          className={`flex items-center gap-2 px-4 py-2.5 bg-white text-black rounded-xl border-2 border-black transition-all duration-200 shadow-neo-sm hover:translate-x-[-1px] hover:translate-y-[-1px] hover:shadow-neo active:translate-x-[1px] active:translate-y-[1px] active:shadow-none`}
+          title="Choisir une plateforme"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+          </svg>
+        </button>
+      )
+    }
+
     if (!preferredPlatform) return null
 
     return (
@@ -515,6 +535,25 @@ export default function SongCard({
           {renderSaveButton()}
         </div>
       </div>
+
+      <PlatformSelectionModal
+        isOpen={isPlatformModalOpen}
+        onClose={() => setIsPlatformModalOpen(false)}
+        onSelect={(platformId) => {
+          // La préférence est déjà sauvegardée par PlatformSelector via autoSave
+          // Ouvrir le lien correspondant si disponible
+          const links: Record<string, string | undefined> = {
+            spotify: spotifyLink,
+            deezer: deezerLink,
+            apple: appleMusicLink,
+            youtube: youtubeLink
+          }
+          const targetUrl = links[platformId]
+          if (targetUrl) {
+            window.open(targetUrl, '_blank', 'noopener,noreferrer')
+          }
+        }}
+      />
     </div>
   )
 }

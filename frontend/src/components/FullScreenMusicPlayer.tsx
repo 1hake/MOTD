@@ -4,6 +4,7 @@ import { useAuth } from '../hooks/useAuth'
 import { useAudio } from '../contexts/AudioContext'
 import { useNavigate } from 'react-router-dom'
 import AudioLevelIndicator from './AudioLevelIndicator'
+import PlatformSelectionModal from './PlatformSelectionModal'
 
 type Post = {
     id: number
@@ -79,6 +80,7 @@ export default function FullScreenMusicPlayer({
     autoPlayInitial = true
 }: FullScreenMusicPlayerProps) {
     const [previewUrls, setPreviewUrls] = useState<Record<number, string>>({})
+    const [isPlatformModalOpen, setIsPlatformModalOpen] = useState(false)
     const containerRef = useRef<HTMLDivElement>(null)
     const observerRef = useRef<IntersectionObserver | null>(null)
     const hasAutoPlayedRef = useRef<boolean>(false)
@@ -236,7 +238,7 @@ export default function FullScreenMusicPlayer({
                     audio.stopAll()
                     onClose()
                 }}
-                className="fixed top-8 left-6 z-50 w-12 h-12 rounded-full bg-white border-3 border-black flex items-center justify-center text-black hover:bg-pop-pink transition-all duration-200 shadow-neo active:translate-x-1 active:translate-y-1 active:shadow-none"
+                className="fixed top-[max(2rem,env(safe-area-inset-top))] left-6 z-50 w-12 h-12 rounded-full bg-white border-3 border-black flex items-center justify-center text-black hover:bg-pop-pink transition-all duration-200 shadow-neo active:translate-x-1 active:translate-y-1 active:shadow-none"
             >
                 <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" />
@@ -358,7 +360,20 @@ export default function FullScreenMusicPlayer({
                                         {/* Action buttons overlay - Platform button on bottom-left, Save on bottom-right */}
                                         <div className="absolute -bottom-8 left-4 right-4 flex items-end justify-between gap-3 pointer-events-none">
                                             {/* Platform button */}
-                                            {preferredPlatform && (
+                                            {!currentUserPlatformPreference ? (
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation()
+                                                        setIsPlatformModalOpen(true)
+                                                    }}
+                                                    className="pointer-events-auto flex items-center justify-center gap-2 px-4 py-3 bg-white text-black border-3 border-black rounded-xl transition-all duration-200 shadow-neo hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-neo-lg active:translate-x-1 active:translate-y-1 active:shadow-none font-black text-sm"
+                                                >
+                                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+                                                    </svg>
+                                                    <span className="uppercase tracking-tight">Plateforme</span>
+                                                </button>
+                                            ) : preferredPlatform && (
                                                 <a
                                                     href={preferredPlatform.url}
                                                     target="_blank"
@@ -372,7 +387,7 @@ export default function FullScreenMusicPlayer({
                                             )}
 
                                             {/* Spacer if no platform button */}
-                                            {!preferredPlatform && <div />}
+                                            {!currentUserPlatformPreference && !preferredPlatform && <div />}
 
                                             {/* Save button */}
                                             <button
@@ -419,6 +434,19 @@ export default function FullScreenMusicPlayer({
                     )
                 })}
             </div>
+
+            <PlatformSelectionModal
+                isOpen={isPlatformModalOpen}
+                onClose={() => setIsPlatformModalOpen(false)}
+                onSelect={(id) => {
+                    // Find the current post to get the correct link
+                    // This is a bit tricky since the modal is global to the player
+                    // but we can try to find the post that is currently in view
+                    // However, it's safer to just let the user click the button again
+                    // which will now show their preferred platform.
+                    // Or we could pass the current post ID to the modal trigger.
+                }}
+            />
         </div>
     )
 }

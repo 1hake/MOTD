@@ -2,14 +2,13 @@ import React from 'react'
 import { Outlet } from 'react-router-dom'
 import Navigation from './components/Navigation'
 import { useAuth } from './hooks/useAuth'
-import LoadingState from './components/LoadingState'
 import { AudioProvider } from './contexts/AudioContext'
 
 const Layout: React.FC = () => {
   const { isLoading } = useAuth()
 
   if (isLoading) {
-    return <LoadingState />
+    return null
   }
 
   return (

@@ -21,7 +21,7 @@ services:
     depends_on:
       - db
     environment:
-      - DATABASE_URL=postgresql://postgres:postgres@db:5432/digger-db?schema=public
+      - DATABASE_URL=postgres://2230a1b39ac8f7bb3090075a15681ab5b1c8d9575c8d968db994fad587c7fc3c:sk_LCzzZADRoGYwL2XBSyH0n@db.prisma.io:5432/postgres?sslmode=require
       - PORT=4000
     volumes:
       - .:/usr/src/app

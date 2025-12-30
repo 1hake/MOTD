@@ -177,7 +177,7 @@ export default function Explorer() {
   return (
     <div className="min-h-screen text-gray-100">
       {/* Sticky Floating Search Bar */}
-      <div className="sticky top-6 z-50 flex justify-center px-8">
+      <div className="sticky top-[max(1.5rem,env(safe-area-inset-top))] z-50 flex justify-center px-8">
         <SearchBar
           value={searchQuery}
           onChange={handleSearchChange}

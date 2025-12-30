@@ -7,6 +7,7 @@ import EmptyFeedCTA from '../components/EmptyFeedCTA'
 import PostsSection from '../components/PostsSection'
 import EmptyFriendsState from '../components/EmptyFriendsState'
 import LoadingState from '../components/LoadingState'
+import NotificationPermissionCard from '../components/NotificationPermissionCard'
 import logo2 from '../assets/img/logoblack.png'
 
 type Post = {
@@ -108,7 +109,7 @@ export default function Feed() {
 
   return (
     <div className="min-h-screen">
-      <div className="max-w-4xl mx-auto px-4 py-6 space-y-8 pb-24">
+      <div className="max-w-4xl mx-auto px-4 pt-[max(1.5rem,env(safe-area-inset-top))] pb-32 space-y-8">
         {/* image logo */}
         <div
           className={`w-full flex justify-center transition-all duration-1000 ease-in-out overflow-hidden ${isSearching ? 'h-0 opacity-0' : 'h-auto opacity-100'
@@ -121,6 +122,10 @@ export default function Feed() {
               } ${isSearching ? 'transform scale-75' : ''}`}
           />
         </div>
+
+        {/* Notification permission prompt (only on mobile) */}
+        <NotificationPermissionCard />
+
         {/* Empty feed CTA */}
         <EmptyFeedCTA
           show={myPosts.length === 0}

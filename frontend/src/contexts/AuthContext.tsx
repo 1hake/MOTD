@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useState, ReactNode } from
 import { authService, LoginCredentials, SignupCredentials } from '../lib/auth'
 import { User } from '../lib/storage'
 import { SearchHistoryService } from '../lib/searchHistory'
+import SplashScreen from '../components/SplashScreen'
 
 interface AuthContextType {
   user: User | null
@@ -134,7 +135,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     refreshUser
   }
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+  return (
+    <AuthContext.Provider value={value}>
+      {isLoading && <SplashScreen />}
+      {children}
+    </AuthContext.Provider>
+  )
 }
 
 export const useAuth = (): AuthContextType => {

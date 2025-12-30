@@ -344,7 +344,15 @@ async function main() {
   console.log('Created ' + friendshipsData.length + ' friendships')
 
   // Create device tokens
-  const deviceTokensData: any[] = []
+  const deviceTokensData = [
+    {
+      id: 1,
+      userId: 1,
+      token: 'dummy_token_for_testing',
+      platform: 'ios',
+      createdAt: '2025-12-29T11:12:41.806Z'
+    }
+  ]
   await prisma.deviceToken.createMany({
     data: deviceTokensData.map((t) => ({
       id: t.id,

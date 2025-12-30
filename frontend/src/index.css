@@ -63,7 +63,16 @@
 
   /* Input Styles */
   .input-field {
-    @apply w-full px-4 py-3 bg-white border-3 border-black rounded-xl focus:outline-none focus:bg-pop-blue/10 transition-all duration-200 placeholder-primary-500 font-medium;
+    @apply w-full px-4 py-3 bg-white border-3 border-black rounded-xl focus:outline-none focus:bg-white focus:shadow-neo transition-all duration-200 placeholder-black/30 font-bold text-black;
+    -webkit-text-fill-color: black;
+  }
+
+  .input-field:-webkit-autofill,
+  .input-field:-webkit-autofill:hover,
+  .input-field:-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0px 1000px white inset !important;
+    transition: background-color 5000s ease-in-out 0s;
+    -webkit-text-fill-color: black !important;
   }
 
   /* Card Styles */

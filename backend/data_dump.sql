@@ -1,0 +1,171 @@
+--
+-- PostgreSQL database dump
+--
+
+\restrict DIjLdbjWFzbaCegVoLBt8iHHyVTdC8Brg4Mnejx2nGeXWs8ZlxbDR6gAPdOf3XW
+
+-- Dumped from database version 14.20 (Debian 14.20-1.pgdg13+1)
+-- Dumped by pg_dump version 14.20 (Debian 14.20-1.pgdg13+1)
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- Data for Name: User; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO public."User" VALUES (3, 'charlie@example.com', NULL, NULL, '$2b$10$Yh6FvRVt2sn6D71vVPD0du5l2a4iAiufRK6lDwwL2NTkyju0xoNZ2', '2025-12-29 11:12:41.916', NULL);
+INSERT INTO public."User" VALUES (4, 'david@example.com', NULL, NULL, '$2b$10$dbWa0btNumX4LjyavGeRBeqcBis9LXojHz6v54x9E4YbuER9hDdiS', '2025-12-29 11:12:41.971', NULL);
+INSERT INTO public."User" VALUES (5, 'emma@example.com', NULL, NULL, '$2b$10$Om20mFdq8cvOiwBBms.nROvG2h6XMG6YsuhBaXnU/qre0uiywCwb.', '2025-12-29 11:12:42.025', 'spotify');
+INSERT INTO public."User" VALUES (7, 'louise@example.com', NULL, NULL, '$2b$10$7gOEusyUY4VOHzRNLc.Iuu5kDArs26YYuKnf0AR9WSMiZh2gqP9qK', '2025-12-30 13:38:17.052', 'spotify');
+INSERT INTO public."User" VALUES (2, 'bob@example.com', NULL, NULL, '$2b$10$kCGLfUNHYyNq6VTYswopgup12x640tRUTcx.H6rqorP3IEZzGc.LC', '2025-12-29 11:12:41.862', 'youtube');
+INSERT INTO public."User" VALUES (8, 'newuser@example.com', NULL, NULL, '$2b$10$EdjPS9OQT4a6G/WLl/h4OOP0i2rIcZARvbleeBz.5cYqliUQjkRWO', '2025-12-30 15:41:29.245', NULL);
+INSERT INTO public."User" VALUES (6, 'colin@example.com', NULL, NULL, '$2b$10$dcJSaJ6xLfh7Oy5jxgInwe6D73DKTp2DBXm9h4vCXDWSk31zEcDIq', '2025-12-30 13:35:44.491', 'apple');
+INSERT INTO public."User" VALUES (1, 'alice@example.com', NULL, NULL, '$2b$10$twVaf22c717pkyAsMQrowekrWLvAit.fOmveB3aYtjeVl2bhnUnca', '2025-12-29 11:12:41.806', 'spotify');
+
+
+--
+-- Data for Name: DeviceToken; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- Data for Name: Friendship; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO public."Friendship" VALUES (1, 1, 2);
+INSERT INTO public."Friendship" VALUES (2, 1, 3);
+INSERT INTO public."Friendship" VALUES (3, 1, 4);
+INSERT INTO public."Friendship" VALUES (4, 2, 1);
+INSERT INTO public."Friendship" VALUES (5, 2, 5);
+INSERT INTO public."Friendship" VALUES (6, 3, 1);
+INSERT INTO public."Friendship" VALUES (7, 4, 1);
+INSERT INTO public."Friendship" VALUES (8, 4, 5);
+INSERT INTO public."Friendship" VALUES (10, 5, 4);
+INSERT INTO public."Friendship" VALUES (11, 5, 2);
+INSERT INTO public."Friendship" VALUES (12, 6, 1);
+INSERT INTO public."Friendship" VALUES (13, 7, 1);
+INSERT INTO public."Friendship" VALUES (14, 7, 5);
+INSERT INTO public."Friendship" VALUES (15, 7, 6);
+INSERT INTO public."Friendship" VALUES (16, 7, 4);
+INSERT INTO public."Friendship" VALUES (17, 7, 2);
+INSERT INTO public."Friendship" VALUES (18, 1, 5);
+INSERT INTO public."Friendship" VALUES (19, 1, 7);
+
+
+--
+-- Data for Name: SongPost; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO public."SongPost" VALUES (9, 'poussette', 'Colin', 'https://www.deezer.com/track/2464492695', 'https://www.deezer.com/search/Colin%20poussette', 'https://open.spotify.com/search/Colin%20poussette', 'https://music.apple.com/search?term=Colin%20poussette', 'https://cdn-images.dzcdn.net/images/cover/99fa9079dcfc8cb197ef838ff9f6c3c9/250x250-000000-80-0-0.jpg', '2025-12-29 11:13:34.782', 1, 'https://music.youtube.com/search?q=Colin%20poussette', NULL, '2464492695', true);
+INSERT INTO public."SongPost" VALUES (10, 'Toi et moi', 'Jul', 'https://www.deezer.com/track/3484547261', 'https://www.deezer.com/track/3484547261', 'spotify:track:6D8pnA3WyMrGy8Q2258BC0', 'music://itunes.apple.com/fr/album/_/1830002880?i=1830003172&mt=1&app=music&ls=1&at=1000lHKX&ct=api_uri_m&itscg=30200&itsct=odsl_m', 'https://cdn-images.dzcdn.net/images/cover/d169d748456254fd2c24e88122401c14/250x250-000000-80-0-0.jpg', '2025-12-29 11:14:09.902', 3, 'https://music.youtube.com/watch?v=VrFXwZoKGCg', NULL, '3484547261', true);
+INSERT INTO public."SongPost" VALUES (11, 'On l''a fait', '375Marty', 'https://www.deezer.com/track/2743805851', 'https://www.deezer.com/track/2743805851', 'spotify:track:5ikzrbAKrfKXNex3CddjPK', 'music://itunes.apple.com/fr/album/_/1740304257?i=1740304665&mt=1&app=music&ls=1&at=1000lHKX&ct=api_uri_m&itscg=30200&itsct=odsl_m', 'https://cdn-images.dzcdn.net/images/cover/5238798fbca8ae38e31cc25d40ddb749/250x250-000000-80-0-0.jpg', '2025-12-29 11:17:54.356', 2, 'https://music.youtube.com/watch?v=EmBWWUL7jGM', NULL, '2743805851', true);
+INSERT INTO public."SongPost" VALUES (13, 'Dumebi', 'Rema', 'https://www.deezer.com/track/752760792', 'https://www.deezer.com/track/752760792', 'spotify:track:0SjQBdIddPvKSWxr8vk6QX', 'music://itunes.apple.com/fr/album/_/1479693891?i=1479694296&mt=1&app=music&ls=1&at=1000lHKX&ct=api_uri_m&itscg=30200&itsct=odsl_m', 'https://cdn-images.dzcdn.net/images/cover/e01c854fc22ac6a5c685a89bd686d36d/250x250-000000-80-0-0.jpg', '2025-12-30 10:50:33.728', 3, 'https://music.youtube.com/watch?v=zUU1bIWpH5c', NULL, '752760792', true);
+INSERT INTO public."SongPost" VALUES (14, 'Veridis Quo', 'Daft Punk', 'https://www.deezer.com/track/3135563', 'https://www.deezer.com/track/3135563', 'spotify:track:2LD2gT7gwAurzdQDQtILds', 'music://itunes.apple.com/fr/album/_/697194953?i=697196125&mt=1&app=music&ls=1&at=1000lHKX&ct=api_uri_m&itscg=30200&itsct=odsl_m', 'https://cdn-images.dzcdn.net/images/cover/5718f7c81c27e0b2417e2a4c45224f8a/250x250-000000-80-0-0.jpg', '2025-12-30 10:56:03.09', 1, 'https://music.youtube.com/watch?v=HhZaHf8RP6g', NULL, '3135563', true);
+INSERT INTO public."SongPost" VALUES (15, 'melodrama', 'disiz', 'https://www.deezer.com/track/3660747342', 'https://www.deezer.com/track/3558373981', 'spotify:track:5Y8C6KjzBRKvcT3Aln1Bc4', 'music://itunes.apple.com/fr/album/_/1840188173?i=1840188177&mt=1&app=music&ls=1&at=1000lHKX&ct=api_uri_m&itscg=30200&itsct=odsl_m', 'https://cdn-images.dzcdn.net/images/cover/33a9839075376eb9d32c0e43f445a79d/250x250-000000-80-0-0.jpg', '2025-12-30 10:56:30.19', 5, 'https://music.youtube.com/watch?v=ll5uAeEanjY', NULL, '3660747342', true);
+INSERT INTO public."SongPost" VALUES (16, 'Sing For The Moment', 'Eminem', 'https://www.deezer.com/track/916426', 'https://www.deezer.com/track/916426', 'spotify:track:3CpoeW0cZSDzIRv5z34F87', 'music://itunes.apple.com/fr/album/_/1440903530?i=1440903700&mt=1&app=music&ls=1&at=1000lHKX&ct=api_uri_m&itscg=30200&itsct=odsl_m', 'https://cdn-images.dzcdn.net/images/cover/ec3c8ed67427064c70f67e5815b74cef/250x250-000000-80-0-0.jpg', '2025-12-30 11:34:36.364', 4, 'https://music.youtube.com/watch?v=D4hAVemuQXY', NULL, '916426', true);
+INSERT INTO public."SongPost" VALUES (17, '27', 'Colin', 'https://www.deezer.com/track/2464492685', 'https://www.deezer.com/track/1578994', 'spotify:track:7bFmXanwZQm6BMV9Nka6Hk', 'music://itunes.apple.com/fr/album/_/1440767912?i=1440768618&mt=1&app=music&ls=1&at=1000lHKX&ct=api_uri_m&itscg=30200&itsct=odsl_m', 'https://cdn-images.dzcdn.net/images/cover/99fa9079dcfc8cb197ef838ff9f6c3c9/250x250-000000-80-0-0.jpg', '2025-12-30 13:36:23.517', 6, 'https://music.youtube.com/watch?v=g-qF3GuAozw', NULL, '2464492685', true);
+INSERT INTO public."SongPost" VALUES (18, 'miki cowboy', 'miki', 'https://www.deezer.com/track/3532320081', 'https://www.deezer.com/search/miki%20miki%20cowboy', 'https://open.spotify.com/search/miki%20miki%20cowboy', 'https://music.apple.com/search?term=miki%20miki%20cowboy', 'https://cdn-images.dzcdn.net/images/cover/77d3b4467f2faf0203365196f8625c74/250x250-000000-80-0-0.jpg', '2025-12-30 13:38:46.928', 7, 'https://music.youtube.com/search?q=miki%20miki%20cowboy', NULL, '3532320081', true);
+INSERT INTO public."SongPost" VALUES (19, 'Toi et moi', 'Jul', 'https://www.deezer.com/track/3484547261', 'https://www.deezer.com/track/3484547261', 'spotify:track:6D8pnA3WyMrGy8Q2258BC0', 'music://itunes.apple.com/fr/album/_/1830002880?i=1830003172&mt=1&app=music&ls=1&at=1000lHKX&ct=api_uri_m&itscg=30200&itsct=odsl_m', 'https://cdn-images.dzcdn.net/images/cover/d169d748456254fd2c24e88122401c14/250x250-000000-80-0-0.jpg', '2025-12-25 16:55:51.683', 1, 'https://music.youtube.com/watch?v=VrFXwZoKGCg', NULL, '3484547261', true);
+INSERT INTO public."SongPost" VALUES (20, 'sad ;(', 'ILIONA', 'https://www.deezer.com/track/3596460832', 'https://www.deezer.com/track/3596460832', NULL, 'music://itunes.apple.com/fr/album/_/1845379985?i=1845379990&mt=1&app=music&ls=1&at=1000lHKX&ct=api_uri_m&itscg=30200&itsct=odsl_m', 'https://cdn-images.dzcdn.net/images/cover/7fb86e2f6f44ce1610f20c7030e384c8/250x250-000000-80-0-0.jpg', '2025-12-28 05:56:11.844', 6, 'https://music.youtube.com/watch?v=PzHSiSQ63Eg', NULL, '3596460832', true);
+INSERT INTO public."SongPost" VALUES (22, 'Olala', 'Le Cluster Ensemble', 'https://www.deezer.com/track/3659061172', 'https://www.deezer.com/track/3659061172', 'spotify:track:7rlGSaFKopiY3eLzhMqJ7i', 'music://itunes.apple.com/fr/album/_/1853159305?i=1853159306&mt=1&app=music&ls=1&at=1000lHKX&ct=api_uri_m&itscg=30200&itsct=odsl_m', 'https://cdn-images.dzcdn.net/images/cover/2e334f4c47518861df12c499c625e8d3/250x250-000000-80-0-0.jpg', '2025-12-27 13:56:46.516', 1, 'https://music.youtube.com/watch?v=4pge4ztxKv4', NULL, '3659061172', true);
+INSERT INTO public."SongPost" VALUES (23, 'INSTINCT', 'Garuze', 'https://www.deezer.com/track/3617789232', 'https://www.deezer.com/search/Garuze%20INSTINCT', 'https://open.spotify.com/search/Garuze%20INSTINCT', 'https://music.apple.com/search?term=Garuze%20INSTINCT', 'https://cdn-images.dzcdn.net/images/cover/33550a3c47e4e8159b22eab3be17ac7c/250x250-000000-80-0-0.jpg', '2025-12-25 06:57:07.661', 1, 'https://music.youtube.com/search?q=Garuze%20INSTINCT', NULL, '3617789232', true);
+INSERT INTO public."SongPost" VALUES (24, 'particule', 'miki', 'https://www.deezer.com/track/3442893731', 'https://www.deezer.com/track/3442893731', 'spotify:track:6HWAQ1RfNaP1fpKw4l4AoS', 'music://itunes.apple.com/fr/album/_/1824413766?i=1824413771&mt=1&app=music&ls=1&at=1000lHKX&ct=api_uri_m&itscg=30200&itsct=odsl_m', 'https://cdn-images.dzcdn.net/images/cover/461b3eea8623b1a68255ae28603aabc7/250x250-000000-80-0-0.jpg', '2025-12-26 20:57:23.042', 7, 'https://music.youtube.com/watch?v=GfLDnW4i31g', NULL, '3442893731', true);
+INSERT INTO public."SongPost" VALUES (25, 'YESTERDAY', 'Hamza', 'https://www.deezer.com/track/3416394251', 'https://www.deezer.com/track/3416394251', 'spotify:track:69UB9UIfNEAyyIXyiioSzP', 'music://itunes.apple.com/fr/album/_/1819751567?i=1819752557&mt=1&app=music&ls=1&at=1000lHKX&ct=api_uri_m&itscg=30200&itsct=odsl_m', 'https://cdn-images.dzcdn.net/images/cover/1732de52d38b7e0d8cd01c52c1057ccd/250x250-000000-80-0-0.jpg', '2025-12-29 15:57:32.644', 4, 'https://music.youtube.com/watch?v=4dKbpBeoVaI', NULL, '3416394251', true);
+INSERT INTO public."SongPost" VALUES (26, 'Vaitimbora', 'Trinix', 'https://www.deezer.com/track/3346909081', 'https://www.deezer.com/track/3346909081', 'spotify:track:4PT2ZuTfGLHI86OBqm2Ezt', 'music://itunes.apple.com/fr/album/_/1811642468?i=1811642469&mt=1&app=music&ls=1&at=1000lHKX&ct=api_uri_m&itscg=30200&itsct=odsl_m', 'https://cdn-images.dzcdn.net/images/cover/10b345e7c12cc4e63c8316265c4a322f/250x250-000000-80-0-0.jpg', '2025-12-29 11:57:41.411', 3, 'https://music.youtube.com/watch?v=jOwsX8AAFx8', NULL, '3346909081', true);
+INSERT INTO public."SongPost" VALUES (27, 'Deux mille', 'SCH', 'https://www.deezer.com/track/3126998241', 'https://www.deezer.com/track/3126998241', NULL, 'music://itunes.apple.com/fr/album/_/1775954131?i=1775954145&mt=1&app=music&ls=1&at=1000lHKX&ct=api_uri_m&itscg=30200&itsct=odsl_m', 'https://cdn-images.dzcdn.net/images/cover/f38a9942047361e6eaeb78ddde0eac0d/250x250-000000-80-0-0.jpg', '2025-12-26 20:57:55.018', 2, 'https://music.youtube.com/watch?v=YFJXhHUwKew', NULL, '3126998241', true);
+INSERT INTO public."SongPost" VALUES (28, 'Hustleuse', 'H JeuneCrack', 'https://www.deezer.com/track/3177339161', 'https://www.deezer.com/track/3210617121', 'spotify:track:4ks8Fw4cG55DOYJ21qpFI9', 'music://itunes.apple.com/fr/album/_/1786555411?i=1786555418&mt=1&app=music&ls=1&at=1000lHKX&ct=api_uri_m&itscg=30200&itsct=odsl_m', 'https://cdn-images.dzcdn.net/images/cover/a71444dba91154b4f64b46d16093c493/250x250-000000-80-0-0.jpg', '2025-12-24 00:58:45.686', 4, 'https://music.youtube.com/watch?v=khvkPJgaw2o', NULL, '3177339161', true);
+INSERT INTO public."SongPost" VALUES (29, 'No Way', 'TIF', 'https://www.deezer.com/track/3146775521', 'https://www.deezer.com/track/3146775521', 'spotify:track:2IPePznzAo4HTEgYKYAeqI', 'music://itunes.apple.com/fr/album/_/1784441800?i=1784441801&mt=1&app=music&ls=1&at=1000lHKX&ct=api_uri_m&itscg=30200&itsct=odsl_m', 'https://cdn-images.dzcdn.net/images/cover/e1fc23f88b03f0ea8bb6347693270ced/250x250-000000-80-0-0.jpg', '2025-12-27 12:58:54.542', 3, 'https://music.youtube.com/watch?v=qpzs91FfIJg', NULL, '3146775521', true);
+INSERT INTO public."SongPost" VALUES (30, 'UNE HISTOIRE ÉTRANGE', 'Laylow', 'https://www.deezer.com/track/1424343712', 'https://www.deezer.com/track/1424343712', 'spotify:track:1LqDW54jByEjfZJMadiLJU', 'music://itunes.apple.com/fr/album/_/1575206577?i=1575206858&mt=1&app=music&ls=1&at=1000lHKX&ct=api_uri_m&itscg=30200&itsct=odsl_m', 'https://cdn-images.dzcdn.net/images/cover/f968eb506868df5736521217bb87ccc7/250x250-000000-80-0-0.jpg', '2025-12-29 13:59:17.626', 4, 'https://music.youtube.com/watch?v=I34xC4NNgbQ', NULL, '1424343712', true);
+INSERT INTO public."SongPost" VALUES (31, 'Atisuba', 'THEODORT', 'https://www.deezer.com/track/1829205757', 'https://www.deezer.com/track/1829205757', 'spotify:track:7rDjz9XgkrN820rdnfekim', 'music://itunes.apple.com/fr/album/_/1635145920?i=1635145923&mt=1&app=music&ls=1&at=1000lHKX&ct=api_uri_m&itscg=30200&itsct=odsl_m', 'https://cdn-images.dzcdn.net/images/cover/11befacf1c7d916341d466af2fdfbf95/250x250-000000-80-0-0.jpg', '2025-12-26 03:59:25.843', 5, 'https://music.youtube.com/watch?v=DaCuFKfhDSA', NULL, '1829205757', true);
+INSERT INTO public."SongPost" VALUES (32, 'L.A.', 'Chilla', 'https://www.deezer.com/track/2840586142', 'https://www.deezer.com/track/2944350611', 'spotify:track:36z7dz7nx2jQCa217hKVel', 'music://itunes.apple.com/fr/album/_/1762476863?i=1762476868&mt=1&app=music&ls=1&at=1000lHKX&ct=api_uri_m&itscg=30200&itsct=odsl_m', 'https://cdn-images.dzcdn.net/images/cover/287a98289c3bc329795641aa633c2e2c/250x250-000000-80-0-0.jpg', '2025-12-30 12:59:48.707', 2, 'https://music.youtube.com/watch?v=kaVRqQI075w', NULL, '2840586142', true);
+INSERT INTO public."SongPost" VALUES (33, 'Wayeh', 'THEODORT', 'https://www.deezer.com/track/2758387541', 'https://www.deezer.com/track/2758387541', 'spotify:track:037wIgLisUOMSRfLRrB38O', 'music://itunes.apple.com/fr/album/_/1735729364?i=1735730180&mt=1&app=music&ls=1&at=1000lHKX&ct=api_uri_m&itscg=30200&itsct=odsl_m', 'https://cdn-images.dzcdn.net/images/cover/7f497f9c3d06315c09198664fe5526d2/250x250-000000-80-0-0.jpg', '2025-12-23 21:00:00.151', 1, 'https://music.youtube.com/watch?v=nh6gI_hzjdw', NULL, '2758387541', true);
+INSERT INTO public."SongPost" VALUES (34, 'Charli et Lorde', 'Jane et Les Autres', 'https://www.deezer.com/track/3622255802', 'https://www.deezer.com/track/3622255802', 'spotify:track:6gUgvLzIgQDpsMfvrOHT8P', 'music://itunes.apple.com/fr/album/_/1848769773?i=1848769993&mt=1&app=music&ls=1&at=1000lHKX&ct=api_uri_m&itscg=30200&itsct=odsl_m', 'https://cdn-images.dzcdn.net/images/cover/77b872dbd080fba3d84fb2453caaa91d/250x250-000000-80-0-0.jpg', '2025-12-25 00:00:00', 4, 'https://music.youtube.com/watch?v=XVB1MRxfE_U', NULL, '3622255802', true);
+INSERT INTO public."SongPost" VALUES (35, 'Charli et Lorde', 'Jane et Les Autres', 'https://www.deezer.com/track/3622255802', 'https://www.deezer.com/track/3622255802', 'spotify:track:6gUgvLzIgQDpsMfvrOHT8P', 'music://itunes.apple.com/fr/album/_/1848769773?i=1848769993&mt=1&app=music&ls=1&at=1000lHKX&ct=api_uri_m&itscg=30200&itsct=odsl_m', 'https://cdn-images.dzcdn.net/images/cover/77b872dbd080fba3d84fb2453caaa91d/250x250-000000-80-0-0.jpg', '2025-12-27 00:00:00', 5, 'https://music.youtube.com/watch?v=XVB1MRxfE_U', NULL, '3622255802', true);
+INSERT INTO public."SongPost" VALUES (36, 'Charli et Lorde', 'Jane et Les Autres', 'https://www.deezer.com/track/3622255802', 'https://www.deezer.com/track/3622255802', 'spotify:track:6gUgvLzIgQDpsMfvrOHT8P', 'music://itunes.apple.com/fr/album/_/1848769773?i=1848769993&mt=1&app=music&ls=1&at=1000lHKX&ct=api_uri_m&itscg=30200&itsct=odsl_m', 'https://cdn-images.dzcdn.net/images/cover/77b872dbd080fba3d84fb2453caaa91d/250x250-000000-80-0-0.jpg', '2025-12-27 00:00:00', 4, 'https://music.youtube.com/watch?v=XVB1MRxfE_U', NULL, '3622255802', true);
+INSERT INTO public."SongPost" VALUES (37, 'Californication', 'Red Hot Chili Peppers', 'https://www.deezer.com/track/725274', 'https://www.deezer.com/track/725274', 'spotify:track:48UPSzbZjgc449aqz8bxox', 'music://itunes.apple.com/fr/album/_/947701030?i=947701035&mt=1&app=music&ls=1&at=1000lHKX&ct=api_uri_m&itscg=30200&itsct=odsl_m', 'https://cdn-images.dzcdn.net/images/cover/5e61e8290a4d1d64ca58920656c9602d/250x250-000000-80-0-0.jpg', '2025-12-29 00:00:00', 5, 'https://music.youtube.com/watch?v=A__cH65WRvE', NULL, '725274', true);
+INSERT INTO public."SongPost" VALUES (38, 'Californication', 'Red Hot Chili Peppers', 'https://www.deezer.com/track/725274', 'https://www.deezer.com/track/725274', 'spotify:track:48UPSzbZjgc449aqz8bxox', 'music://itunes.apple.com/fr/album/_/947701030?i=947701035&mt=1&app=music&ls=1&at=1000lHKX&ct=api_uri_m&itscg=30200&itsct=odsl_m', 'https://cdn-images.dzcdn.net/images/cover/5e61e8290a4d1d64ca58920656c9602d/250x250-000000-80-0-0.jpg', '2025-12-28 00:00:00', 5, 'https://music.youtube.com/watch?v=A__cH65WRvE', NULL, '725274', true);
+INSERT INTO public."SongPost" VALUES (39, 'Californication', 'Red Hot Chili Peppers', 'https://www.deezer.com/track/725274', 'https://www.deezer.com/track/725274', 'spotify:track:48UPSzbZjgc449aqz8bxox', 'music://itunes.apple.com/fr/album/_/947701030?i=947701035&mt=1&app=music&ls=1&at=1000lHKX&ct=api_uri_m&itscg=30200&itsct=odsl_m', 'https://cdn-images.dzcdn.net/images/cover/5e61e8290a4d1d64ca58920656c9602d/250x250-000000-80-0-0.jpg', '2025-12-17 00:00:00', 1, 'https://music.youtube.com/watch?v=A__cH65WRvE', NULL, '725274', true);
+INSERT INTO public."SongPost" VALUES (40, 'Californication', 'Red Hot Chili Peppers', 'https://www.deezer.com/track/725274', 'https://www.deezer.com/track/725274', 'spotify:track:48UPSzbZjgc449aqz8bxox', 'music://itunes.apple.com/fr/album/_/947701030?i=947701035&mt=1&app=music&ls=1&at=1000lHKX&ct=api_uri_m&itscg=30200&itsct=odsl_m', 'https://cdn-images.dzcdn.net/images/cover/5e61e8290a4d1d64ca58920656c9602d/250x250-000000-80-0-0.jpg', '2025-12-20 00:00:00', 6, 'https://music.youtube.com/watch?v=A__cH65WRvE', NULL, '725274', true);
+INSERT INTO public."SongPost" VALUES (41, 'Californication', 'Red Hot Chili Peppers', 'https://www.deezer.com/track/725274', 'https://www.deezer.com/track/725274', 'spotify:track:48UPSzbZjgc449aqz8bxox', 'music://itunes.apple.com/fr/album/_/947701030?i=947701035&mt=1&app=music&ls=1&at=1000lHKX&ct=api_uri_m&itscg=30200&itsct=odsl_m', 'https://cdn-images.dzcdn.net/images/cover/5e61e8290a4d1d64ca58920656c9602d/250x250-000000-80-0-0.jpg', '2025-12-28 00:00:00', 1, 'https://music.youtube.com/watch?v=A__cH65WRvE', NULL, '725274', true);
+INSERT INTO public."SongPost" VALUES (42, 'Californication', 'Red Hot Chili Peppers', 'https://www.deezer.com/track/725274', 'https://www.deezer.com/track/725274', 'spotify:track:48UPSzbZjgc449aqz8bxox', 'music://itunes.apple.com/fr/album/_/947701030?i=947701035&mt=1&app=music&ls=1&at=1000lHKX&ct=api_uri_m&itscg=30200&itsct=odsl_m', 'https://cdn-images.dzcdn.net/images/cover/5e61e8290a4d1d64ca58920656c9602d/250x250-000000-80-0-0.jpg', '2025-12-25 00:00:00', 5, 'https://music.youtube.com/watch?v=A__cH65WRvE', NULL, '725274', true);
+
+
+--
+-- Data for Name: Save; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO public."Save" VALUES (1, 2, 10, '2025-12-29 11:32:01.472');
+INSERT INTO public."Save" VALUES (2, 2, 9, '2025-12-29 11:44:38.638');
+INSERT INTO public."Save" VALUES (7, 1, 11, '2025-12-29 12:10:00');
+INSERT INTO public."Save" VALUES (6, 5, 14, '2025-12-30 11:24:54.217');
+INSERT INTO public."Save" VALUES (8, 5, 13, '2025-12-30 11:24:56.911');
+INSERT INTO public."Save" VALUES (10, 1, 13, '2025-12-30 11:57:25.568');
+INSERT INTO public."Save" VALUES (12, 1, 16, '2025-12-30 11:57:28.621');
+INSERT INTO public."Save" VALUES (15, 1, 37, '2025-12-30 15:58:19.916');
+INSERT INTO public."Save" VALUES (16, 1, 18, '2025-12-30 15:58:52.772');
+
+
+--
+-- Data for Name: _prisma_migrations; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO public._prisma_migrations VALUES ('4e20d245-510a-4709-be89-5ad85404ac93', '01dcd5a6597bc141328a70edf733963d2e9ce3a0186a7f88f9fc7054176ad24a', '2025-12-29 11:12:40.636108+00', '20250904141658_init', NULL, NULL, '2025-12-29 11:12:40.623269+00', 1);
+INSERT INTO public._prisma_migrations VALUES ('9719d20b-10b6-47f0-8854-84c663cb4e68', '71472e703917446970c78a1ba121f6c09cb680c19739127fc987ccbb1dc4b3ff', '2025-12-29 11:12:40.637598+00', '20250904160711_add_platform_preference', NULL, NULL, '2025-12-29 11:12:40.636655+00', 1);
+INSERT INTO public._prisma_migrations VALUES ('8fab762d-793b-455e-959b-8772dda8095b', 'cefd3fc9e7febccb009244c1286eb27e5b9a3bd7b779df26f7ce73977ecf4286', '2025-12-29 11:12:40.639019+00', '20250916090232_add_youtube_link', NULL, NULL, '2025-12-29 11:12:40.638169+00', 1);
+INSERT INTO public._prisma_migrations VALUES ('50b74129-91cf-4862-9f1a-33a6a4040bda', '7809fecb7edbe5c2d12747a278209bd09f00c8529d4408b8d7affca64fc7d353', '2025-12-29 11:12:40.640329+00', '20250916200624_add_description_to_song_posts', NULL, NULL, '2025-12-29 11:12:40.639501+00', 1);
+INSERT INTO public._prisma_migrations VALUES ('d7aad5a2-4626-4e1e-8ffa-4cf38e884035', '7eed8cf7822b66e7be58eac89de2cb619e7a11d838fd65e0a83ea0f85b2f852a', '2025-12-29 11:12:40.641614+00', '20251002085526_add_deezer_track_id', NULL, NULL, '2025-12-29 11:12:40.640818+00', 1);
+INSERT INTO public._prisma_migrations VALUES ('9ab78849-d44b-4f5f-bd6a-fddd092730ea', '965d9b87b2aa670a2f6bee0322116b0d2a513e2a4a54dfcebc7b560c413ee3d2', '2025-12-29 11:12:40.645894+00', '20251003094446_rename_like_to_save', NULL, NULL, '2025-12-29 11:12:40.642137+00', 1);
+INSERT INTO public._prisma_migrations VALUES ('11b021e4-59d1-4e98-b3d1-ba0ff7094a0c', '82a28bb31689e902ba37b6ac7ad5eaa5896d5b4aa10ffd80b28f570c6357efe5', '2025-12-30 13:32:45.260199+00', '20251230133245_add_visibility_to_posts', NULL, NULL, '2025-12-30 13:32:45.255973+00', 1);
+
+
+--
+-- Name: DeviceToken_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public."DeviceToken_id_seq"', 1, false);
+
+
+--
+-- Name: Friendship_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public."Friendship_id_seq"', 19, true);
+
+
+--
+-- Name: Save_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public."Save_id_seq"', 16, true);
+
+
+--
+-- Name: SongPost_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public."SongPost_id_seq"', 42, true);
+
+
+--
+-- Name: User_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public."User_id_seq"', 8, true);
+
+
+--
+-- PostgreSQL database dump complete
+--
+
+\unrestrict DIjLdbjWFzbaCegVoLBt8iHHyVTdC8Brg4Mnejx2nGeXWs8ZlxbDR6gAPdOf3XW
+

@@ -38,11 +38,15 @@ export async function initMobileApp() {
     // Initialize push notifications
     await initPushSafe()
 
-    // Hide splash screen
-    await SplashScreen.hide()
-
     console.log('Mobile app initialized successfully')
   } catch (error) {
     console.error('Error initializing mobile app:', error)
+  } finally {
+    // Always hide splash screen, even if initialization fails
+    try {
+      await SplashScreen.hide()
+    } catch (e) {
+      console.warn('Failed to hide splash screen:', e)
+    }
   }
 }

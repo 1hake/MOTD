@@ -9,11 +9,13 @@ const getApiBaseUrl = () => {
   }
 
   if (Capacitor.isNativePlatform()) {
-    // Use your computer's IP address for mobile simulators/devices
-    return 'http://192.168.1.139:4000' // Your Mac's IP address on correct port
+    // For iOS simulator, localhost works. For physical devices, use your machine's IP.
+    // If you're on a physical device, replace 'localhost' with your Mac's IP (e.g., '192.168.1.XX')
+    const host = 'localhost'
+    return `http://${host}:4000`
   }
 
-  return 'http://localhost:4000' // Correct backend port
+  return 'http://localhost:4000'
 }
 
 const API_BASE_URL = getApiBaseUrl()
