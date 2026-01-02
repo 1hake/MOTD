@@ -4,6 +4,7 @@ import { useAuth } from '../hooks/useAuth'
 import { useNavigate } from 'react-router-dom'
 import LoadingState from '../components/LoadingState'
 import AutoSavePlatformSelector from '../components/AutoSavePlatformSelector'
+import LogoutButton from '../components/LogoutButton'
 import { useToast } from '../components/Toast'
 
 type User = {
@@ -305,6 +306,14 @@ export default function EditProfile() {
                 </svg>
                 <span>Vos modifications sont sauvegardées automatiquement</span>
               </div>
+            </div>
+
+            {/* Logout Section */}
+            <div className="pt-8 border-t-3 border-black/10">
+              <LogoutButton className="w-full py-4 text-base" />
+              <p className="text-center mt-4 text-xs font-bold text-black/40 uppercase tracking-widest">
+                Vous nous quittez déjà ?
+              </p>
             </div>
           </div>
         </div>

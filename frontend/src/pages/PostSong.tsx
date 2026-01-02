@@ -4,6 +4,7 @@ import { useAuth } from '../hooks/useAuth'
 import { useNavigate } from 'react-router-dom'
 import Search from '../components/Search'
 import { generateMusicServiceLinks } from '../lib/musicServices'
+import DraggableToggle from '../components/DraggableToggle'
 
 export default function PostSong() {
   const [selected, setSelected] = useState<{
@@ -181,16 +182,11 @@ export default function PostSong() {
                           </span>
                         </div>
                       </div>
-                      <button
-                        onClick={() => setIsPublic(!isPublic)}
-                        className={`relative inline-flex h-7 w-12 items-center rounded-full border-3 border-black transition-all duration-200 focus:outline-none ${isPublic ? 'bg-pop-mint' : 'bg-gray-300'
-                          }`}
-                      >
-                        <span
-                          className={`inline-block h-3.5 w-3.5 transform rounded-full bg-black transition-transform duration-200 ${isPublic ? 'translate-x-6' : 'translate-x-1'
-                            }`}
-                        />
-                      </button>
+                      <DraggableToggle
+                        active={isPublic}
+                        onChange={setIsPublic}
+                        activeColor="bg-pop-mint"
+                      />
                     </div>
 
                     {/* Actions */}

@@ -1,11 +1,9 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState } from 'react'
 import { api } from '../lib/api'
 import { useAuth } from '../hooks/useAuth'
 import { useNavigate } from 'react-router-dom'
-import SongCard from '../components/SongCard'
 import LoadingState from '../components/LoadingState'
-import LogoutButton from '../components/LogoutButton'
-import AutoSavePlatformSelector from '../components/AutoSavePlatformSelector'
+import ProfileView from '../components/ProfileView'
 
 type Post = {
   id: number
@@ -34,12 +32,8 @@ export default function Profile() {
   const [posts, setPosts] = useState<Post[]>([])
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('list')
   const [friendsCount, setFriendsCount] = useState(0)
   const [savedCount, setSavedCount] = useState(0)
-  const [isSticky, setIsSticky] = useState(false)
-  const filterBarRef = useRef<HTMLDivElement>(null)
-  const stickyTriggerRef = useRef<HTMLDivElement>(null)
   const navigate = useNavigate()
   const { user: currentUser, isAuthenticated } = useAuth()
 
@@ -80,75 +74,6 @@ export default function Profile() {
       prevPosts.map((p) => (p.id === postId ? { ...p, isSavedByUser: isSaved, saveCount: newSaveCount } : p))
     )
   }
-
-
-  // Simple and clean date display
-  const getDateDisplay = (dateString: string) => {
-    const postDate = new Date(dateString)
-    const today = new Date()
-    const yesterday = new Date(today)
-    yesterday.setDate(today.getDate() - 1)
-
-    // Reset time to compare only dates
-    const postDateOnly = new Date(postDate.getFullYear(), postDate.getMonth(), postDate.getDate())
-    const todayOnly = new Date(today.getFullYear(), today.getMonth(), today.getDate())
-    const yesterdayOnly = new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate())
-
-    if (postDateOnly.getTime() === todayOnly.getTime()) {
-      return {
-        displayText: "Aujourd'hui",
-        isToday: true
-      }
-    } else if (postDateOnly.getTime() === yesterdayOnly.getTime()) {
-      return {
-        displayText: 'Hier',
-        isToday: false
-      }
-    } else {
-      return {
-        displayText: postDate.toLocaleDateString('fr-FR', {
-          day: 'numeric',
-          month: 'long',
-          year: postDate.getFullYear() !== today.getFullYear() ? 'numeric' : undefined
-        }),
-        isToday: false
-      }
-    }
-  }
-
-  const groupPostsByDate = (posts: Post[]) => {
-    const grouped: { [key: string]: Post[] } = {}
-    posts.forEach((post) => {
-      const date = new Date(post.date).toDateString()
-      if (!grouped[date]) {
-        grouped[date] = []
-      }
-      grouped[date].push(post)
-    })
-    return grouped
-  }
-
-  const groupedPosts = groupPostsByDate(posts)
-  const sortedDates = Object.keys(groupedPosts).sort((a, b) => new Date(b).getTime() - new Date(a).getTime())
-
-  // Observe sticky position for filter bar
-  useEffect(() => {
-    if (!stickyTriggerRef.current) return
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setIsSticky(!entry.isIntersecting)
-      },
-      {
-        threshold: 1.0,
-        rootMargin: '-1px 0px 0px 0px'
-      }
-    )
-
-    observer.observe(stickyTriggerRef.current)
-
-    return () => observer.disconnect()
-  }, [sortedDates])
 
   if (loading) {
     return <LoadingState message="Chargement du profil..." />
@@ -197,7 +122,6 @@ export default function Profile() {
                     </svg>
                     Modifier
                   </button>
-                  <LogoutButton className="text-sm px-5 py-2" />
                 </div>
               </div>
 
@@ -236,107 +160,13 @@ export default function Profile() {
           </div>
         </div>
 
-        {/* Sticky trigger element - invisible marker */}
-        {sortedDates.length > 0 && <div ref={stickyTriggerRef} className="h-px" />}
-
-        {/* View Switcher */}
-        {sortedDates.length > 0 && (
-          <div
-            ref={filterBarRef}
-            className={`sticky top-0 z-40 pb-4 -mx-6 px-6 mb-6 transition-all duration-200 ${isSticky ? 'pt-[max(1rem,env(safe-area-inset-top))]' : 'pt-4'
-              }`}
-          >
-            <div className="flex justify-center">
-              <div className="flex items-center gap-2 p-1.5 bg-white border-3 border-black rounded-xl shadow-neo-sm">
-                <button
-                  onClick={() => setViewMode('grid')}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-black uppercase transition-all duration-200 ${viewMode === 'grid'
-                    ? 'bg-pop-pink border-2 border-black text-black shadow-none'
-                    : 'text-black opacity-60 hover:opacity-100'
-                    }`}
-                >
-                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-                  </svg>
-                  Grille
-                </button>
-                <button
-                  onClick={() => setViewMode('list')}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-black uppercase transition-all duration-200 ${viewMode === 'list'
-                    ? 'bg-pop-pink border-2 border-black text-black shadow-none'
-                    : 'text-black opacity-60 hover:opacity-100'
-                    }`}
-                >
-                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
-                  </svg>
-                  Liste
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Posts History */}
-        {sortedDates.length === 0 ? (
-          <div className="card text-center py-20 px-8">
-            <div className="text-8xl mb-6">🎵</div>
-            <h3 className="text-2xl font-black text-black mb-4 uppercase italic">Aucune chanson partagée</h3>
-            <p className="text-lg font-bold text-black opacity-60">L'aventure musicale commence ici !</p>
-          </div>
-        ) : (
-          <div className={`mb-24 ${viewMode === 'grid' ? 'space-y-12' : 'space-y-10'}`}>
-            {sortedDates.map((date) => {
-              const dateDisplay = getDateDisplay(date)
-              return (
-                <div key={date} className="space-y-6">
-                  {/* Neo Brutalist date header */}
-                  <div className="flex items-center gap-4">
-                    <h2 className={`text-sm font-black uppercase italic px-4 py-1.5 border-2 border-black rounded-lg shadow-neo-sm ${dateDisplay.isToday
-                      ? 'bg-pop-pink text-black'
-                      : 'bg-pop-mint text-black'
-                      }`}>
-                      {dateDisplay.displayText}
-                    </h2>
-                    <div className="h-1 bg-black flex-1 rounded-full opacity-10"></div>
-                  </div>
-
-                  {/* Songs for this date */}
-                  <div className={
-                    dateDisplay.isToday
-                      ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" // Today's songs always in grid
-                      : viewMode === 'grid'
-                        ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-                        : "space-y-6" // List view for previous songs
-                  }>
-                    {groupedPosts[date].map((post) => (
-                      <SongCard
-                        key={post.id}
-                        id={post.id}
-                        title={post.title}
-                        artist={post.artist}
-                        description={post.description}
-                        link={post.link}
-                        deezerLink={post.deezerLink}
-                        spotifyLink={post.spotifyLink}
-                        appleMusicLink={post.appleMusicLink}
-                        youtubeLink={post.youtubeLink}
-                        coverUrl={post.coverUrl}
-                        saveCount={post.saveCount}
-                        isSavedByUser={post.isSavedByUser}
-                        onSaveChange={handleSaveChange}
-                        showSaves={true}
-                        isOwnPost={true}
-                        horizontal={!dateDisplay.isToday && viewMode === 'list'}
-                        userPlatformPreference={user?.platformPreference}
-                      />
-                    ))}
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-        )}
+        {/* Posts Section */}
+        <ProfileView
+          posts={posts}
+          onSaveChange={handleSaveChange}
+          isOwnPost={true}
+          userPlatformPreference={user?.platformPreference}
+        />
       </div>
     </div>
   )

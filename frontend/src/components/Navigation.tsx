@@ -1,6 +1,7 @@
-import React from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import React, { useRef, useEffect, useState } from 'react'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
+import { motion, useMotionValue, animate } from 'framer-motion'
 
 type NavItem = { path: string; label: string; icon: React.ReactNode }
 
@@ -40,33 +41,130 @@ const navItems: NavItem[] = [
 
 const Navigation: React.FC = () => {
   const { pathname } = useLocation()
+  const navigate = useNavigate()
   const { isAuthenticated } = useAuth()
+
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [containerWidth, setContainerWidth] = useState(0)
+  const isDragging = useRef(false)
+
+  const getActiveIndex = () => {
+    if (pathname === '/profile' || pathname === '/profile/edit') return 2
+    if (pathname === '/explorer' || pathname === '/friends' || pathname.startsWith('/friends/')) return 1
+    if (pathname === '/feed' || pathname === '/home') return 0
+    return 0
+  }
+
+  const activeIndex = getActiveIndex()
+
+  // Internal width after padding (px-3 = 12px * 2 = 24px)
+  const internalWidth = Math.max(0, containerWidth - 24)
+  const pillWidth = (internalWidth - 16) / 3 // 16 is total gap (2 * 8px)
+  const step = pillWidth + 8
+
+  const x = useMotionValue(activeIndex * step)
+
+  useEffect(() => {
+    const updateWidth = () => {
+      if (containerRef.current) {
+        setContainerWidth(containerRef.current.offsetWidth)
+      }
+    }
+
+    updateWidth()
+    window.addEventListener('resize', updateWidth)
+    return () => window.removeEventListener('resize', updateWidth)
+  }, [])
+
+  useEffect(() => {
+    if (!isDragging.current && containerWidth > 0) {
+      animate(x, activeIndex * step, {
+        type: "spring",
+        stiffness: 500,
+        damping: 40
+      })
+    }
+  }, [activeIndex, containerWidth, step, x])
+
+  const handleDrag = () => {
+    const currentX = x.get()
+    let targetIndex = 0
+    if (currentX > step * 1.5) {
+      targetIndex = 2
+    } else if (currentX > step * 0.5) {
+      targetIndex = 1
+    }
+
+    if (targetIndex !== activeIndex) {
+      navigate(navItems[targetIndex].path)
+    }
+  }
+
+  const handleDragStart = () => {
+    isDragging.current = true
+  }
+
+  const handleDragEnd = () => {
+    isDragging.current = false
+    animate(x, activeIndex * step, {
+      type: "spring",
+      stiffness: 500,
+      damping: 40
+    })
+  }
 
   // Don't show navigation if not authenticated
   if (!isAuthenticated) {
     return null
   }
 
-  const isActive = (path: string) => {
-    if (path === '/profile') return pathname === '/profile' || pathname === '/profile/edit'
-    if (path === '/explorer') return pathname === '/explorer' || pathname === '/friends' || pathname.startsWith('/friends/')
-    if (path === '/feed') return pathname === '/feed' || pathname === '/home'
-    return pathname === path
-  }
-
   return (
     <nav className="fixed bottom-[max(1.5rem,env(safe-area-inset-bottom))] left-8 right-8 flex justify-center z-50">
-      <div className="bg-white border-3 border-black shadow-neo rounded-full px-3 py-2 max-w-sm w-full">
-        <ul className="flex justify-between items-center gap-2">
-          {navItems.map(({ path, label, icon }) => {
-            const active = isActive(path)
+      <div
+        ref={containerRef}
+        className="relative bg-white border-3 border-black shadow-neo rounded-full px-3 py-2 max-w-sm w-full select-none cursor-pointer"
+        onClick={(e) => {
+          if (containerWidth === 0) return
+          const rect = e.currentTarget.getBoundingClientRect()
+          const clickX = e.clientX - rect.left
+          const width = rect.width
+
+          let targetIndex = 0
+          if (clickX > (width * 2) / 3) targetIndex = 2
+          else if (clickX > width / 3) targetIndex = 1
+
+          if (targetIndex !== activeIndex) {
+            navigate(navItems[targetIndex].path)
+          }
+        }}
+      >
+        {/* Animated Background Indicator / Draggable Pill */}
+        {containerWidth > 0 && (
+          <motion.div
+            drag="x"
+            dragConstraints={{ left: 0, right: 2 * step }}
+            dragElastic={0}
+            dragMomentum={false}
+            onDragStart={handleDragStart}
+            onDrag={handleDrag}
+            onDragEnd={handleDragEnd}
+            onClick={(e) => e.stopPropagation()}
+            style={{ x, left: '12px', width: pillWidth }}
+            className="absolute z-10 h-[calc(100%-16px)] rounded-full bg-pop-pink border-3 border-black cursor-grab active:cursor-grabbing shadow-neo-sm touch-none"
+          />
+        )}
+
+        <ul className="relative z-20 flex justify-between items-center gap-2 pointer-events-none">
+          {navItems.map(({ path, label, icon }, index) => {
+            const active = index === activeIndex
             return (
               <li key={path} className="flex-1 flex justify-center">
                 <Link
                   to={path}
                   aria-label={label}
                   aria-current={active ? 'page' : undefined}
-                  className={`nav-item ${active ? 'nav-item-active' : 'nav-item-inactive'}`}
+                  className={`nav-item flex items-center justify-center w-full h-14 rounded-full transition-colors duration-200 border-none hover:bg-transparent hover:border-none shadow-none hover:shadow-none ${active ? 'text-black' : 'text-black/40'
+                    }`}
                 >
                   {icon}
                   <span className="sr-only">{label}</span>

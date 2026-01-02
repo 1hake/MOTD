@@ -1,5 +1,5 @@
 import React from 'react'
-import PlatformSelector from './PlatformSelector'
+import AutoSavePlatformSelector from './AutoSavePlatformSelector'
 
 interface PlatformSelectionModalProps {
   isOpen: boolean
@@ -44,14 +44,13 @@ export default function PlatformSelectionModal({
           </div>
 
           <div className="mt-8">
-            <PlatformSelector
-              selectedPlatform=""
+            <AutoSavePlatformSelector
+              showClearOption={false}
               onPlatformChange={(id) => {
                 onSelect(id)
-                onClose()
+                // On laisse un petit délai pour que l'utilisateur voie le glitch avant de fermer
+                setTimeout(onClose, 400)
               }}
-              showClearOption={false}
-              autoSave={true}
             />
           </div>
 

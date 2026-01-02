@@ -4,6 +4,7 @@ import Search from './Search'
 import { api } from '../lib/api'
 import { useAuth } from '../hooks/useAuth'
 import { generateMusicServiceLinks } from '../lib/musicServices'
+import DraggableToggle from './DraggableToggle'
 
 interface EmptyFeedCTAProps {
   show: boolean
@@ -225,16 +226,11 @@ const EmptyFeedCTA: React.FC<EmptyFeedCTAProps> = ({ show, onSearchStateChange, 
                     {isPublic ? 'Tout le monde peut voir' : 'Seulement vos amis'}
                   </span>
                 </div>
-                <button
-                  onClick={() => setIsPublic(!isPublic)}
-                  className={`relative inline-flex h-7 w-12 items-center rounded-full transition-all duration-300 focus:outline-none border-2 border-black ${isPublic ? 'bg-pop-mint shadow-neo-sm' : 'bg-gray-200'
-                    }`}
-                >
-                  <span
-                    className={`inline-block h-4 w-4 transform rounded-full bg-white border-2 border-black transition-transform duration-300 ${isPublic ? 'translate-x-6' : 'translate-x-1'
-                      }`}
-                  />
-                </button>
+                <DraggableToggle
+                  active={isPublic}
+                  onChange={setIsPublic}
+                  activeColor="bg-pop-mint"
+                />
               </div>
 
               {/* Actions */}

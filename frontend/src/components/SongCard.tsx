@@ -1,4 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { savePost, unsavePost, getDeezerTrackPreview } from '../lib/api'
 import { useAuth } from '../hooks/useAuth'
 import { useAudio } from '../contexts/AudioContext'
@@ -107,6 +108,13 @@ export default function SongCard({
 
   const isPlaying = audio.isPlaying(id)
 
+  // Simplified transition config
+  const transition = {
+    type: "spring",
+    stiffness: 260,
+    damping: 20
+  }
+
   // Fetch preview URL when component mounts if deezerTrackId is available
   useEffect(() => {
     if (deezerTrackId) {
@@ -212,13 +220,23 @@ export default function SongCard({
       : 'w-10 h-10'
 
     return (
-      <div className={`${sizeClasses} rounded-full bg-pop-yellow flex items-center justify-center border-3 border-black shadow-neo-sm transition-transform duration-200 ${isPlaying ? 'translate-x-[2px] translate-y-[2px] shadow-none' : 'hover:scale-110 active:scale-95'}`}>
+      <div
+        className={`${sizeClasses} rounded-full bg-pop-yellow flex items-center justify-center border-3 border-black shadow-neo-sm transition-transform duration-200 ${isPlaying ? 'translate-x-[2px] translate-y-[2px] shadow-none' : 'hover:scale-110 active:scale-95'}`}
+      >
         {isPlaying ? (
-          <svg className={`${iconSizeClasses} text-black`} fill="currentColor" viewBox="0 0 20 20">
+          <svg
+            className={`${iconSizeClasses} text-black`}
+            fill="currentColor"
+            viewBox="0 0 20 20"
+          >
             <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
           </svg>
         ) : (
-          <svg className={`${iconSizeClasses} text-black ${size === 'small' ? 'ml-0.5' : 'ml-1'}`} fill="currentColor" viewBox="0 0 20 20">
+          <svg
+            className={`${iconSizeClasses} text-black ${size === 'small' ? 'ml-0.5' : 'ml-1'}`}
+            fill="currentColor"
+            viewBox="0 0 20 20"
+          >
             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
           </svg>
         )}
@@ -266,7 +284,9 @@ export default function SongCard({
 
     if (isOwnPost) {
       return (
-        <div className="flex items-center gap-1.5 px-3 py-2 bg-pop-blue border-2 border-black rounded-xl text-black">
+        <div
+          className="flex items-center gap-1.5 px-3 py-2 bg-pop-blue border-2 border-black rounded-xl text-black"
+        >
           <svg
             className="w-4 h-4 stroke-current fill-none"
             viewBox="0 0 24 24"
@@ -299,10 +319,16 @@ export default function SongCard({
       </button>
     )
   }
+
   if (horizontal) {
     return (
-      <div
-        className={`relative flex items-stretch gap-0 bg-white rounded-xl border-3 border-black shadow-neo overflow-hidden transition-all touch-manipulation ${className}`}
+      <motion.div
+        key={`song-card-horizontal-${id}`}
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.95 }}
+        transition={transition}
+        className={`relative flex items-stretch gap-0 bg-white rounded-2xl border-3 border-black shadow-neo overflow-hidden transition-all touch-manipulation ${className}`}
         style={{ WebkitTapHighlightColor: 'transparent' }}
       >
         {/* Cover Image with preview button */}
@@ -310,14 +336,16 @@ export default function SongCard({
           className={`flex-shrink-0 w-24 relative group border-r-3 border-black ${disableAudioClick ? '' : 'cursor-pointer'}`}
           onClick={disableAudioClick ? undefined : handleAudioToggle}
         >
-          {coverUrl ? (
-            <img
-              src={coverUrl}
-              alt={`${title} cover`}
-              className="w-full h-full object-cover"
-            />
-          ) : (
-            <div className="w-full h-full bg-pop-pink flex items-center justify-center">
+          <div
+            className="absolute inset-0 bg-center bg-cover"
+            style={{
+              backgroundImage: coverUrl ? `url(${coverUrl})` : 'none',
+              backgroundColor: coverUrl ? '#f3f4f6' : '#FFD1DC',
+            }}
+            aria-label={`${title} cover`}
+          />
+          {!coverUrl && (
+            <div className="absolute inset-0 flex items-center justify-center">
               <svg className="w-8 h-8 text-black" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M18 3a1 1 0 00-1.447-.894L8.763 6H5a3 3 0 000 6h.28l1.771 5.316A1 1 0 008 18h1a1 1 0 001-1v-4.382l6.553 3.276A1 1 0 0018 15V3z" clipRule="evenodd" />
               </svg>
@@ -348,13 +376,6 @@ export default function SongCard({
               </div>
               <span className="text-[10px] font-bold uppercase text-black/60 tracking-wider flex items-center gap-1">
                 Partagé par {sharedBy}
-                {!isPublic && (
-                  <span className="text-pop-yellow ml-1" title="Visible par vos amis uniquement">
-                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                    </svg>
-                  </span>
-                )}
               </span>
             </div>
           )}
@@ -390,12 +411,19 @@ export default function SongCard({
           {renderPlatformButton(true)}
           {renderSaveButton()}
         </div>
-      </div>
+      </motion.div>
     )
   }
 
   return (
-    <div className={`bg-white rounded-2xl border-3 border-black shadow-neo overflow-hidden transition-all duration-200 ${className}`}>
+    <motion.div
+      key={`song-card-vertical-${id}`}
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.95 }}
+      transition={transition}
+      className={`bg-white rounded-2xl border-3 border-black shadow-neo overflow-hidden transition-all duration-200 ${className}`}
+    >
       {/* User header */}
       {showUserHeader && userInfo && (
         <div className="flex items-center gap-3 p-4 border-b-3 border-black bg-pop-mint/30">
@@ -437,20 +465,27 @@ export default function SongCard({
         onClick={disableAudioClick ? undefined : handleAudioToggle}
         className={`relative overflow-hidden h-80 w-full group ${previewUrl && !disableAudioClick ? 'cursor-pointer' : 'cursor-default'}`}
         style={{
-          ...(coverUrl
-            ? {
-              backgroundImage: `url(${coverUrl})`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center'
-            }
-            : {
-              backgroundColor: '#FFD1DC'
-            }),
           WebkitTapHighlightColor: 'transparent'
         }}
       >
+        <div
+          className="absolute inset-0 bg-center bg-cover"
+          style={{
+            backgroundImage: coverUrl ? `url(${coverUrl})` : 'none',
+            backgroundColor: coverUrl ? '#f3f4f6' : '#FFD1DC',
+          }}
+          aria-label={`${title} cover`}
+        />
+        {!coverUrl && (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <svg className="w-16 h-16 text-black" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M18 3a1 1 0 00-1.447-.894L8.763 6H5a3 3 0 000 6h.28l1.771 5.316A1 1 0 008 18h1a1 1 0 001-1v-4.382l6.553 3.276A1 1 0 0018 15V3z" clipRule="evenodd" />
+            </svg>
+          </div>
+        )}
+
         {/* Gradient overlay for better text readability */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/10" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/10 pointer-events-none" />
 
         {/* Play/Pause indicator overlay */}
         {previewUrl && (
@@ -516,12 +551,15 @@ export default function SongCard({
             {artist}
           </p>
           {description && (
-            <p
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={transition}
               className="text-white font-bold text-sm italic mt-2 line-clamp-2 drop-shadow-md"
               title={description}
             >
               "{description}"
-            </p>
+            </motion.p>
           )}
         </div>
 
@@ -554,6 +592,6 @@ export default function SongCard({
           }
         }}
       />
-    </div>
+    </motion.div>
   )
 }
