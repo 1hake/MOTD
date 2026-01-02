@@ -8,9 +8,10 @@ import { generateMusicServiceLinks } from '../lib/musicServices'
 interface EmptyFeedCTAProps {
   show: boolean
   onSearchStateChange?: (isSearching: boolean) => void
+  onSongSelectedChange?: (isSelected: boolean) => void
 }
 
-const EmptyFeedCTA: React.FC<EmptyFeedCTAProps> = ({ show, onSearchStateChange }) => {
+const EmptyFeedCTA: React.FC<EmptyFeedCTAProps> = ({ show, onSearchStateChange, onSongSelectedChange }) => {
   const navigate = useNavigate()
   const { user, isAuthenticated } = useAuth()
   const [selected, setSelected] = useState<{
@@ -103,13 +104,15 @@ const EmptyFeedCTA: React.FC<EmptyFeedCTAProps> = ({ show, onSearchStateChange }
 
     // Notify parent that search state is reset
     onSearchStateChange?.(false)
+    // Notify parent that song is no longer selected
+    onSongSelectedChange?.(false)
   }
 
   if (!show) return null
 
   return (
     <div
-      className={`text-black rounded-2xl px-6 transition-all duration-500 ease-out ${isSearching ? 'pb-24 transform' : ''
+      className={`mt-8 text-black rounded-2xl px-6 transition-all duration-500 ease-out ${isSearching ? 'pb-24 transform' : ''
         }`}
     >
       {!selected ? (
@@ -143,6 +146,8 @@ const EmptyFeedCTA: React.FC<EmptyFeedCTAProps> = ({ show, onSearchStateChange }
 
                 // Notify parent that search state is reset
                 onSearchStateChange?.(false)
+                // Notify parent that song is selected
+                onSongSelectedChange?.(true)
               }}
               onSearchChange={handleSearchStart}
             />

@@ -80,7 +80,7 @@ export default function MusicFeed({
 
     return (
         <div className="mb-8">
-            <h2 className="text-2xl italic font-semibold text-black mb-6">Musiques du jour</h2>
+            <h2 className="mt-8 text-2xl italic font-semibold text-black mb-6">Musiques du jour</h2>
 
             {posts.length === 0 ? (
                 <div className="text-center py-20">

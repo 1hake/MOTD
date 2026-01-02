@@ -39,6 +39,7 @@ export default function Feed() {
   const [friendsPosts, setFriendsPosts] = useState<Post[]>([])
   const [loading, setLoading] = useState(true)
   const [isSearching, setIsSearching] = useState(false)
+  const [isSongSelected, setIsSongSelected] = useState(false)
   const navigate = useNavigate()
   const { user, isAuthenticated } = useAuth()
 
@@ -111,17 +112,15 @@ export default function Feed() {
     <div className="min-h-screen">
       <div className="max-w-4xl mx-auto px-4 pt-[max(1.5rem,env(safe-area-inset-top))] pb-32 space-y-8">
         {/* image logo */}
-        <div
-          className={`w-full flex justify-center transition-all duration-1000 ease-in-out overflow-hidden ${isSearching ? 'h-0 opacity-0' : 'h-auto opacity-100'
-            }`}
-        >
-          <img
-            src={logo2}
-            alt="DIGGER"
-            className={`transition-all duration-500 ${myPosts.length === 0 ? 'w-64 mb-4' : 'w-56'
-              } ${isSearching ? 'transform scale-75' : ''}`}
-          />
-        </div>
+        {!isSearching && !isSongSelected && (
+          <div className="w-full flex justify-center">
+            <img
+              src={logo2}
+              alt="DIGGER"
+              className={`transition-all duration-500 ${myPosts.length === 0 ? 'w-64 mb-4' : 'w-56'}`}
+            />
+          </div>
+        )}
 
         {/* Notification permission prompt (only on mobile) */}
         <NotificationPermissionCard />
@@ -130,6 +129,7 @@ export default function Feed() {
         <EmptyFeedCTA
           show={myPosts.length === 0}
           onSearchStateChange={setIsSearching}
+          onSongSelectedChange={setIsSongSelected}
         />
 
         {/* My posts today */}

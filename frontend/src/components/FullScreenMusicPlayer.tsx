@@ -288,7 +288,7 @@ export default function FullScreenMusicPlayer({
                             {/* Content container - Single column layout */}
                             <div className="relative z-10 h-full w-full flex flex-col max-w-lg mx-auto">
                                 {/* Top bar: Song title on left, User info on right */}
-                                <div className="flex items-center justify-between gap-4 px-6 pt-24 pb-4">
+                                <div className="flex items-center justify-between gap-4 px-6 pt-28 pb-4">
                                     {/* Song title on left */}
                                     <div className="flex-1 min-w-0">
                                         <h2 className="text-2xl font-black text-black leading-tight line-clamp-2 uppercase tracking-tight italic">

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { api } from '../lib/api'
 import { useAuth } from '../hooks/useAuth'
 import { useNavigate } from 'react-router-dom'
@@ -37,6 +37,9 @@ export default function Profile() {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('list')
   const [friendsCount, setFriendsCount] = useState(0)
   const [savedCount, setSavedCount] = useState(0)
+  const [isSticky, setIsSticky] = useState(false)
+  const filterBarRef = useRef<HTMLDivElement>(null)
+  const stickyTriggerRef = useRef<HTMLDivElement>(null)
   const navigate = useNavigate()
   const { user: currentUser, isAuthenticated } = useAuth()
 
@@ -125,6 +128,28 @@ export default function Profile() {
     return grouped
   }
 
+  const groupedPosts = groupPostsByDate(posts)
+  const sortedDates = Object.keys(groupedPosts).sort((a, b) => new Date(b).getTime() - new Date(a).getTime())
+
+  // Observe sticky position for filter bar
+  useEffect(() => {
+    if (!stickyTriggerRef.current) return
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsSticky(!entry.isIntersecting)
+      },
+      {
+        threshold: 1.0,
+        rootMargin: '-1px 0px 0px 0px'
+      }
+    )
+
+    observer.observe(stickyTriggerRef.current)
+
+    return () => observer.disconnect()
+  }, [sortedDates])
+
   if (loading) {
     return <LoadingState message="Chargement du profil..." />
   }
@@ -139,9 +164,6 @@ export default function Profile() {
       </div>
     )
   }
-
-  const groupedPosts = groupPostsByDate(posts)
-  const sortedDates = Object.keys(groupedPosts).sort((a, b) => new Date(b).getTime() - new Date(a).getTime())
 
   return (
     <div className="min-h-screen">
@@ -214,10 +236,16 @@ export default function Profile() {
           </div>
         </div>
 
+        {/* Sticky trigger element - invisible marker */}
+        {sortedDates.length > 0 && <div ref={stickyTriggerRef} className="h-px" />}
 
         {/* View Switcher */}
         {sortedDates.length > 0 && (
-          <div className="sticky top-0 z-40 pt-[max(1rem,env(safe-area-inset-top))] pb-4 -mx-6 px-6 mb-6">
+          <div
+            ref={filterBarRef}
+            className={`sticky top-0 z-40 pb-4 -mx-6 px-6 mb-6 transition-all duration-200 ${isSticky ? 'pt-[max(1rem,env(safe-area-inset-top))]' : 'pt-4'
+              }`}
+          >
             <div className="flex justify-center">
               <div className="flex items-center gap-2 p-1.5 bg-white border-3 border-black rounded-xl shadow-neo-sm">
                 <button
