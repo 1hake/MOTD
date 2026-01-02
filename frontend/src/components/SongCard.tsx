@@ -108,11 +108,10 @@ export default function SongCard({
 
   const isPlaying = audio.isPlaying(id)
 
-  // Simplified transition config
+  // Ultra-smooth transition - opacity only, no layout shifts
   const transition = {
-    type: "spring",
-    stiffness: 260,
-    damping: 20
+    duration: 0.4,
+    ease: "easeOut"
   }
 
   // Fetch preview URL when component mounts if deezerTrackId is available
@@ -324,12 +323,12 @@ export default function SongCard({
     return (
       <motion.div
         key={`song-card-horizontal-${id}`}
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 0.95 }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
         transition={transition}
-        className={`relative flex items-stretch gap-0 bg-white rounded-2xl border-3 border-black shadow-neo overflow-hidden transition-all touch-manipulation ${className}`}
-        style={{ WebkitTapHighlightColor: 'transparent' }}
+        className={`relative flex items-stretch gap-0 bg-white rounded-2xl border-3 border-black shadow-neo overflow-hidden touch-manipulation ${className}`}
+        style={{ WebkitTapHighlightColor: 'transparent', willChange: 'opacity' }}
       >
         {/* Cover Image with preview button */}
         <div
@@ -418,11 +417,12 @@ export default function SongCard({
   return (
     <motion.div
       key={`song-card-vertical-${id}`}
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.95 }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
       transition={transition}
-      className={`bg-white rounded-2xl border-3 border-black shadow-neo overflow-hidden transition-all duration-200 ${className}`}
+      className={`bg-white rounded-2xl border-3 border-black shadow-neo overflow-hidden ${className}`}
+      style={{ willChange: 'opacity' }}
     >
       {/* User header */}
       {showUserHeader && userInfo && (
@@ -551,15 +551,12 @@ export default function SongCard({
             {artist}
           </p>
           {description && (
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={transition}
+            <p
               className="text-white font-bold text-sm italic mt-2 line-clamp-2 drop-shadow-md"
               title={description}
             >
               "{description}"
-            </motion.p>
+            </p>
           )}
         </div>
 
